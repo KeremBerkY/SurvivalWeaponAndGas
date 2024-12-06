@@ -28,6 +28,7 @@
 #include "WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
 #include "WeaponPickupSystem/UserInterface/SurvivalSystemHUD.h"
 #include "Survival//WeaponPickupSystem/Character/GAS/Abilities/AbilityInputs/GASAbilityInputID.h"
+#include "WeaponPickupSystem/Character/Components/GASEnhancedInputComponent.h"
 #include "WeaponPickupSystem/Character/Components/ResourceComponent.h"
 #include "WeaponPickupSystem/Character/PlayerStates/CharacterPlayerState.h"
 #include "WeaponPickupSystem/Data/CharacterClassInfo.h"
@@ -83,6 +84,7 @@ ASurvivalCharacter::ASurvivalCharacter()
 	WeaponInventoryComponent = CreateDefaultSubobject<UWeaponInventory>(TEXT("WeaponInventoryComponent"));
 	CharacterStateComponent = CreateDefaultSubobject<UCharacterStateComponent>(TEXT("CharacterStateComponent"));
 	CharacterWeaponComponent = CreateDefaultSubobject<UCharacterWeaponComponent>(TEXT("CharacterWeaponComponent"));
+	GASEnhancedInputComponent = CreateDefaultSubobject<UGASEnhancedInputComponent>(TEXT("GASEnhancedInputComponent"));
 	ResourceComponent = CreateDefaultSubobject<UResourceComponent>(TEXT("HealthComponent"));
 	
 }
@@ -162,32 +164,32 @@ void ASurvivalCharacter::HandleInitializeDelay()
 		ResourceComponent->InitializeWithGAS(CharacterAbilitySystemComponent, CharacterAttributes);
 	}
 }
-
-void ASurvivalCharacter::BindAbilityInput()
-{
-	if (!CharacterAbilitySystemComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("CharacterAbilitySystemComponent is null. Did you forget to initialize it in the constructor?"));
-	}
-	if (!InputComponent)
-	{
-		UE_LOG(LogTemp, Error, TEXT("InputComponent is null. Ensure InputComponent is initialized in BeginPlay or earlier."));
-	}
-	
-	if (CharacterAbilitySystemComponent && InputComponent)
-	{
-		const FGameplayAbilityInputBinds Binds("Confirm", "Cancel", FTopLevelAssetPath(TEXT("/Script/Survival.EGASAbilityInputID")),
-			static_cast<int32>(EGASAbilityInputID::Confirm), static_cast<int32>(EGASAbilityInputID::Cancel));
-
-		CharacterAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, Binds);
-
-		UE_LOG(LogTemp, Log, TEXT("Ability inputs successfully bound!"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to bind ability inputs! Either CharacterAbilitySystemComponent or InputComponent is null."));
-	}
-}
+//
+// void ASurvivalCharacter::BindAbilityInput()
+// {
+// 	if (!CharacterAbilitySystemComponent)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("CharacterAbilitySystemComponent is null. Did you forget to initialize it in the constructor?"));
+// 	}
+// 	if (!InputComponent)
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("InputComponent is null. Ensure InputComponent is initialized in BeginPlay or earlier."));
+// 	}
+// 	
+// 	if (CharacterAbilitySystemComponent && InputComponent)
+// 	{
+// 		const FGameplayAbilityInputBinds Binds("Confirm", "Cancel", FTopLevelAssetPath(TEXT("/Script/Survival.EGASAbilityInputID")),
+// 			static_cast<int32>(EGASAbilityInputID::Confirm), static_cast<int32>(EGASAbilityInputID::Cancel));
+//
+// 		CharacterAbilitySystemComponent->BindAbilityActivationToInputComponent(InputComponent, Binds);
+//
+// 		UE_LOG(LogTemp, Log, TEXT("Ability inputs successfully bound!"));
+// 	}
+// 	else
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Failed to bind ability inputs! Either CharacterAbilitySystemComponent or InputComponent is null."));
+// 	}
+// }
 
 void ASurvivalCharacter::InitializeResourceComponent()
 {
@@ -224,13 +226,13 @@ void ASurvivalCharacter::BeginPlay()
 	CharacterAnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance());
 	
 	//Add Input Mapping Context
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(DefaultMappingContext, 0);
-		}
-	}
+	// if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	// {
+	// 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+	// 	{
+	// 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
+	// 	}
+	// }
 
 	WeaponInventoryComponent = NewObject<UWeaponInventory>(this);
 
@@ -259,94 +261,94 @@ ASurvivalSystemHUD* ASurvivalCharacter::GetSurvivalHUD() const
 //////////////////////////////////////////////////////////////////////////
 // Input
 
-void ASurvivalCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
-		// Moving
-		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::Move);
-		// Looking
-		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::Look);
-		// Interact
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::Interact);
-		// Fire
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &ASurvivalCharacter::FirePressed);
-		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ASurvivalCharacter::FireReleased);
-		// Reload
-		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::Reload);
-		// Drop	
-		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::Drop);
-		// Raycast Switch
-		EnhancedInputComponent->BindAction(RaycastAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::RaycastWeaponSwitch);
-		// Projectile Switch
-		EnhancedInputComponent->BindAction(ProjectileAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::ProjectileWeaponSwitch);
-		// Melee Switch
-		EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::MeleeWeaponSwitch);
-		// Toggle Fire Mode
-		EnhancedInputComponent->BindAction(ToggleFireModeAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::ToggleWeaponFireMode);
-		// Sprinting
-		// EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::StartSprinting);
-		// EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvivalCharacter::StopSrinting);
-	}
-	else
-	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
-	}
-	
-	BindAbilityInput();
-}
+// void ASurvivalCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+// {
+// 	// Set up action bindings
+// 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
+// 		// Jumping
+// 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+// 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+// 		// Moving
+// 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::Move);
+// 		// Looking
+// 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::Look);
+// 		// Interact
+// 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::Interact);
+// 		// Fire
+// 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &ASurvivalCharacter::FirePressed);
+// 		EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &ASurvivalCharacter::FireReleased);
+// 		// Reload
+// 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::Reload);
+// 		// Drop	
+// 		EnhancedInputComponent->BindAction(DropAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::Drop);
+// 		// Raycast Switch
+// 		EnhancedInputComponent->BindAction(RaycastAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::RaycastWeaponSwitch);
+// 		// Projectile Switch
+// 		EnhancedInputComponent->BindAction(ProjectileAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::ProjectileWeaponSwitch);
+// 		// Melee Switch
+// 		EnhancedInputComponent->BindAction(MeleeAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::MeleeWeaponSwitch);
+// 		// Toggle Fire Mode
+// 		EnhancedInputComponent->BindAction(ToggleFireModeAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::ToggleWeaponFireMode);
+// 		// Sprinting
+// 		// EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ASurvivalCharacter::StartSprinting);
+// 		// EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ASurvivalCharacter::StopSrinting);
+// 	}
+// 	else
+// 	{
+// 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+// 	}
+// 	
+// 	// BindAbilityInput();
+// }
 
-void ASurvivalCharacter::Move(const FInputActionValue& Value)
-{
-	FVector2D MovementVector = Value.Get<FVector2D>();
+// void ASurvivalCharacter::Move(const FInputActionValue& Value) // Updated! 
+// {
+// 	FVector2D MovementVector = Value.Get<FVector2D>();
+//
+// 	if (Controller != nullptr)
+// 	{
+// 		const FRotator Rotation = Controller->GetControlRotation();
+// 		const FRotator YawRotation(0, Rotation.Yaw, 0);
+// 		
+// 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+// 		
+// 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+// 		
+// 		AddMovementInput(ForwardDirection, MovementVector.Y);
+// 		AddMovementInput(RightDirection, MovementVector.X);
+// 		
+// 	}
+// }
 
-	if (Controller != nullptr)
-	{
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-		
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
-		
-	}
-}
+//
+// void ASurvivalCharacter::StartSprinting()
+// {
+// 	// if (GetCharacterAbilitySystemComponent())
+// 	// {
+// 	// 	FGameplayTagContainer AbilityTags;
+// 	// 	AbilityTags.AddTag(FGameplayTag::RequestGameplayTag(TEXT("Ability.Movement.Sprint")));
+// 	// 	
+// 	// 	GetCharacterAbilitySystemComponent()->TryActivateAbilitiesByTag(AbilityTags);
+// 	// }
+// }
+//
+// void ASurvivalCharacter::StopSprinting()
+// {
+// 	
+// }
 
-
-void ASurvivalCharacter::StartSprinting()
-{
-	// if (GetCharacterAbilitySystemComponent())
-	// {
-	// 	FGameplayTagContainer AbilityTags;
-	// 	AbilityTags.AddTag(FGameplayTag::RequestGameplayTag(TEXT("Ability.Movement.Sprint")));
-	// 	
-	// 	GetCharacterAbilitySystemComponent()->TryActivateAbilitiesByTag(AbilityTags);
-	// }
-}
-
-void ASurvivalCharacter::StopSprinting()
-{
-	
-}
-
-void ASurvivalCharacter::Look(const FInputActionValue& Value)
-{
-	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
-
-	if (Controller != nullptr)
-	{
-		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
-	}
-}
+// void ASurvivalCharacter::Look(const FInputActionValue& Value) // Updated!
+// {
+// 	// input is a Vector2D
+// 	FVector2D LookAxisVector = Value.Get<FVector2D>();
+//
+// 	if (Controller != nullptr)
+// 	{
+// 		// add yaw and pitch input to controller
+// 		AddControllerYawInput(LookAxisVector.X);
+// 		AddControllerPitchInput(LookAxisVector.Y);
+// 	}
+// }
 
 
 void ASurvivalCharacter::OnPickupOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -375,6 +377,7 @@ void ASurvivalCharacter::UpdateCurrentPickup(ABasePickup* NewPickup)
 	}
 
 	CurrentPickup = NewPickup;
+	SetCurrentPickup(NewPickup);
 
 	if (CurrentPickup)
 	{
@@ -427,116 +430,116 @@ void ASurvivalCharacter::CheckNearbyPickups()
 	}
 }
 
+//
+// void ASurvivalCharacter::Interact()  // Updated! Made with Ability
+// {
+// 	if (CurrentPickup)
+// 	{
+// 		IInteractionInterface* Interactable = Cast<IInteractionInterface>(CurrentPickup);
+// 		if (Interactable)
+// 		{
+// 			Interactable->Interact(this);
+// 			CurrentPickup = nullptr;
+// 		}
+// 	}
+// 	else
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("No pickup available to interact with."));
+// 	}
+// }
 
-void ASurvivalCharacter::Interact()
-{
-	if (CurrentPickup)
-	{
-		IInteractionInterface* Interactable = Cast<IInteractionInterface>(CurrentPickup);
-		if (Interactable)
-		{
-			Interactable->Interact(this);
-			CurrentPickup = nullptr;
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No pickup available to interact with."));
-	}
-}
+// void ASurvivalCharacter::Drop()  // Updated! Made with Ability // TODO: Bu Drop(), CharacterWeaponComponent::WeaponDrop(this) // 
+// {
+// 	// if (CurrentWeapon)
+// 	// {
+// 	// 	AWeaponBase* WeaponDrop = Cast<AWeaponBase>(CurrentWeapon);
+// 	// 	if (WeaponDrop)
+// 	// 	{
+// 	// 		WeaponDrop->DropWeapon(this); // TODO: Bu CharacterWeaponComponentda yine çağrılacak AWaponBase'nin üstüne düşen sorumluluk.
+// 	// 		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+// 	// 		CurrentWeapon = nullptr;
+// 	// 		CharacterAnimInstance->UpdateWeaponType(CurrentWeapon);
+// 	// 	}
+// 	// }
+// 	if (CharacterWeaponComponent)
+// 	{
+// 		CharacterWeaponComponent->DropWeapon(this);
+// 	}
+// }
 
-void ASurvivalCharacter::Drop() // TODO: Bu Drop(), CharacterWeaponComponent::WeaponDrop(this)
-{
-	// if (CurrentWeapon)
-	// {
-	// 	AWeaponBase* WeaponDrop = Cast<AWeaponBase>(CurrentWeapon);
-	// 	if (WeaponDrop)
-	// 	{
-	// 		WeaponDrop->DropWeapon(this); // TODO: Bu CharacterWeaponComponentda yine çağrılacak AWaponBase'nin üstüne düşen sorumluluk.
-	// 		CurrentWeapon->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	// 		CurrentWeapon = nullptr;
-	// 		CharacterAnimInstance->UpdateWeaponType(CurrentWeapon);
-	// 	}
-	// }
-	if (CharacterWeaponComponent)
-	{
-		CharacterWeaponComponent->DropWeapon(this);
-	}
-}
+// void ASurvivalCharacter::RaycastWeaponSwitch()
+// {
+// 	if (CanSwitchWeapon())
+// 	{
+// 		WeaponInventoryComponent->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), this, EWeaponCategories::EWC_RaycastWeapons);
+// 		UpdateLastSwitchTime();
+// 	}
+// }
+//
+// void ASurvivalCharacter::ProjectileWeaponSwitch()
+// {
+// 	if (CanSwitchWeapon())
+// 	{
+// 		WeaponInventoryComponent->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), this, EWeaponCategories::EWC_ProjectileWeapons);
+// 		UpdateLastSwitchTime();
+// 	}
+// }
+//
+// void ASurvivalCharacter::MeleeWeaponSwitch()
+// {
+// 	if (CanSwitchWeapon())
+// 	{
+// 		WeaponInventoryComponent->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), this, EWeaponCategories::EWC_MeleeWeapons);
+// 		UpdateLastSwitchTime();
+// 	}
+// }
+//
+// bool ASurvivalCharacter::CanSwitchWeapon() const
+// {
+// 	return (GetWorld()->TimeSeconds - LastSwitchTime) >= WeaponSwitchCooldown;
+// }
+//
+// void ASurvivalCharacter::UpdateLastSwitchTime()
+// {
+// 	LastSwitchTime = GetWorld()->TimeSeconds;
+// }
 
-void ASurvivalCharacter::RaycastWeaponSwitch()
-{
-	if (CanSwitchWeapon())
-	{
-		WeaponInventoryComponent->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), this, EWeaponCategories::EWC_RaycastWeapons);
-		UpdateLastSwitchTime();
-	}
-}
-
-void ASurvivalCharacter::ProjectileWeaponSwitch()
-{
-	if (CanSwitchWeapon())
-	{
-		WeaponInventoryComponent->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), this, EWeaponCategories::EWC_ProjectileWeapons);
-		UpdateLastSwitchTime();
-	}
-}
-
-void ASurvivalCharacter::MeleeWeaponSwitch()
-{
-	if (CanSwitchWeapon())
-	{
-		WeaponInventoryComponent->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), this, EWeaponCategories::EWC_MeleeWeapons);
-		UpdateLastSwitchTime();
-	}
-}
-
-bool ASurvivalCharacter::CanSwitchWeapon() const
-{
-	return (GetWorld()->TimeSeconds - LastSwitchTime) >= WeaponSwitchCooldown;
-}
-
-void ASurvivalCharacter::UpdateLastSwitchTime()
-{
-	LastSwitchTime = GetWorld()->TimeSeconds;
-}
-
-void ASurvivalCharacter::FirePressed()
-{
-	
-	if (CharacterWeaponComponent->GetCurrentWeapon() && CharacterWeaponComponent->GetCurrentWeapon()->CanFire())
-	{
-		CharacterWeaponComponent->GetCurrentWeapon()->FireHandle(true);
-	}
-	else if (!CharacterWeaponComponent->GetCurrentWeapon())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("You have no weapon!"));
-	}
-}
-
-void ASurvivalCharacter::FireReleased()
-{
-	if (CharacterWeaponComponent->GetCurrentWeapon())
-	{
-		CharacterWeaponComponent->GetCurrentWeapon()->FireHandle(false);
-	}
-}
-
-void ASurvivalCharacter::Reload()
-{
-	if (CharacterWeaponComponent->GetCurrentWeapon())
-	{
-		CharacterWeaponComponent->GetCurrentWeapon()->Reload();
-	}
-}
-
-void ASurvivalCharacter::ToggleWeaponFireMode()
-{
-	if (CharacterWeaponComponent->GetCurrentWeapon())
-	{
-		CharacterWeaponComponent->GetCurrentWeapon()->ToggleFireMode();
-	}
-}
+// void ASurvivalCharacter::FirePressed() // Updated! Made with Ability
+// {
+// 	
+// 	if (CharacterWeaponComponent->GetCurrentWeapon() && CharacterWeaponComponent->GetCurrentWeapon()->CanFire())
+// 	{
+// 		CharacterWeaponComponent->GetCurrentWeapon()->FireHandle(true);
+// 	}
+// 	else if (!CharacterWeaponComponent->GetCurrentWeapon())
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("You have no weapon!"));
+// 	}
+// }
+//
+// void ASurvivalCharacter::FireReleased() // TODO: 
+// {
+// 	if (CharacterWeaponComponent->GetCurrentWeapon())
+// 	{
+// 		CharacterWeaponComponent->GetCurrentWeapon()->FireHandle(false);
+// 	}
+// }
+//
+// void ASurvivalCharacter::Reload()
+// {
+// 	if (CharacterWeaponComponent->GetCurrentWeapon())
+// 	{
+// 		CharacterWeaponComponent->GetCurrentWeapon()->Reload();
+// 	}
+// }
+//
+// void ASurvivalCharacter::ToggleWeaponFireMode()
+// {
+// 	if (CharacterWeaponComponent->GetCurrentWeapon())
+// 	{
+// 		CharacterWeaponComponent->GetCurrentWeapon()->ToggleFireMode();
+// 	}
+// }
 
 /* Bu kısmı buradan taşı ! */
 void ASurvivalCharacter::PlayerTotalCoin() const

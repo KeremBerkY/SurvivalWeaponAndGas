@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Survival/WeaponPickupSystem/Character/CharacterTypes.h"
 #include "CharacterWeaponComponent.generated.h"
 
 class ASurvivalCharacter;

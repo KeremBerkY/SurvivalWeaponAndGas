@@ -9,6 +9,16 @@ enum class EGASAbilityInputID : uint8
 	None,
 	Confirm,
 	Cancel,
+	Jump,
 	Sprint,
-	Dash
+	Dash,
+	Interact,
+	Fire,
+	Reload,
+	Drop,
+	RaycastAction,
+	ProjectileAction,
+	MeleeAction,
+	ToggleFireMode,
+	
 };

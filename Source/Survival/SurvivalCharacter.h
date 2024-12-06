@@ -19,6 +19,7 @@
 #include "SurvivalCharacter.generated.h"
 
 
+class UGASEnhancedInputComponent;
 class UResourceComponent;
 class UCharacterGameplayAbility;
 class UCharacterAbilitySystemComponent;
@@ -47,49 +48,49 @@ class ASurvivalCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	// TODO: TObjectPtr<UInputAction> yap
+	// // TODO: TObjectPtr<UInputAction> yap
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-	/** MappingContext */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputMappingContext* DefaultMappingContext;
-	/** Jump Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* JumpAction;
-	/** Move Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
-	/** Look Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* LookAction;
-	/** Interact Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* InteractAction;
-	/* Fire Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* FireAction;
-	/* Reload Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* ReloadAction;
-	/** Drop Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* DropAction;
-	/* Weapon Inventory Actions Weapon Swap */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* RaycastAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* ProjectileAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* MeleeAction;
-	/* ToggleFireMode Input Action */
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* ToggleFireModeAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	UInputAction* SprintAction;
+	// /** MappingContext */
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputMappingContext* DefaultMappingContext;
+	// /** Jump Input Action */
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* JumpAction;
+	// /** Move Input Action */
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* MoveAction;
+	// /** Look Input Action */
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* LookAction;
+	// /** Interact Input Action */
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* InteractAction;
+	// /* Fire Input Action */
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* FireAction;
+	// /* Reload Input Action */
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* ReloadAction;
+	// /** Drop Input Action */
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* DropAction;
+	// /* Weapon Inventory Actions Weapon Swap */
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* RaycastAction;
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* ProjectileAction;
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* MeleeAction;
+	// /* ToggleFireMode Input Action */
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* ToggleFireModeAction;
+	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	// UInputAction* SprintAction;
 public:
 	ASurvivalCharacter();
 	
@@ -110,6 +111,9 @@ public:
 	FORCEINLINE UCharacterWeaponComponent* GetCharacterWeaponComponent() const { return CharacterWeaponComponent; }
 	// Ability System Component
 	FORCEINLINE UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent() const { return  CharacterAbilitySystemComponent; }
+	// Current Pickup
+	FORCEINLINE ABasePickup* GetCurrentPickup() const { return CurrentPickup; }
+	FORCEINLINE void SetCurrentPickup(ABasePickup* NewPickup) { CurrentPickup = NewPickup; }
 	
 	/* HUD */
 	ASurvivalSystemHUD* GetSurvivalHUD() const;
@@ -144,7 +148,7 @@ public:
 	
 protected:
 	
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	// virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
 	
@@ -154,24 +158,24 @@ protected:
 	void OnPickupOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 /* Input Methods */
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
-	void Interact();
-	void Drop();
-	void FirePressed();
-	void FireReleased();
-	void Reload();
-	void RaycastWeaponSwitch();
-	void ProjectileWeaponSwitch();
-	void MeleeWeaponSwitch();
-	void ToggleWeaponFireMode();
-	void StartSprinting();
-	void StopSprinting();
+	// void Move(const FInputActionValue& Value);
+	// void Look(const FInputActionValue& Value);
+	// void Interact();
+	// void Drop();
+	// void FirePressed();
+	// void FireReleased();
+	// void Reload();
+	// void RaycastWeaponSwitch();
+	// void ProjectileWeaponSwitch();
+	// void MeleeWeaponSwitch();
+	// void ToggleWeaponFireMode();
+	// void StartSprinting();
+	// void StopSprinting();
 	
 /* Time / Cooldown Methods */
-	bool CanSwitchWeapon() const;
-	void UpdateLastSwitchTime();
-	
+	// bool CanSwitchWeapon() const;
+	// void UpdateLastSwitchTime();
+	//
 // Health Component
 	UFUNCTION()
 	void InitializeResourceComponent();
@@ -221,6 +225,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Components | Character Health")
 	UResourceComponent* ResourceComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components | Character Health")
+	UGASEnhancedInputComponent* GASEnhancedInputComponent;	
 
 	FTimerHandle InitializeDelayTimerHandle;
 

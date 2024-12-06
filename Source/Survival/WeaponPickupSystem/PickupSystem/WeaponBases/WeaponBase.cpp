@@ -314,19 +314,19 @@ FName AWeaponBase::GetWeaponSocketName(ASurvivalCharacter* PlayerCharacter) // T
 	{
 		switch (this->WeaponType)
 		{
-		case EWeaponType::EWT_AssaultRifle:
+		case EWeaponType::Ewt_AssaultRifle:
 			Socketname = FName("RaycastSocket");
 			break;
-		case EWeaponType::EWT_Pistol:
+		case EWeaponType::Ewt_Pistol:
 			Socketname = FName("RaycastPistolSocket");
 			break;
-		case EWeaponType::EWT_Shotgun:
+		case EWeaponType::Ewt_Shotgun:
 			Socketname = FName("RaycastSocket");
 			break;
 		case EWeaponType::EWT_GrenadeLauncher:
 			Socketname = FName("ProjectileSocket");
 			break;
-		case EWeaponType::EWT_RocketLauncher:
+		case EWeaponType::Ewt_RocketLauncher:
 			Socketname = FName("ProjectileSocket");
 			break;
 		case EWeaponType::EWT_Sword:

@@ -26,14 +26,14 @@ UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	// Raycast Silahlar
-	EWT_Unarmed UMETA(DisplayName = "Unarmed"),
-	EWT_AssaultRifle UMETA(DisplayName = "Assault Rifle"),
-	EWT_Pistol UMETA(DisplayName = "Pistol"),
-	EWT_Shotgun UMETA(DisplayName = "Shotgun"),
+	Ewt_Unarmed UMETA(DisplayName = "Unarmed"),
+	Ewt_AssaultRifle UMETA(DisplayName = "Assault Rifle"),
+	Ewt_Pistol UMETA(DisplayName = "Pistol"),
+	Ewt_Shotgun UMETA(DisplayName = "Shotgun"),
 
 	// Projectile Silahlar
 	EWT_GrenadeLauncher UMETA(DisplayName = "Grenade Launcher"),
-	EWT_RocketLauncher UMETA(DisplayName = "Rocket Launcher"),
+	Ewt_RocketLauncher UMETA(DisplayName = "Rocket Launcher"),
 
 	// Melee Silahlar
 	EWT_Sword UMETA(DisplayName = "Sword"),
