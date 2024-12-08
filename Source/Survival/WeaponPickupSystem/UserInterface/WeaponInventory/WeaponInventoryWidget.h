@@ -6,6 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "WeaponInventoryWidget.generated.h"
 
+class UImage;
+class UWeaponInventory;
 class AWeaponBase;
 /**
  * 
@@ -16,10 +18,14 @@ class SURVIVAL_API UWeaponInventoryWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	void BindCallback(UWeaponInventory* WeaponInventory);
 	
+	UFUNCTION()
+	void ResetSlotToDefault(EWeaponCategories WeaponCategory);
+	
+	UFUNCTION()
 	void UpdateInventory(AWeaponBase* Weapon);
 
-	void ResetSlotToDefault(EWeaponCategories WeaponCategory);
 	
 protected:
 	virtual void NativeConstruct() override;

@@ -267,26 +267,28 @@ void AWeaponBase::ResetWeaponPosition(FVector OriginalLocation)
 
 void AWeaponBase::Equip(ACharacter* Character) // TODO: Bunu CharacterWeaponComponent'a taşı,
 {
-	ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(Character);
-	if (PlayerCharacter)
-	{
-		SetWeaponOwner(PlayerCharacter);
-		FName InSocketName = GetWeaponSocketName(PlayerCharacter);
-		
-		PlayerCharacter->GetCharacterWeaponComponent()->SetCurrentWeapon(this);
-		AttechMeshToSocket(PlayerCharacter->GetMesh(), InSocketName);
+	// ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(Character);
+	// if (PlayerCharacter)
+	// {
+	// 	SetWeaponOwner(PlayerCharacter);
+	// 	FName InSocketName = GetWeaponSocketName(PlayerCharacter);
+	// 	
+	// 	PlayerCharacter->GetCharacterWeaponComponent()->SetCurrentWeapon(this);
+	// 	AttechMeshToSocket(PlayerCharacter->GetMesh(), InSocketName);
+	//
+	// 	UCharacterAnimInstance* AnimInstance = PlayerCharacter->GetCharacterAnimInstance();
+	// 	if (AnimInstance)
+	// 	{
+	// 		AnimInstance->UpdateWeaponType(this);
+	// 		UE_LOG(LogTemp, Warning, TEXT("AnimInstance UpdateWeapon called !"))
+	// 	}
+	// 	
+	// }
+	UE_LOG(LogTemp, Warning, TEXT("YANLIŞ SINIF ÇALIŞTI"));
 
-		UCharacterAnimInstance* AnimInstance = PlayerCharacter->GetCharacterAnimInstance();
-		if (AnimInstance)
-		{
-			AnimInstance->UpdateWeaponType(this);
-			UE_LOG(LogTemp, Warning, TEXT("AnimInstance UpdateWeapon called !"))
-		}
-		
-	}
 }
 
-void AWeaponBase::SetWeaponOwner(ASurvivalCharacter* NewOwner)
+void AWeaponBase::SetWeaponOwner(ASurvivalCharacter* NewOwner) // TODO: Projede önemli bir yeri var mı bak ! yoksa kaldır
 {
 	SetOwner(NewOwner);
 	
@@ -296,94 +298,99 @@ void AWeaponBase::SetWeaponOwner(ASurvivalCharacter* NewOwner)
 }
 
 
-FName AWeaponBase::GetWeaponSocketName(ASurvivalCharacter* PlayerCharacter) // TODO: Bunu CharacterWeaponComponent'a taşıma !! bu silahın socket ismini alıyor!!
+FName AWeaponBase::GetWeaponSocketName(ASurvivalCharacter* PlayerCharacter) // TODO: WeaponAttachmentManager
 {
-	// AWeaponBase* CurrentWeapon = PlayerCharacter->GetCurrentWeapon();
-	AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon();
-	FName Socketname;
-	if (CurrentWeapon == nullptr)
-	{
-		Socketname = FName("WeaponSocket");
-		UE_LOG(LogTemp, Error, TEXT("CurrentWeapon == nullptr: FName = WeaponSocket"));
-		// PlayerCharacter->UpdateCharacterWeaponState(this);
-		PlayerCharacter->GetCharacterWeaponComponent()->UpdateWeaponState(this);
-		UE_LOG(LogTemp, Error, TEXT("UpdateCharacterState()"));
-
-	}
-	else
-	{
-		switch (this->WeaponType)
-		{
-		case EWeaponType::Ewt_AssaultRifle:
-			Socketname = FName("RaycastSocket");
-			break;
-		case EWeaponType::Ewt_Pistol:
-			Socketname = FName("RaycastPistolSocket");
-			break;
-		case EWeaponType::Ewt_Shotgun:
-			Socketname = FName("RaycastSocket");
-			break;
-		case EWeaponType::EWT_GrenadeLauncher:
-			Socketname = FName("ProjectileSocket");
-			break;
-		case EWeaponType::Ewt_RocketLauncher:
-			Socketname = FName("ProjectileSocket");
-			break;
-		case EWeaponType::EWT_Sword:
-			Socketname = FName("MeleeSocket");
-			break;
-		case EWeaponType::EWT_Axe:
-			Socketname = FName("MeleeSocket");
-			break;
-		default:
-			Socketname = FName("DefaultWeaponSocket");
-			break;
-		}
-	}
-	UE_LOG(LogTemp, Error, TEXT("SocketName: %s"), *Socketname.ToString());
-	return Socketname;
+	// // AWeaponBase* CurrentWeapon = PlayerCharacter->GetCurrentWeapon();
+	// AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon();
+	// FName Socketname;
+	// if (CurrentWeapon == nullptr)
+	// {
+	// 	Socketname = FName("WeaponSocket");
+	// 	UE_LOG(LogTemp, Error, TEXT("CurrentWeapon == nullptr: FName = WeaponSocket"));
+	// 	// PlayerCharacter->UpdateCharacterWeaponState(this);
+	// 	PlayerCharacter->GetCharacterWeaponComponent()->UpdateWeaponState(this);
+	// 	UE_LOG(LogTemp, Error, TEXT("UpdateCharacterState()"));
+	//
+	// }
+	// else
+	// {
+	// 	switch (this->WeaponType)
+	// 	{
+	// 	case EWeaponType::Ewt_AssaultRifle:
+	// 		Socketname = FName("RaycastSocket");
+	// 		break;
+	// 	case EWeaponType::Ewt_Pistol:
+	// 		Socketname = FName("RaycastPistolSocket");
+	// 		break;
+	// 	case EWeaponType::Ewt_Shotgun:
+	// 		Socketname = FName("RaycastSocket");
+	// 		break;
+	// 	case EWeaponType::EWT_GrenadeLauncher:
+	// 		Socketname = FName("ProjectileSocket");
+	// 		break;
+	// 	case EWeaponType::Ewt_RocketLauncher:
+	// 		Socketname = FName("ProjectileSocket");
+	// 		break;
+	// 	case EWeaponType::EWT_Sword:
+	// 		Socketname = FName("MeleeSocket");
+	// 		break;
+	// 	case EWeaponType::EWT_Axe:
+	// 		Socketname = FName("MeleeSocket");
+	// 		break;
+	// 	default:
+	// 		Socketname = FName("DefaultWeaponSocket");
+	// 		break;
+	// 	}
+	// }
+	// UE_LOG(LogTemp, Error, TEXT("SocketName: %s"), *Socketname.ToString());
+	// return Socketname;
+	UE_LOG(LogTemp, Warning, TEXT("YANLIŞ SINIF ÇALIŞTI"));
+	return "1";
 }
 
-void AWeaponBase::AttechMeshToSocket(USceneComponent* InParent, FName InSocketName)
+void AWeaponBase::AttechMeshToSocket(USceneComponent* InParent, FName InSocketName) // TODO: WeaponAttachmentManager
 {
-	FAttachmentTransformRules TransformRules(EAttachmentRule::SnapToTarget, true);
-	AttachToComponent(InParent, TransformRules, InSocketName);
+	// FAttachmentTransformRules TransformRules(EAttachmentRule::SnapToTarget, true);
+	// AttachToComponent(InParent, TransformRules, InSocketName);
+	UE_LOG(LogTemp, Warning, TEXT("YANLIŞ SINIF ÇALIŞTI"));
+
 }
 
 void AWeaponBase::DropWeapon(ASurvivalCharacter* PlayerCharacter)
 {
-	if (!WeaponPickupClass)
-	{
-		UE_LOG(LogTemp, Error, TEXT("WeaponClass is null in DropWeapon!"));
-		return;
-	}
-	
-	FVector DropLocation = PlayerCharacter->GetActorLocation() + PlayerCharacter->GetActorForwardVector() * 100.0f;
-	FRotator DropRotation = PlayerCharacter->GetActorRotation();
-	
-	AWeaponPickup* DroppedWeapon = GetWorld()->SpawnActor<AWeaponPickup>(WeaponPickupClass, DropLocation, DropRotation);
-    
-	if (DroppedWeapon)
-	{
-		UStaticMeshComponent* DroppedWeaponMesh = DroppedWeapon->FindComponentByClass<UStaticMeshComponent>();
-		if (DroppedWeaponMesh)
-		{
-			DroppedWeaponMesh->SetSimulatePhysics(true);
-			DroppedWeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			
-			FVector ForwardImpulse = PlayerCharacter->GetActorForwardVector() * DropDistance;
-			DroppedWeaponMesh->AddImpulse(ForwardImpulse);
-		}
-		
-		PlayerCharacter->GetWeaponInventory()->RemoveFromSlot(this);
-		this->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		
-		this->Destroy();
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to spawn WeaponPickup!"));
-	}
-	
+	// if (!WeaponPickupClass)
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("WeaponClass is null in DropWeapon!"));
+	// 	return;
+	// }
+	//
+	// FVector DropLocation = PlayerCharacter->GetActorLocation() + PlayerCharacter->GetActorForwardVector() * 100.0f;
+	// FRotator DropRotation = PlayerCharacter->GetActorRotation();
+	//
+	// AWeaponPickup* DroppedWeapon = GetWorld()->SpawnActor<AWeaponPickup>(WeaponPickupClass, DropLocation, DropRotation);
+ //    
+	// if (DroppedWeapon)
+	// {
+	// 	UStaticMeshComponent* DroppedWeaponMesh = DroppedWeapon->FindComponentByClass<UStaticMeshComponent>();
+	// 	if (DroppedWeaponMesh)
+	// 	{
+	// 		DroppedWeaponMesh->SetSimulatePhysics(true);
+	// 		DroppedWeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	// 		
+	// 		FVector ForwardImpulse = PlayerCharacter->GetActorForwardVector() * DropDistance;
+	// 		DroppedWeaponMesh->AddImpulse(ForwardImpulse);
+	// 	}
+	// 	
+	// 	PlayerCharacter->GetWeaponInventory()->RemoveFromSlot(this);
+	// 	this->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	// 	
+	// 	this->Destroy();
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("Failed to spawn WeaponPickup!"));
+	// }
+	UE_LOG(LogTemp, Warning, TEXT("YANLIŞ SINIF ÇALIŞTI"));
+
 }
 

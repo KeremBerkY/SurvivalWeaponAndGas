@@ -29,28 +29,13 @@ void AWeaponPickup::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AWeaponPickup::Interact(AActor* Actor)
+void AWeaponPickup::Interact(AActor* Actor) //TODO: Yeni versiyon CharacterWeaponComponent hallediyor.
 {
-	if (GetWeaponClass())
+	if (!WeaponClass && !Actor) return;
+
+	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(Actor))
 	{
-		AWeaponBase* WeaponInstance = GetWorld()->SpawnActor<AWeaponBase>(GetWeaponClass(), GetActorLocation(), GetActorRotation());
-		ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(Actor);
-		if (WeaponInstance && PlayerCharacter)
-		{
-			// Bu kısımda sadece CurrentWeapon check ettim ve if/else bloku yazdım
-			// AWeaponBase* CurrentWeapon = PlayerCharacter->GetCurrentWeapon();
-			AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon();
-			if (CurrentWeapon == nullptr)
-			{
-				WeaponInstance->Equip(PlayerCharacter); // ? UWeaponInventory::EquipWeapon() daki fonksiyonu CharacterWeaponComponent taşıyabiliriz. if (CurrentWeapon == nullptr) ise EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, FName SocketName, bool bSetAsCurrent = true) SocketName parametresine UWeaponInventory de bulunan WeaponSocket değerini verirsen set edebilirsin.
-				UE_LOG(LogTemp, Warning, TEXT("WeaponInstance->Equip()"));
-			}
-			else // WeaponInventory hallediyor
-			{
-				PlayerCharacter->GetWeaponInventory()->AddWeaponToSlot(WeaponInstance, PlayerCharacter);
-				UE_LOG(LogTemp, Warning, TEXT("AddWeaponToSlot()"));
-			}
-		}
+		PlayerCharacter->GetCharacterWeaponComponent()->AddWeapon(WeaponClass, PlayerCharacter);
 	}
 	Destroy();
 }

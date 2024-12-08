@@ -18,10 +18,18 @@ void UWeaponInventoryWidget::NativeConstruct()
 	// 	DefaultSlotTexture = Cast<UTexture2D>(DefaultSlotImage->GetBrush().GetResourceObject());
 	// }
 
+	
+	
 	APawn* OwnerPawn = GetOwningPlayerPawn();
 	if (OwnerPawn)
 	{
 		ASurvivalCharacter* Character = Cast<ASurvivalCharacter>(OwnerPawn);
+
+		if (UWeaponInventory* WeaponInventory = Character->GetWeaponInventory())
+		{
+			BindCallback(WeaponInventory);
+		}
+		
 		if (Character->GetWeaponInventory())
 		{
 			if (Character->GetWeaponInventory()->GetDefaultSlotTexture())
@@ -42,7 +50,11 @@ void UWeaponInventoryWidget::NativeConstruct()
 	}
 }
 
-
+void UWeaponInventoryWidget::BindCallback(UWeaponInventory* WeaponInventory)
+{
+	WeaponInventory->OnResetSlot.AddDynamic(this, &UWeaponInventoryWidget::ResetSlotToDefault);
+	WeaponInventory->OnUpdateInventory.AddDynamic(this, &UWeaponInventoryWidget::UpdateInventory);
+}
 
 void UWeaponInventoryWidget::UpdateInventory(AWeaponBase* Weapon)
 {
@@ -113,7 +125,8 @@ void UWeaponInventoryWidget::ResetSlotToDefault(EWeaponCategories WeaponCategory
 	UE_LOG(LogTemp, Warning, TEXT("ResetSlotToDefault CALLED! Set SlotImage to DefaultSlotTexture"));
 }
 
-int32 UWeaponInventoryWidget::GetSlotIndexForCategory(EWeaponCategories WeaponCategory) const
+
+int32 UWeaponInventoryWidget::GetSlotIndexForCategory(EWeaponCategories WeaponCategory) const // TODO: Bunu WeaponInventory'e taşımalı mıyız ??
 {
 	switch (WeaponCategory) {
 	case EWeaponCategories::EWC_RaycastWeapons:

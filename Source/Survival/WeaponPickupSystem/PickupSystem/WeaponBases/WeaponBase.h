@@ -158,6 +158,7 @@ public:
 	// FORCEINLINE TSubclassOf<UCrosshairBaseWidget> GetCrosshairWidgetClass() const { return CrosshairWidgetClass; }
 	FORCEINLINE EWeaponCategories GetWeaponCategory() const { return WeaponCategory; }
 	FORCEINLINE ASurvivalCharacter* GetCachedOwnerCharacter() const { return CachedOwnerCharacter; }
+	FORCEINLINE TSubclassOf<AWeaponPickup> GetWeaponPickupClass() const { return  WeaponPickupClass; } 
 
 	
 	UFUNCTION()

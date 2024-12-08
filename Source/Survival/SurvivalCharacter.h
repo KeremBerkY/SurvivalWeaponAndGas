@@ -198,7 +198,7 @@ private:
 	
 	void InitAbilityActorInfo();
 	void InitClassDefaults();
-	void BindAbilityInput();
+	// void BindAbilityInput();
 	
 	
 // -------
@@ -232,10 +232,10 @@ private:
 	FTimerHandle InitializeDelayTimerHandle;
 
 // TEST Section
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Switching", meta = (AllowPrivateAccess = "true"))
-	float WeaponSwitchCooldown = 1.0f;
-	UPROPERTY()
-	float LastSwitchTime;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Switching", meta = (AllowPrivateAccess = "true"))
+	// float WeaponSwitchCooldown = 1.0f;
+	// UPROPERTY()
+	// float LastSwitchTime;
 
 	bool bIsSprinting; // For Sprint state
 	

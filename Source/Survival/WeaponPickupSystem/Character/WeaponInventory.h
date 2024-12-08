@@ -9,6 +9,8 @@
 #include "WeaponInventory.generated.h"
 
 // TODO: Change class name with WeaponInventoryComponent
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnResetSlot, EWeaponCategories, WeaponCategory);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateInventory, AWeaponBase*, WeaponToUpdate);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SURVIVAL_API UWeaponInventory : public UActorComponent
@@ -18,40 +20,43 @@ class SURVIVAL_API UWeaponInventory : public UActorComponent
 public:
 	UWeaponInventory();
 
+	// DELEGATE
+	FOnResetSlot OnResetSlot;
+	FOnUpdateInventory OnUpdateInventory;
+
 	FORCEINLINE UTexture2D* GetDefaultSlotTexture() const { return DefaultSlotTexture; }
-	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-								   FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION()
 	void SwapToBackWeapon(AWeaponBase* CurrentWeapon, ASurvivalCharacter* PlayerCharacter, EWeaponCategories DesiredCategory);
+	void InitializeCategoryMap();
+	void AddWeaponToSlot(AWeaponBase* NewWeapon, ASurvivalCharacter* PlayerCharacter);
+	void RemoveFromSlot(AWeaponBase* WeaponToRemove);
+
+	int32 GetSlotIndex(EWeaponCategories Category) const;
 	
+protected:
+	virtual void BeginPlay() override;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Inventory")
 	TMap<int32, AWeaponBase*> WeaponSlots;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Inventory")
 	TMap<EWeaponCategories, int32> CategoryToSlotMap;
-
-	void InitializeCategoryMap();
-	void AddWeaponToSlot(AWeaponBase* NewWeapon, ASurvivalCharacter* PlayerCharacter);
-	void AttachWeaponToSocket(AWeaponBase* NewWeapon, ASurvivalCharacter* PlayerCharacter, FName OverrideSocketName);
-	void RemoveFromSlot(AWeaponBase* WeaponToRemove);
-
-	int32 GetSlotIndex(EWeaponCategories Category) const;
-	void EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, FName SocketName, bool bSetAsCurrent);
 	
-protected:
-	virtual void BeginPlay() override;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
 	UCharacterAnimInstance* CharacterAnimInstance;
 
 private:
-	void UpdateHUDForWeaponSwap(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeapon, ASurvivalCharacter* PlayerCharacter, EWeaponCategories DesiredCategory);
+	
+	bool ValidateInputs(const ASurvivalCharacter* PlayerCharacter) const;
+	void EquipBackWeapon(AWeaponBase* BackWeapon, ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex);
+	void MoveCurrentWeaponToBack(AWeaponBase* CurrentWeapon, ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex);
+	void SwapWeapons(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeapon, ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex);
+	void HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeaponForDesiredCategory,ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex, EWeaponCategories DesiredCategory);
 	
 	FName WeaponSocket = "WeaponSocket";
 	
-	FName NameOfTheWeaponAccordingToType = NAME_None; // NAME_None için de bir global değişken yaz daha anlaşılır olsun.
+	FName DefaultSocketName = NAME_None;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon Inventory")
 	UTexture2D* DefaultSlotTexture;

@@ -18,7 +18,8 @@ class SURVIVAL_API AWeaponPickup : public ABasePickup
 public:
 	AWeaponPickup();
 
-	FORCEINLINE TSubclassOf<AWeaponBase> GetWeaponClass() const { return WeaponClass; }
+	FORCEINLINE UStaticMeshComponent* GetStaticMeshComponent() const { return Mesh; }
+	FORCEINLINE TSubclassOf<AWeaponBase> GetWeaponClass() const { return WeaponClass; } //TODO: Burayı kaldır daha sonra?
 	
 protected:
 	virtual void BeginPlay() override;
@@ -27,7 +28,7 @@ protected:
 
 private:
 	
-	UPROPERTY(EditAnywhere, Category = "Weapon");
+	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"));
 	TSubclassOf<AWeaponBase> WeaponClass;
 
 	UPROPERTY(EditAnywhere, Category  = "Weapon")

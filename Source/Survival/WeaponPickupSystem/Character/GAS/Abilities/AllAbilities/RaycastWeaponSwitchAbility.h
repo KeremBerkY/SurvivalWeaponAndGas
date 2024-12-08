@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Survival/WeaponPickupSystem/Character/GAS/Abilities/CharacterGameplayAbility.h"
-#include "FireAbility.generated.h"
+#include "RaycastWeaponSwitchAbility.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SURVIVAL_API UFireAbility : public UCharacterGameplayAbility
+class SURVIVAL_API URaycastWeaponSwitchAbility : public UCharacterGameplayAbility
 {
 	GENERATED_BODY()
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
-	void FireHandleController(const FGameplayAbilityActorInfo* ActorInfo, bool bPressed);
+	
 };

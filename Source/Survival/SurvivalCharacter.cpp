@@ -517,7 +517,7 @@ void ASurvivalCharacter::CheckNearbyPickups()
 // 	}
 // }
 //
-// void ASurvivalCharacter::FireReleased() // TODO: 
+// void ASurvivalCharacter::FireReleased() // Updated! Made with Ability 
 // {
 // 	if (CharacterWeaponComponent->GetCurrentWeapon())
 // 	{

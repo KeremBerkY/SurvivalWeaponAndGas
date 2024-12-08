@@ -7,11 +7,6 @@
 #include "Survival/WeaponPickupSystem/PickupSystem/BasePickup.h"
 #include "Survival/WeaponPickupSystem/PickupSystem/Interfaces/InteractionInterface.h"
 
-bool UInteractAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
-{
-	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
-	
-}
 
 void UInteractAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -34,6 +29,9 @@ void UInteractAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 			UE_LOG(LogTemp, Warning, TEXT("No pickup available to interact with."));
 		}
 	}
+
+	// Current haline getirdim bir hata alırsan bundan olabilir
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 void UInteractAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)

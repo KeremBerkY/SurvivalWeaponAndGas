@@ -197,6 +197,7 @@ void UGASEnhancedInputComponent::HandleDropActionReleased()
 
 void UGASEnhancedInputComponent::HandleRaycastActionReleased()
 {
+	UE_LOG(LogTemp, Log, TEXT("Raycas action Released..."));
 	SendInputActionToASC(true, EGASAbilityInputID::RaycastAction);
 }
 
