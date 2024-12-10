@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "InteractionWidget.generated.h"
 
+class UPickupComponent;
 class UProgressBar;
 class UTextBlock;
 struct FInteractableData;
@@ -22,8 +23,11 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Interaction Widget | Player Reference")
 	ASurvivalCharacter* PlayerReference;
 
-	void UpdateWidget(const FInteractableData* InteractableData) const;
+	UFUNCTION()
+	void UpdateWidget(const FInteractableData& InteractableData);
+	UFUNCTION()
 	void ShowWidget();
+	UFUNCTION()
 	void HideWidget();
 protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "Interaction Widget | Interactable Data")
@@ -49,5 +53,8 @@ protected:
 
 	virtual void NativeOnInitialized() override;
 	virtual void NativeConstruct() override;
+
+	void BindShowAndHideCallbacks(UPickupComponent* PickupComponent);
+	void BindUpdateWidgetCallbacks(UPickupComponent* PickupComponent);
 
 };

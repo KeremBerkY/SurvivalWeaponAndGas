@@ -9,6 +9,7 @@
 #include "GASEnhancedInputComponent.generated.h"
 
 
+class UCharacterAbilitySystemComponent;
 class UAbilitySystemComponent;
 class UInputMappingContext;
 class UInputAction;
@@ -90,5 +91,6 @@ protected:
 private:
 	void SendInputActionToASC(bool bIsPressed, const EGASAbilityInputID AbilityInputID) const;
 
-	TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponentPtr;
+	// TWeakObjectPtr<UAbilitySystemComponent> AbilitySystemComponentPtr;
+	TWeakObjectPtr<UCharacterAbilitySystemComponent> AbilitySystemComponentPtr;
 };

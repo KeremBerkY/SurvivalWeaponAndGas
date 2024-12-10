@@ -4,7 +4,7 @@
 #include "ProjectileWeaponSwitchAbility.h"
 
 #include "Survival/SurvivalCharacter.h"
-#include "Survival/WeaponPickupSystem/Character/WeaponInventory.h"
+#include "Survival/WeaponPickupSystem/Character/Components/WeaponInventory.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
 
 void UProjectileWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -29,7 +29,5 @@ void UProjectileWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecH
 void UProjectileWeaponSwitchAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	
 
 }

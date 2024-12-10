@@ -3,27 +3,32 @@
 
 #include "WeaponInventory.h"
 
-#include "CharacterAnimInstance.h"
-#include "Components/CharacterWeaponComponent.h"
+// #include "Components/CharacterWeaponComponent.h"
+#include "CharacterWeaponComponent.h"
 #include "Survival/SurvivalCharacter.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponAttechmentManager/WeaponAttachmentManager.h"
-#include "Survival/WeaponPickupSystem/UserInterface/MainHUDWidget.h"
-#include "Survival/WeaponPickupSystem/UserInterface/SurvivalSystemHUD.h"
-#include "Survival/WeaponPickupSystem/UserInterface/GameHUD/GameHUDWidget.h"
-#include "Survival/WeaponPickupSystem/UserInterface/WeaponInventory/WeaponInventoryWidget.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponAttechmentManager/WeaponAttachmentManager.h"
+
 
 
 UWeaponInventory::UWeaponInventory()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
+	
+	UE_LOG(LogTemp, Error, TEXT("Weapon Inventory initialize..."));
+	
 }
 
 void UWeaponInventory::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	NotifyWeaponInventoryReady();
 	InitializeCategoryMap();
+}
+
+void UWeaponInventory::NotifyWeaponInventoryReady()
+{
+	WeaponInventoryReady.Broadcast();
 }
 
 void UWeaponInventory::InitializeCategoryMap()
@@ -33,11 +38,10 @@ void UWeaponInventory::InitializeCategoryMap()
 	CategoryToSlotMap.Add(EWeaponCategories::EWC_MeleeWeapons, 3);
 }
 
-// TODO: HUD'ları değişecek. Delege bağla!
-
 void UWeaponInventory::SwapToBackWeapon(AWeaponBase* CurrentWeapon, ASurvivalCharacter* PlayerCharacter, EWeaponCategories DesiredCategory)
 {
-	if (!ValidateInputs(PlayerCharacter)) return;
+	// if (!ValidateInputs(PlayerCharacter)) return;
+	if (!PlayerCharacter) return;
 	
 	int32 DesiredSlotIndex = GetSlotIndex(DesiredCategory);
 	if (DesiredSlotIndex == INDEX_NONE)
@@ -64,14 +68,14 @@ void UWeaponInventory::SwapToBackWeapon(AWeaponBase* CurrentWeapon, ASurvivalCha
 	}
 
 	// If there is a weapon of the same category on the back, swap them
-	if (CurrentWeapon && BackWeapon && CurrentWeapon->WeaponCategory == DesiredCategory)
+	if (CurrentWeapon && BackWeapon && CurrentWeapon->GetWeaponCategory() == DesiredCategory)
 	{
 		SwapWeapons(CurrentWeapon, BackWeapon, PlayerCharacter, DesiredSlotIndex);
 		return;
 	}
 
 	// I have a ProjectileWeapon but, I wanted to put a RaycastWeapon by pressing the 1 button.
-	if (CurrentWeapon && CurrentWeapon->WeaponCategory != DesiredCategory)
+	if (CurrentWeapon && CurrentWeapon->GetWeaponCategory() != DesiredCategory)
 	{
 		HandleDifferentCategorySwap(CurrentWeapon, BackWeapon, PlayerCharacter, DesiredSlotIndex, DesiredCategory);
 		return;
@@ -80,35 +84,14 @@ void UWeaponInventory::SwapToBackWeapon(AWeaponBase* CurrentWeapon, ASurvivalCha
 	UE_LOG(LogTemp, Warning, TEXT("No valid swap condition met for SwapToBackWeapon."));
 }
 
-bool UWeaponInventory::ValidateInputs(const ASurvivalCharacter* PlayerCharacter) const
-{
-	if (!PlayerCharacter)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player Character is null"));
-		return false;
-	}
-
-	if (!PlayerCharacter->GetSurvivalHUD())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("HUD is null in SwapToBackWeapon"));
-		return false;
-	}
-
-	return true;
-}
-
 void UWeaponInventory::EquipBackWeapon(AWeaponBase* BackWeapon, ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex)
 {
 	if (!BackWeapon || !PlayerCharacter) return;
 	
 	PlayerCharacter->GetCharacterWeaponComponent()->EquipWeapon(BackWeapon, PlayerCharacter, WeaponSocket ,true);
-
-	auto HUD = PlayerCharacter->GetSurvivalHUD();
-	if (HUD)
-	{
-		// HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetWeaponInventoryWidget()->ResetSlotToDefault(BackWeapon->GetWeaponCategory());
-		OnResetSlot.Broadcast(BackWeapon->GetWeaponCategory());
-	}
+	
+	OnResetSlot.Broadcast(BackWeapon->GetWeaponCategory());
+	UE_LOG(LogTemp, Warning, TEXT("Broadcasting OnResetSlot for category: %d"), static_cast<int32>(BackWeapon->GetWeaponCategory()));
 
 	WeaponSlots.Remove(DesiredSlotIndex);
 	UE_LOG(LogTemp, Warning, TEXT("Equipped back weapon: %s"), *BackWeapon->GetName());
@@ -121,14 +104,8 @@ void UWeaponInventory::MoveCurrentWeaponToBack(AWeaponBase* CurrentWeapon, ASurv
 	PlayerCharacter->GetCharacterWeaponComponent()->EquipWeapon(CurrentWeapon, PlayerCharacter, DefaultSocketName, false);
 	
 	WeaponSlots.Add(DesiredSlotIndex, CurrentWeapon);
-
-	auto HUD = PlayerCharacter->GetSurvivalHUD();
-	if (HUD)
-	{
-		// HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetWeaponInventoryWidget()->UpdateInventory(CurrentWeapon);
-		OnUpdateInventory.Broadcast(CurrentWeapon);
-	}
-
+	OnUpdateInventory.Broadcast(CurrentWeapon);
+	
 	UE_LOG(LogTemp, Warning, TEXT("Moved current weapon to back: %s"), *CurrentWeapon->GetName());
 }
 
@@ -137,23 +114,14 @@ void UWeaponInventory::SwapWeapons(AWeaponBase* CurrentWeapon, AWeaponBase* Back
 	if (!CurrentWeapon || !BackWeapon || !PlayerCharacter) return;
 
 	PlayerCharacter->GetCharacterWeaponComponent()->EquipWeapon(CurrentWeapon, PlayerCharacter, DefaultSocketName, false);
-	
 	PlayerCharacter->GetCharacterWeaponComponent()->EquipWeapon(BackWeapon, PlayerCharacter, WeaponSocket, true);
 	
-
 	WeaponSlots.Remove(DesiredSlotIndex);
 	WeaponSlots.Add(DesiredSlotIndex, CurrentWeapon);
-
-	auto HUD = PlayerCharacter->GetSurvivalHUD();
-	if (HUD)
-	{
-		// HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetWeaponInventoryWidget()->ResetSlotToDefault(BackWeapon->GetWeaponCategory());
-		OnResetSlot.Broadcast(BackWeapon->GetWeaponCategory());
-		
-		// HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetWeaponInventoryWidget()->UpdateInventory(CurrentWeapon);
-		OnUpdateInventory.Broadcast(CurrentWeapon);
-	}
-
+	
+	OnResetSlot.Broadcast(BackWeapon->GetWeaponCategory());
+	OnUpdateInventory.Broadcast(CurrentWeapon);
+	
 	UE_LOG(LogTemp, Warning, TEXT("Swapped weapons: %s -> %s"), *CurrentWeapon->GetName(), *BackWeapon->GetName());
 }
 
@@ -162,10 +130,10 @@ void UWeaponInventory::HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, A
     if (!CurrentWeapon || !PlayerCharacter) return;
 	
     // Find slots by category of current weapon
-    int32 SlotIndex = GetSlotIndex(CurrentWeapon->WeaponCategory);
+    int32 SlotIndex = GetSlotIndex(CurrentWeapon->GetWeaponCategory());
     if (SlotIndex == INDEX_NONE)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Invalid Current Weapon Category: %d"), static_cast<int32>(CurrentWeapon->WeaponCategory));
+        UE_LOG(LogTemp, Warning, TEXT("Invalid Current Weapon Category: %d"), static_cast<int32>(CurrentWeapon->GetWeaponCategory()));
         return;
     }
 
@@ -177,43 +145,26 @@ void UWeaponInventory::HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, A
     if (BackSlotWeaponForCurrentWeaponCategory)
     {
 		PlayerCharacter->GetCharacterWeaponComponent()->DropWeapon(PlayerCharacter, BackSlotWeaponForCurrentWeaponCategory);
+        OnResetSlot.Broadcast(BackSlotWeaponForCurrentWeaponCategory->GetWeaponCategory());
     	
-        auto HUD = PlayerCharacter->GetSurvivalHUD();
-        if (HUD)
-        {
-            // HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetWeaponInventoryWidget()->ResetSlotToDefault(BackSlotWeaponForCurrentWeaponCategory->GetWeaponCategory());
-        	OnResetSlot.Broadcast(BackSlotWeaponForCurrentWeaponCategory->GetWeaponCategory());
-        }
-
         UE_LOG(LogTemp, Warning, TEXT("DropWeapon() called for: %s"), *BackSlotWeaponForCurrentWeaponCategory->GetName());
     }
 
     // Add CurrentWeapon to back
 	PlayerCharacter->GetCharacterWeaponComponent()->EquipWeapon(CurrentWeapon, PlayerCharacter, DefaultSocketName, false);
     WeaponSlots.Add(SlotIndex, CurrentWeapon);
-
-    auto HUD = PlayerCharacter->GetSurvivalHUD();
-    if (HUD)
-    {
-        // HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetWeaponInventoryWidget()->UpdateInventory(CurrentWeapon);
-    	OnUpdateInventory.Broadcast(CurrentWeapon);
-    }
-
+	
+    OnUpdateInventory.Broadcast(CurrentWeapon);
+	
     // If you have BackWeaponForDesiredCategory, equip it
     if (BackWeaponForDesiredCategory)
     {
     	PlayerCharacter->GetCharacterWeaponComponent()->EquipWeapon(BackWeaponForDesiredCategory, PlayerCharacter, WeaponSocket, true);
-
-        if (HUD)
-        {
-            // HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetWeaponInventoryWidget()->ResetSlotToDefault(BackWeaponForDesiredCategory->GetWeaponCategory());
-        	OnResetSlot.Broadcast(BackWeaponForDesiredCategory->GetWeaponCategory());
-        }
-
+        OnResetSlot.Broadcast(BackWeaponForDesiredCategory->GetWeaponCategory());
+    	
         WeaponSlots.Remove(DesiredSlotIndex);
 
-        UE_LOG(LogTemp, Warning, TEXT("Swapped weapon: %s to back, and equipped weapon: %s"), 
-            *CurrentWeapon->GetName(), *BackWeaponForDesiredCategory->GetName());
+        UE_LOG(LogTemp, Warning, TEXT("Swapped weapon: %s to back, and equipped weapon: %s"), *CurrentWeapon->GetName(), *BackWeaponForDesiredCategory->GetName());
     }
     else
     {
@@ -231,9 +182,9 @@ void UWeaponInventory::AddWeaponToSlot(AWeaponBase* NewWeapon, ASurvivalCharacte
 	}
 	
 	// Finding the slot number corresponding to the category with SlotIndexPtr
-	int32* SlotIndexPtr = CategoryToSlotMap.Find(NewWeapon->WeaponCategory);
+	int32* SlotIndexPtr = CategoryToSlotMap.Find(NewWeapon->GetWeaponCategory());
 
-	if (!SlotIndexPtr) { UE_LOG(LogTemp, Warning, TEXT("Invalid WeaponCategory: %d"), static_cast<int32>(NewWeapon->WeaponCategory)); return; }
+	if (!SlotIndexPtr) { UE_LOG(LogTemp, Warning, TEXT("Invalid WeaponCategory: %d"), static_cast<int32>(NewWeapon->GetWeaponCategory())); return; }
 
 	int32 SlotIndex = *SlotIndexPtr;
 	
@@ -246,29 +197,20 @@ void UWeaponInventory::AddWeaponToSlot(AWeaponBase* NewWeapon, ASurvivalCharacte
 		if (ExistingWeapon)
 		{
 			// Drop if there is a weapon from the same category
-			if (ExistingWeapon && ExistingWeapon->WeaponCategory == NewWeapon->WeaponCategory)
+			if (ExistingWeapon && ExistingWeapon->GetWeaponCategory() == NewWeapon->GetWeaponCategory())
 			{
 				PlayerCharacter->GetCharacterWeaponComponent()->DropWeapon(PlayerCharacter, ExistingWeapon);
 			}
-
-			ASurvivalSystemHUD* HUD = PlayerCharacter->GetSurvivalHUD();
-			if (HUD)
-			{
-				// HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetWeaponInventoryWidget()->ResetSlotToDefault(NewWeapon->WeaponCategory);
-				OnResetSlot.Broadcast(NewWeapon->WeaponCategory);
-			}
+			
+			OnResetSlot.Broadcast(NewWeapon->GetWeaponCategory());
 		}
 	}
 	
 	WeaponSlots.Add(SlotIndex, NewWeapon);
 	PlayerCharacter->GetCharacterWeaponComponent()->GetWeaponAttachmentManager()->AttachWeaponToSocket(NewWeapon, PlayerCharacter, DefaultSocketName); // Bunu buradaki fonksiyonla çağırmıştık!
 	
-	ASurvivalSystemHUD* HUD = PlayerCharacter->GetSurvivalHUD();
-	if (HUD)
-	{
-		// HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetWeaponInventoryWidget()->UpdateInventory(NewWeapon);
-		OnUpdateInventory.Broadcast(NewWeapon);
-	}
+	OnUpdateInventory.Broadcast(NewWeapon);
+	
 }
 
 int32 UWeaponInventory::GetSlotIndex(EWeaponCategories Category) const
@@ -286,10 +228,10 @@ void UWeaponInventory::RemoveFromSlot(AWeaponBase* WeaponToRemove)
 	}
 
 	// We find the slot index using the category of WeaponToRemove
-	int32 SlotIndex = GetSlotIndex(WeaponToRemove->WeaponCategory);
+	int32 SlotIndex = GetSlotIndex(WeaponToRemove->GetWeaponCategory());
 	if (SlotIndex == INDEX_NONE)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid Weapon Category: %d"), static_cast<int32>(WeaponToRemove->WeaponCategory));
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Weapon Category: %d"), static_cast<int32>(WeaponToRemove->GetWeaponCategory()));
 		return;
 	}
 	

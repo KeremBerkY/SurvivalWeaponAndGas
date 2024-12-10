@@ -67,13 +67,13 @@ struct FWeaponAttributes // AmmoCapacity total Ammo buna bir üst limitte koy bi
 	float Damage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	int32 AmmoCapacity; // Taşınabilir maksimum mermi miktarı, yani karakterin üzerinde bulundurabileceği toplam mermi kapasitesi (örneğinizde 150).
+	int32 AmmoCapacity; // Taşınabilir maksimum mermi miktarı, yani karakterin üzerinde bulundurabileceği toplam mermi kapasitesi.
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	int32 AmmoInMagazine; // Şarjörün tam kapasitesi, yani her reload işleminde şarjöre dolan mermi miktarı (örneğinizde 30).
+	int32 AmmoInMagazine; // Şarjörün tam kapasitesi, yani her reload işleminde şarjöre dolan mermi miktarı
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
-	int32 CurrentAmmo; // Şarjörde şu anda bulunan mermi miktarı (örneğinizde 15).
+	int32 CurrentAmmo; // Şarjörde şu anda bulunan mermi miktarı.
 
 	// // TODO: SocketName'leri Silahı yaratırken tanımla!! Daha Sonra GetSocketName() Fonksiyonundan kullanılan socketlere ulaş
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
@@ -155,26 +155,20 @@ public:
 	FORCEINLINE bool CanFire() const { return FireSettings.bCanFire; }
 	FORCEINLINE FFireSettings& GetFireSettings() { return FireSettings; }
 	FORCEINLINE TScriptInterface<IFireMode> GetCurrentFireMode() const { return CurrentFireMode; }
-	// FORCEINLINE TSubclassOf<UCrosshairBaseWidget> GetCrosshairWidgetClass() const { return CrosshairWidgetClass; }
 	FORCEINLINE EWeaponCategories GetWeaponCategory() const { return WeaponCategory; }
-	FORCEINLINE ASurvivalCharacter* GetCachedOwnerCharacter() const { return CachedOwnerCharacter; }
-	FORCEINLINE TSubclassOf<AWeaponPickup> GetWeaponPickupClass() const { return  WeaponPickupClass; } 
+	FORCEINLINE TSubclassOf<AWeaponPickup> GetWeaponPickupClass() const { return  WeaponPickupClass; }
+	FORCEINLINE FWeaponAttributes GetWeaponAttributes() const { return WeaponAttributes; }
 
 	
-	UFUNCTION()
-	FName GetWeaponSocketName(ASurvivalCharacter* PlayerCharacter);
-	UFUNCTION()
-	virtual void Equip(ACharacter* Character);
-	UFUNCTION()
-	void DropWeapon(ASurvivalCharacter* PlayerCharacter);
+
+
 	UFUNCTION()
 	virtual void Fire();
 	UFUNCTION()
 	virtual void Reload();
 	UFUNCTION()
 	virtual void FinishReload();
-	UFUNCTION()
-	virtual void AttechMeshToSocket(USceneComponent* InParent, FName InSocketName);
+
 	UFUNCTION()
 	void ResetRecoil();
 	UFUNCTION()
@@ -189,33 +183,7 @@ public:
 	void StartCooldown();
 
 	
-	UPROPERTY(EditAnywhere, Category = "Weapon | Categories")
-	EWeaponCategories WeaponCategory;
 
-	UPROPERTY(EditAnywhere, Category = "Weapon | Types")
-	EWeaponType WeaponType;
-
-	UPROPERTY(EditAnywhere, Category = "Weapon | Fire Modes")
-	EFireMode FireMode;
-	
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	FWeaponAttributes WeaponAttributes;
-
-	UPROPERTY(EditAnywhere, Category = "Weapon | Recoil Settings")
-	FRecoilSettings RecoilSettings;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon")
-	TSubclassOf<AWeaponPickup> WeaponPickupClass;
-	
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon | Fire Settings")
-	FFireSettings FireSettings;
-
-	// Crosshair comment line made! \\
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Crosshair Settings")
-	// FWeaponCrosshairSettings CrosshairSettings;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Decal Settings")
-	FDecalSettings DecalSettings;
 
 protected:
 	UFUNCTION()
@@ -242,32 +210,51 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	EFireMode CurrentFireModeType = EFireMode::SingleShot;
 
-	UPROPERTY()
-	ASurvivalCharacter* CachedOwnerCharacter;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon | Categories", meta = (AllowPrivateAccess = "true"))
+	EWeaponCategories WeaponCategory;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon | Types", meta = (AllowPrivateAccess = "true"))
+	EWeaponType WeaponType;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon | Fire Modes", meta = (AllowPrivateAccess = "true"))
+	EFireMode FireMode;
+	
+	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	FWeaponAttributes WeaponAttributes;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon | Recoil Settings", meta = (AllowPrivateAccess = "true"))
+	FRecoilSettings RecoilSettings;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AWeaponPickup> WeaponPickupClass;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "Weapon | Fire Settings", meta = (AllowPrivateAccess = "true"))
+	FFireSettings FireSettings;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon | Decal Settings", meta = (AllowPrivateAccess = "true"))
+	FDecalSettings DecalSettings;
 	
 private:
 	UFUNCTION()
 	void ResetWeaponPosition(FVector OriginalLocation);
-
-	UFUNCTION()
-	void SetWeaponOwner(ASurvivalCharacter* NewOwner);
 	
-	UPROPERTY(EditAnywhere, Category = "Weapon")
+	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* WeaponMesh;
-	UPROPERTY(VisibleAnywhere, Category = "Weapon")
+	
+	UPROPERTY(VisibleAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	USceneComponent* MuzzleLocation;
-	UPROPERTY(EditAnywhere, Category  = "Weapon")
+	
+	UPROPERTY(EditAnywhere, Category  = "Weapon", meta = (AllowPrivateAccess = "true"))
 	float DropDistance = 200.f;
 
-	// UPROPERTY(EditAnywhere, Category = "Weapon | Crosshair")
-	// TSubclassOf<UCrosshairBaseWidget> CrosshairWidgetClass;
-
+	
 	UPROPERTY()
 	bool bIsReloading;
 
 	FTimerHandle ReloadTimerHandle;
 	
-	UPROPERTY(EditAnywhere, Category = "Weapon")
+	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	float ReloadDuration = 2.0f;
 
 };

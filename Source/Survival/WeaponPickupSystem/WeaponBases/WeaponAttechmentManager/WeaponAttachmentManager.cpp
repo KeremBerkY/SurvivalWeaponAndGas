@@ -4,7 +4,7 @@
 #include "WeaponAttachmentManager.h"
 
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 
 FName UWeaponAttachmentManager::GetWeaponSocketName(UCharacterWeaponComponent* WeaponComponent, AWeaponBase* Weapon) // TODO: Bunu CharacterWeaponComponent'a taşıma !! bu silahın socket ismini alıyor!!
 {
@@ -23,7 +23,7 @@ FName UWeaponAttachmentManager::GetWeaponSocketName(UCharacterWeaponComponent* W
 	{
 		UE_LOG(LogTemp, Error, TEXT("GetWeaponSocketName called!! Switch Case"));
 
-		switch (Weapon->WeaponType)
+		switch (Weapon->GetWeaponType())
 		{
 		case EWeaponType::Ewt_AssaultRifle:
 			Socketname = "RaycastSocket";
@@ -76,7 +76,7 @@ void UWeaponAttachmentManager::AttachWeaponToSocket(AWeaponBase* NewWeapon, ASur
 	UE_LOG(LogTemp, Warning, TEXT("AttachWeaponToSocket called! SocketName: %s"), *SocketName.ToString())
 	
 	// FName SocketName = NewWeapon->GetWeaponSocketName(PlayerCharacter);
-	switch (NewWeapon->WeaponCategory)
+	switch (NewWeapon->GetWeaponCategory())
 	{
 	case EWeaponCategories::EWC_RaycastWeapons:
 		AttachMeshToSocket(PlayerCharacter->GetMesh(), SocketName, NewWeapon);

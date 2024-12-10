@@ -5,6 +5,8 @@
 
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
+#include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/Character/Components/PickupComponent.h"
 #include "Survival/WeaponPickupSystem/PickupSystem/BasePickup.h"
 #include "Survival/WeaponPickupSystem/PickupSystem/Interfaces/InteractionInterface.h"
 
@@ -13,14 +15,48 @@ void UInteractionWidget::NativeOnInitialized()
 	Super::NativeOnInitialized();
 
 	InteractionProgressBar->PercentDelegate.BindUFunction(this, "UpdateInteractionProgress");
+
+	if (APawn* OwnerPawn = GetOwningPlayerPawn())
+	{
+		if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(OwnerPawn))
+		{
+			if (UPickupComponent* PickupComponent = PlayerCharacter->GetPickupComponent())
+			{
+				BindShowAndHideCallbacks(PickupComponent);
+			
+			}
+		}
+	}
 }
 
 void UInteractionWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	if (APawn* OwnerPawn = GetOwningPlayerPawn())
+	{
+		if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(OwnerPawn))
+		{
+			if (UPickupComponent* PickupComponent = PlayerCharacter->GetPickupComponent())
+			{
+				BindUpdateWidgetCallbacks(PickupComponent);
+			}
+		}
+	}
+	
 	KeyPressText->SetText(FText::FromString("Press"));
 	CurrentInteractionDuration = 0.f;
+}
+
+void UInteractionWidget::BindShowAndHideCallbacks(UPickupComponent* PickupComponent)
+{
+	PickupComponent->ShowWidget.AddDynamic(this, &UInteractionWidget::ShowWidget);
+	PickupComponent->HideWidget.AddDynamic(this, &UInteractionWidget::HideWidget);
+}
+
+void UInteractionWidget::BindUpdateWidgetCallbacks(UPickupComponent* PickupComponent)
+{
+	PickupComponent->OnPickupUpdated.AddDynamic(this, &UInteractionWidget::UpdateWidget);
 }
 
 void UInteractionWidget::ShowWidget()
@@ -37,26 +73,20 @@ void UInteractionWidget::HideWidget()
 	SetVisibility(ESlateVisibility::Hidden);
 }
 
-void UInteractionWidget::UpdateWidget(const FInteractableData* InteractableData) const
+void UInteractionWidget::UpdateWidget(const FInteractableData& InteractableData)
 {
 	UE_LOG(LogTemp, Warning, TEXT("UpdateWidget called"));
 
-	if (!InteractableData)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("InteractableData is nullptr"));
-		return;
-	}
-
-	ActionText->SetText(InteractableData->Action);
-	NameText->SetText(InteractableData->Name);
-	QuantityText->SetText(FText::AsNumber(InteractableData->Quantity));
+	ActionText->SetText(InteractableData.Action);
+	NameText->SetText(InteractableData.Name);
+	QuantityText->SetText(FText::AsNumber(InteractableData.Quantity));
 	
-	switch (InteractableData->InteractableType) {
+	switch (InteractableData.InteractableType) {
 	case EInteractableType::Pickup:
 		KeyPressText->SetText(FText::FromString("Press"));
 		InteractionProgressBar->SetVisibility(ESlateVisibility::Collapsed);
 
-		if (InteractableData->Quantity < 2)
+		if (InteractableData.Quantity < 2)
 		{
 			QuantityText->SetVisibility(ESlateVisibility::Collapsed);
 		}
@@ -83,7 +113,6 @@ void UInteractionWidget::UpdateWidget(const FInteractableData* InteractableData)
 	case EInteractableType::Container:
 		break;
 	}
-	
 }
 
 float UInteractionWidget::UpdateInteractionProgress()

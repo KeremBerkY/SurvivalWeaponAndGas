@@ -5,36 +5,29 @@
 
 #include "Components/Image.h"
 #include "Survival/SurvivalCharacter.h"
-#include "Survival/WeaponPickupSystem/Character/WeaponInventory.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/Character/Components/WeaponInventory.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 
 
 void UWeaponInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	
-	// if (DefaultSlotImage)
-	// {
-	// 	DefaultSlotTexture = Cast<UTexture2D>(DefaultSlotImage->GetBrush().GetResourceObject());
-	// }
+
+	UE_LOG(LogTemp, Error, TEXT("Weapon Inventory WIDGET Inventory initialize..."));
 
 	
-	
-	APawn* OwnerPawn = GetOwningPlayerPawn();
-	if (OwnerPawn)
+	if (APawn* OwnerPawn = GetOwningPlayerPawn())
 	{
-		ASurvivalCharacter* Character = Cast<ASurvivalCharacter>(OwnerPawn);
-
-		if (UWeaponInventory* WeaponInventory = Character->GetWeaponInventory())
+		if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(OwnerPawn))
 		{
-			BindCallback(WeaponInventory);
-		}
-		
-		if (Character->GetWeaponInventory())
-		{
-			if (Character->GetWeaponInventory()->GetDefaultSlotTexture())
+			if (UWeaponInventory* WeaponInventory = PlayerCharacter->GetWeaponInventory())
 			{
-				DefaultSlotTexture = Character->GetWeaponInventory()->GetDefaultSlotTexture();
+				BindCallback(WeaponInventory);
+				
+				if (WeaponInventory->GetDefaultSlotTexture())
+				{
+					DefaultSlotTexture = PlayerCharacter->GetWeaponInventory()->GetDefaultSlotTexture();
+				}
 			}
 		}
 	}
@@ -54,6 +47,8 @@ void UWeaponInventoryWidget::BindCallback(UWeaponInventory* WeaponInventory)
 {
 	WeaponInventory->OnResetSlot.AddDynamic(this, &UWeaponInventoryWidget::ResetSlotToDefault);
 	WeaponInventory->OnUpdateInventory.AddDynamic(this, &UWeaponInventoryWidget::UpdateInventory);
+	
+	UE_LOG(LogTemp, Error, TEXT("Callback functions successfully bound to WeaponInventory!"));
 }
 
 void UWeaponInventoryWidget::UpdateInventory(AWeaponBase* Weapon)
@@ -64,11 +59,11 @@ void UWeaponInventoryWidget::UpdateInventory(AWeaponBase* Weapon)
 		return;
 	}
 
-	int32 SlotIndex = GetSlotIndexForCategory(Weapon->WeaponCategory);
+	int32 SlotIndex = GetSlotIndexForCategory(Weapon->GetWeaponCategory());
 
 	if (SlotIndex == INDEX_NONE || SlotIndex >= SlotImages.Num())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid SlotIndex for WeaponCategory: %d"), static_cast<int32>(Weapon->WeaponCategory));
+		UE_LOG(LogTemp, Warning, TEXT("Invalid SlotIndex for WeaponCategory: %d"), static_cast<int32>(Weapon->GetWeaponCategory()));
 		return;
 	}
 
@@ -85,9 +80,9 @@ void UWeaponInventoryWidget::UpdateInventory(AWeaponBase* Weapon)
 		UE_LOG(LogTemp, Warning, TEXT("Cleared existing image from SlotIndex: %d"), SlotIndex);
 	}
 
-	if (Weapon->WeaponAttributes.GetWeaponImage())
+	if (Weapon->GetWeaponAttributes().GetWeaponImage())
 	{
-		SlotImage->SetBrushFromTexture(Weapon->WeaponAttributes.GetWeaponImage());
+		SlotImage->SetBrushFromTexture(Weapon->GetWeaponAttributes().GetWeaponImage());
 		UE_LOG(LogTemp, Log, TEXT("Added new image to SlotIndex: %d for Weapon: %s"), SlotIndex, *Weapon->GetName());
 	}
 	else

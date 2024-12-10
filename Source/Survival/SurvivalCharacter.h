@@ -1,24 +1,18 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
-//// DENEME(1) /////
-// #include "WeaponPickupSystem/PickupMaster.h"
-// #include "WeaponMaster.generated.h" // command line yap derliyo o zaman ama cpp de SpawnWeapon tsubclassof parametresine hata veriyor.
-// #include "WeaponPickupSystem/WeaponMaster.h" // bunu da sonradan ekledim
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "WeaponPickupSystem/Character/CharacterTypes.h"
-#include "WeaponPickupSystem/Character/GAS/Abilities/AbilityInputs/GASAbilityInputID.h"
-
-#include "AbilitySystemInterface.h"
 #include "WeaponPickupSystem/Character/GAS/CharacterAbilitySystemComponent.h"
 
 
 #include "SurvivalCharacter.generated.h"
 
 
+class UPickupComponent;
 class UGASEnhancedInputComponent;
 class UResourceComponent;
 class UCharacterGameplayAbility;
@@ -55,42 +49,7 @@ class ASurvivalCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
-	// /** MappingContext */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputMappingContext* DefaultMappingContext;
-	// /** Jump Input Action */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* JumpAction;
-	// /** Move Input Action */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* MoveAction;
-	// /** Look Input Action */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* LookAction;
-	// /** Interact Input Action */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* InteractAction;
-	// /* Fire Input Action */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* FireAction;
-	// /* Reload Input Action */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* ReloadAction;
-	// /** Drop Input Action */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* DropAction;
-	// /* Weapon Inventory Actions Weapon Swap */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* RaycastAction;
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* ProjectileAction;
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* MeleeAction;
-	// /* ToggleFireMode Input Action */
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* ToggleFireModeAction;
-	// UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	// UInputAction* SprintAction;
+
 public:
 	ASurvivalCharacter();
 	
@@ -112,31 +71,20 @@ public:
 	// Ability System Component
 	FORCEINLINE UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent() const { return  CharacterAbilitySystemComponent; }
 	// Current Pickup
-	FORCEINLINE ABasePickup* GetCurrentPickup() const { return CurrentPickup; }
-	FORCEINLINE void SetCurrentPickup(ABasePickup* NewPickup) { CurrentPickup = NewPickup; }
+	FORCEINLINE ABasePickup* GetCurrentPickup() const { return CurrentPickup; } // TODO: Pickup Component'a al!		
+	FORCEINLINE void SetCurrentPickup(ABasePickup* NewPickup) { CurrentPickup = NewPickup; } // TODO: Pickup Component'a al!
+	// Pickup Component
+	FORCEINLINE UPickupComponent* GetPickupComponent() const { return PickupComponent; }
+	// PickupSphere
+	FORCEINLINE USphereComponent* GetPickupSphere() const { return PickupSphere; }
 	
 	/* HUD */
 	ASurvivalSystemHUD* GetSurvivalHUD() const;
 	
-	/* GOLD */
-	UFUNCTION()
-	void AddCoin(int32 CoinAdded) { TotalCoin += CoinAdded; }
-	UFUNCTION()
-	void PlayerTotalCoin() const;
-
-	/* Pickups */
-	UFUNCTION()
-	void CheckPickupInterval(float DeltaTime);
-	UFUNCTION()
-	void CheckNearbyPickups();
-	UFUNCTION()
-	void UpdateCurrentPickup(ABasePickup* NewPickup);
 
 	/* GAS */
-
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
-	
 	//--------
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
@@ -147,35 +95,10 @@ public:
 
 	
 protected:
-	
-	// virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
-	
-	UFUNCTION()
-	void OnPickupOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-	void OnPickupOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-/* Input Methods */
-	// void Move(const FInputActionValue& Value);
-	// void Look(const FInputActionValue& Value);
-	// void Interact();
-	// void Drop();
-	// void FirePressed();
-	// void FireReleased();
-	// void Reload();
-	// void RaycastWeaponSwitch();
-	// void ProjectileWeaponSwitch();
-	// void MeleeWeaponSwitch();
-	// void ToggleWeaponFireMode();
-	// void StartSprinting();
-	// void StopSprinting();
-	
-/* Time / Cooldown Methods */
-	// bool CanSwitchWeapon() const;
-	// void UpdateLastSwitchTime();
-	//
+
 // Health Component
 	UFUNCTION()
 	void InitializeResourceComponent();
@@ -227,23 +150,12 @@ private:
 	UResourceComponent* ResourceComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components | Character Health")
-	UGASEnhancedInputComponent* GASEnhancedInputComponent;	
-
+	UGASEnhancedInputComponent* GASEnhancedInputComponent;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Components | Pickups" )
+	UPickupComponent* PickupComponent;
+	
 	FTimerHandle InitializeDelayTimerHandle;
-
-// TEST Section
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Switching", meta = (AllowPrivateAccess = "true"))
-	// float WeaponSwitchCooldown = 1.0f;
-	// UPROPERTY()
-	// float LastSwitchTime;
-
-	bool bIsSprinting; // For Sprint state
-	
-	int32 TotalCoin;
-	int32 Coin;
-	
-	// bool bIsFiring = false;
-	
 	
 };
 

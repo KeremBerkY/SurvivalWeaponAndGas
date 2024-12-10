@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "ProjectileWeapons.generated.h"
 
 
@@ -16,10 +16,6 @@ class SURVIVAL_API AProjectileWeapons : public AWeaponBase
 
 public:
 	AProjectileWeapons();
-
-	virtual void Tick(float DeltaTime) override;
-	virtual void Equip(ACharacter* Character) override;
-	virtual void Fire() override;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<AProjectile> ProjectileClass;
@@ -42,7 +38,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void Tick(float DeltaTime) override;
+	virtual void Fire() override;
 	virtual void PlayWeaponEffect() override;
 	virtual void ApplyRecoilEffect() override;
 

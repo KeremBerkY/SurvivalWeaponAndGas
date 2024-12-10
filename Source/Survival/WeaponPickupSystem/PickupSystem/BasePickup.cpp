@@ -5,6 +5,7 @@
 
 #include "Components/BoxComponent.h"
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/Character/Components/PickupComponent.h"
 
 
 // Sets default values
@@ -39,33 +40,30 @@ void ABasePickup::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ABasePickup::OnPickupOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ABasePickup::OnPickupOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ASurvivalCharacter* Character = Cast<ASurvivalCharacter>(OtherActor);
-	if (Character)
+	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(OtherActor))
 	{
-		// bIsOverlapping = true;
-		// Character->CurrentPickup = this;
-		Character->CheckNearbyPickups();
+		if (UPickupComponent* PickupComponent = PlayerCharacter->GetPickupComponent())
+		{
+			PickupComponent->CheckNearbyPickups();
+		}
 	}
 }
 
-void ABasePickup::OnPickupOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+void ABasePickup::OnPickupOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	ASurvivalCharacter* Character = Cast<ASurvivalCharacter>(OtherActor);
-	if (Character)
+	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(OtherActor))
 	{
-		// bIsOverlapping = false;
-		// Character->CurrentPickup = nullptr;
-		Character->CheckNearbyPickups();
+		if (UPickupComponent* PickupComponent = PlayerCharacter->GetPickupComponent())
+		{
+			PickupComponent->CheckNearbyPickups();
+		}
 	}
 }
 
 void ABasePickup::Interact(AActor* Actor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("BasePickup class Interact"));
 }
 
 void ABasePickup::SetCustomDepth(bool bRenderCustomDepth) const

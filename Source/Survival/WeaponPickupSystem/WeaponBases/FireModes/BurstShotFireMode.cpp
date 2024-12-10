@@ -3,7 +3,7 @@
 
 #include "BurstShotFireMode.h"
 
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 
 void UBurstShotFireMode::StartFire(AWeaponBase* Weapon)
 {
@@ -37,7 +37,7 @@ void UBurstShotFireMode::StopFire(AWeaponBase* Weapon)
 
 void UBurstShotFireMode::FireShot()
 {
-	if (!CurrentWeapon || CurrentWeapon->WeaponAttributes.GetCurrentAmmo() <= 0) return;
+	if (!CurrentWeapon || CurrentWeapon->GetWeaponAttributes().GetCurrentAmmo() <= 0) return;
 	
 	if (CurrentWeapon)
 	{

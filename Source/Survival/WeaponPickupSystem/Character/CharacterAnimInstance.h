@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponCategories/RaycastWeapons.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RaycastWeapons.h"
 #include "CharacterAnimInstance.generated.h"
 
 class UCharacterMovementComponent;

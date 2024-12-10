@@ -3,45 +3,91 @@
 
 #include "SprintAbility.h"
 #include "Abilities/Tasks/AbilityTask_WaitInputRelease.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/Character/GAS/CharacterAbilitySystemComponent.h"
 
-
-bool USprintAbility::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
-{
-	return Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags);
-}
 
 void USprintAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	// ApplyGameplayEffect();
-	
-	if (UAbilityTask_WaitInputRelease* WaitInputReleaseTask = UAbilityTask_WaitInputRelease::WaitInputRelease(this))
+	UCharacterAbilitySystemComponent* CharacterASC = Cast<UCharacterAbilitySystemComponent>(ActorInfo->AbilitySystemComponent);
+	if (!CharacterASC)
 	{
-		WaitInputReleaseTask->OnRelease.AddDynamic(this, &USprintAbility::OnInputRelease);
-		WaitInputReleaseTask->Activate();
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
 	}
+
+	if (ACharacter* Character = Cast<ACharacter>(ActorInfo->AvatarActor))
+	{
+		DefaultMovementSpeed = Character->GetCharacterMovement()->MaxWalkSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("DefaultMovementSpeed saved: %f"), DefaultMovementSpeed);
+	}
+	
+	FGameplayTag SprintTag = FGameplayTag::RequestGameplayTag(FName("State.Sprint"));
+	CharacterASC->AddLooseGameplayTag(SprintTag);
+	
+
+	ActiveSprintEffectHandle = ApplyGameplayEffect(CharacterASC, SprintEffect, 1);
+
+	UAbilityTask_WaitInputRelease* WaitInputReleaseTask = UAbilityTask_WaitInputRelease::WaitInputRelease(this, false);
+	WaitInputReleaseTask->OnRelease.AddDynamic(this, &USprintAbility::OnInputRelease);
+	WaitInputReleaseTask->Activate();
 }
 
-// void USprintAbility::ApplyGameplayEffect()
-// {
-// 	if (SprintEffect)
-// 	{
-// 		FGameplayEffectSpecHandle EffectSpecHandle = MakeOutgoingGameplayEffectSpec(SprintEffect, 1);
-// 		if (EffectSpecHandle.IsValid())
-// 		{
-// 			ApplyGameplayEffectSpecToOwner(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, EffectSpecHandle);
-// 		}
-// 	}
-// }
+FActiveGameplayEffectHandle USprintAbility::ApplyGameplayEffect(UCharacterAbilitySystemComponent* AbilitySystem, TSubclassOf<UGameplayEffect> GameplayEffectClass, int32 Level)
+{
+	if (!AbilitySystem || !GameplayEffectClass)
+	{
+		return FActiveGameplayEffectHandle();
+	}
+	
+	FGameplayEffectSpecHandle  EffectSpecHandle = AbilitySystem->MakeOutgoingSpec(GameplayEffectClass, 1, AbilitySystem->MakeEffectContext());
+	if (EffectSpecHandle.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Sprint Effect Applied"));
+
+		return AbilitySystem->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+	}
+
+	
+	return FActiveGameplayEffectHandle();
+	
+}
 
 void USprintAbility::OnInputRelease(float TimeHeld)
 {
-	// Tuş bırakıldığında ability sona erdir
+	UE_LOG(LogTemp, Warning, TEXT("Input Released after %f seconds"), TimeHeld);
+	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
+
 void USprintAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+
+	UCharacterAbilitySystemComponent* CharacterASC = Cast<UCharacterAbilitySystemComponent>(ActorInfo->AbilitySystemComponent);
+	if (CharacterASC)
+	{
+		FGameplayTag SprintTag = FGameplayTag::RequestGameplayTag(FName("State.Sprint"));
+		CharacterASC->RemoveLooseGameplayTag(SprintTag);
+	}
+
+	if (ACharacter* Character = Cast<ACharacter>(ActorInfo->AvatarActor))
+	{
+		
+		Character->GetCharacterMovement()->MaxWalkSpeed = DefaultMovementSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("MaxWalkSpeed reverted to: %f"), DefaultMovementSpeed);
+		
+	}
+
+	if (ActiveSprintEffectHandle.IsValid())
+	{
+		CharacterASC->RemoveActiveGameplayEffect(ActiveSprintEffectHandle);
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Sprint END"));
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

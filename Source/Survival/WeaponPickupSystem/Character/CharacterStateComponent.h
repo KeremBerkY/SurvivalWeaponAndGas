@@ -3,8 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "CharacterTypes.h"
 #include "Components/ActorComponent.h"
 #include "CharacterStateComponent.generated.h"
+
+/*
+ *		BU SINIF KULLANILMIYOR TAGLAR İLE YÖNETİCEZ
+ */
 
 // DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterStateChanged, ECharacterState, NewState);
 

@@ -26,12 +26,6 @@ void APistolWeapon::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void APistolWeapon::Equip(ACharacter* Character)
-{
-	Super::Equip(Character);
-
-	
-}
 
 void APistolWeapon::Fire()
 {

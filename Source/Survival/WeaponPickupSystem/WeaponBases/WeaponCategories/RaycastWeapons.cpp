@@ -11,7 +11,7 @@
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/CharacterAnimInstance.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterCameraComponent.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/FireModes/BurstShotFireMode.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/FireModes/BurstShotFireMode.h"
 
 
 ARaycastWeapons::ARaycastWeapons()
@@ -41,12 +41,6 @@ void ARaycastWeapons::BeginPlay()
 void ARaycastWeapons::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-}
-
-void ARaycastWeapons::Equip(ACharacter* Character)
-{
-	Super::Equip(Character);
-
 }
 
 void ARaycastWeapons::Fire()

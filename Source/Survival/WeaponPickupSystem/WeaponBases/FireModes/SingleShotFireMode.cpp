@@ -3,7 +3,7 @@
 
 #include "SingleShotFireMode.h"
 
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 
 void USingleShotFireMode::StartFire(AWeaponBase* Weapon)
 {

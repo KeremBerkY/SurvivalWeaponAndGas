@@ -46,8 +46,6 @@ void AGoldPickup::Interact(AActor* Actor)
 	ASurvivalCharacter* Character = Cast<ASurvivalCharacter>(Actor);
 	if (Character)
 	{
-		Character->AddCoin(CoinAmount);
-		Character->PlayerTotalCoin();
 		Destroy();
 	}
 }

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponCategories/RaycastWeapons.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RaycastWeapons.h"
 #include "PistolWeapon.generated.h"
 
 UCLASS()
@@ -15,7 +15,6 @@ public:
 	APistolWeapon();
 	
 	virtual void Tick(float DeltaTime) override;
-	virtual void Equip(ACharacter* Character) override;
 	virtual void Fire() override;
 	
 protected:

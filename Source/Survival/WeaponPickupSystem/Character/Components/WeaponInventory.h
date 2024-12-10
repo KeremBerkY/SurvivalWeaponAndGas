@@ -5,10 +5,12 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Survival/SurvivalCharacter.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "WeaponInventory.generated.h"
 
 // TODO: Change class name with WeaponInventoryComponent
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponInventoryReady);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnResetSlot, EWeaponCategories, WeaponCategory);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateInventory, AWeaponBase*, WeaponToUpdate);
 
@@ -23,6 +25,7 @@ public:
 	// DELEGATE
 	FOnResetSlot OnResetSlot;
 	FOnUpdateInventory OnUpdateInventory;
+	FOnWeaponInventoryReady WeaponInventoryReady;
 
 	FORCEINLINE UTexture2D* GetDefaultSlotTexture() const { return DefaultSlotTexture; }
 
@@ -48,11 +51,13 @@ protected:
 
 private:
 	
-	bool ValidateInputs(const ASurvivalCharacter* PlayerCharacter) const;
+	// bool ValidateInputs(const ASurvivalCharacter* PlayerCharacter) const;
 	void EquipBackWeapon(AWeaponBase* BackWeapon, ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex);
 	void MoveCurrentWeaponToBack(AWeaponBase* CurrentWeapon, ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex);
 	void SwapWeapons(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeapon, ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex);
 	void HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeaponForDesiredCategory,ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex, EWeaponCategories DesiredCategory);
+
+	void NotifyWeaponInventoryReady();
 	
 	FName WeaponSocket = "WeaponSocket";
 	

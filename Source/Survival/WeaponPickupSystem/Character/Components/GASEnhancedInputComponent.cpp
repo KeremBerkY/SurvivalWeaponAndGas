@@ -172,53 +172,53 @@ void UGASEnhancedInputComponent::HandleSprintActionHold()
 
 void UGASEnhancedInputComponent::HandleJumpActionReleased()
 {
-	SendInputActionToASC(true, EGASAbilityInputID::Jump);
+	SendInputActionToASC(false, EGASAbilityInputID::Jump);
 }
 
 void UGASEnhancedInputComponent::HandleInteractActionReleased()
 {
-	SendInputActionToASC(true, EGASAbilityInputID::Interact);
+	SendInputActionToASC(false, EGASAbilityInputID::Interact);
 }
 
 void UGASEnhancedInputComponent::HandleFireActionReleased()
 {
-	SendInputActionToASC(true, EGASAbilityInputID::Fire);
+	SendInputActionToASC(false, EGASAbilityInputID::Fire);
 }
 
 void UGASEnhancedInputComponent::HandleReloadActionReleased()
 {
-	SendInputActionToASC(true, EGASAbilityInputID::Reload);
+	SendInputActionToASC(false, EGASAbilityInputID::Reload);
 }
 
 void UGASEnhancedInputComponent::HandleDropActionReleased()
 {
-	SendInputActionToASC(true, EGASAbilityInputID::Drop);
+	SendInputActionToASC(false, EGASAbilityInputID::Drop);
 }
 
 void UGASEnhancedInputComponent::HandleRaycastActionReleased()
 {
 	UE_LOG(LogTemp, Log, TEXT("Raycas action Released..."));
-	SendInputActionToASC(true, EGASAbilityInputID::RaycastAction);
+	SendInputActionToASC(false, EGASAbilityInputID::RaycastAction);
 }
 
 void UGASEnhancedInputComponent::HandleProjectileActionReleased()
 {
-	SendInputActionToASC(true, EGASAbilityInputID::ProjectileAction);
+	SendInputActionToASC(false, EGASAbilityInputID::ProjectileAction);
 }
 
 void UGASEnhancedInputComponent::HandleMeleeActionReleased()
 {
-	SendInputActionToASC(true, EGASAbilityInputID::MeleeAction);
+	SendInputActionToASC(false, EGASAbilityInputID::MeleeAction);
 }
 
 void UGASEnhancedInputComponent::HandleToggleFireModeActionReleased()
 {
-	SendInputActionToASC(true, EGASAbilityInputID::ToggleFireMode);
+	SendInputActionToASC(false, EGASAbilityInputID::ToggleFireMode);
 }
 
 void UGASEnhancedInputComponent::HandleSprintActionReleased()
 {
-	SendInputActionToASC(true, EGASAbilityInputID::Sprint);
+	SendInputActionToASC(false, EGASAbilityInputID::Sprint);
 	UE_LOG(LogTemp, Log, TEXT("Released..."));
 }
 
@@ -234,6 +234,7 @@ void UGASEnhancedInputComponent::SendInputActionToASC(bool bIsPressed, const EGA
 	else
 	{
 		AbilitySystemComponentPtr->AbilityLocalInputReleased(static_cast<int32>(AbilityInputID));
+		UE_LOG(LogTemp, Warning, TEXT("Input Released: %d"), AbilityInputID);
 	}
 }
 

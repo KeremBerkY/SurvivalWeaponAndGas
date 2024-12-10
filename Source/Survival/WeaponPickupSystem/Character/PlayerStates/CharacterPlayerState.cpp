@@ -10,7 +10,7 @@ ACharacterPlayerState::ACharacterPlayerState()
 	NetUpdateFrequency = 100.f;
 	MinNetUpdateFrequency = 66.f;
 
-	CharacterAbilitySystemComponent = CreateDefaultSubobject<UCharacterAbilitySystemComponent>("AbilitySystemComponent"); // Bunun ismini düzelttim sadece "" içindeki?? bozuldu
+	CharacterAbilitySystemComponent = CreateDefaultSubobject<UCharacterAbilitySystemComponent>("AbilitySystemComponent");
 	CharacterAbilitySystemComponent->SetIsReplicated(true); // not required for single-player gameplay
 	CharacterAbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal); // not required for single-player gameplay ! Mixed but Minimal is optimal
 

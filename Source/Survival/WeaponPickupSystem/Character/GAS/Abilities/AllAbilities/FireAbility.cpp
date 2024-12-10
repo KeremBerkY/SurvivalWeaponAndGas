@@ -5,7 +5,7 @@
 
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 
 
 void UFireAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

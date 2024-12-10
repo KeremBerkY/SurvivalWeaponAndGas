@@ -8,6 +8,8 @@
 #include "GameplayEffectTypes.h"
 #include "GameplayEffectExtension.h"
 #include "GameplayEffectAggregatorLibrary.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Survival/WeaponPickupSystem/Character/GAS/CharacterAbilitySystemComponent.h"
 #include "Survival/WeaponPickupSystem/Libraries/SurvivalAbilitySystemLibrary.h"
 
@@ -44,6 +46,13 @@ void UCharacterAttributeSet::OnRep_MaxSprint(const FGameplayAttributeData& OldMa
 void UCharacterAttributeSet::OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSet, MovementSpeed, OldMovementSpeed);
+
+	ACharacter* Character = Cast<ACharacter>(GetOwningActor());
+	if (Character)
+	{
+		Character->GetCharacterMovement()->MaxWalkSpeed = MovementSpeed.GetCurrentValue();
+		UE_LOG(LogTemp, Warning, TEXT("OnRep_MovementSpeed: MaxWalkSpeed updated to %f"), MovementSpeed.GetCurrentValue());
+	}
 }
 
 void UCharacterAttributeSet::OnRep_SprintSpeed(const FGameplayAttributeData& OldSprintSpeed)
@@ -92,6 +101,15 @@ void UCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attrib
 	if (Attribute == GetMovementSpeedAttribute())
 	{
 		NewValue = FMath::Clamp<float>(NewValue, 150.f, 1000.f);
+
+		if (ACharacter* Character = Cast<ACharacter>(GetOwningActor()))
+		{
+			if (UCharacterMovementComponent* MovementComponent = Character->GetCharacterMovement())
+			{
+				MovementComponent->MaxWalkSpeed = NewValue;
+				UE_LOG(LogTemp, Warning, TEXT("PreAttributeChange: Updated MaxWalkSpeed to %f"), NewValue);
+			}
+		}
 	}
 
 	
@@ -130,7 +148,6 @@ void UCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModC
 	{
 		if (GetMovementSpeed() > 500.f)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Character Speeds UP!"));
 			// TODO: Burada animasyon veya efekt tetiklersin...
 		}
 	}
@@ -145,9 +162,9 @@ void UCharacterAttributeSet::OnAttributeAggregatorCreated(const FGameplayAttribu
 		return;
 	}
 
-	if (Attribute == GetMovementSpeedAttribute())
-	{
-		NewAggregator->EvaluationMetaData = &FAggregatorEvaluateMetaDataLibrary::MostNegativeMod_AllPositiveMods;
-	}	
+	// if (Attribute == GetMovementSpeedAttribute())
+	// {
+	// 	NewAggregator->EvaluationMetaData = &FAggregatorEvaluateMetaDataLibrary::MostNegativeMod_AllPositiveMods;
+	// }	
 }
 

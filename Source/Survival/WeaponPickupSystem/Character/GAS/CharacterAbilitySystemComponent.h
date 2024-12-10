@@ -22,6 +22,6 @@ public:
 	void InitializeDefaultAttributes(const TSubclassOf<UGameplayEffect>& AttributeEffect);
 	void InitializeSpecialAttributes(const TArray<TSubclassOf<UGameplayEffect>>& SpecialEffects);
 
-	void AbilityActorInfoSet();
-	void EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);
+	// void AbilityActorInfoSet();
+	// void EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);
 };

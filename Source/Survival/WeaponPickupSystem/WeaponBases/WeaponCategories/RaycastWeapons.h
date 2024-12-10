@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "RaycastWeapons.generated.h"
 
 UCLASS()
@@ -15,8 +15,8 @@ public:
 	ARaycastWeapons();
 	
 	virtual void Tick(float DeltaTime) override;
-	virtual void Equip(ACharacter* Character) override;
 	virtual void Fire() override;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon | Effects")
 	UParticleSystem* MuzzleFlashEffect;
 

@@ -4,6 +4,7 @@
 #include "InteractAbility.h"
 
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/Character/Components/PickupComponent.h"
 #include "Survival/WeaponPickupSystem/PickupSystem/BasePickup.h"
 #include "Survival/WeaponPickupSystem/PickupSystem/Interfaces/InteractionInterface.h"
 
@@ -14,23 +15,22 @@ void UInteractAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	UE_LOG(LogTemp, Warning, TEXT("Interact Called."));
 
+	
 	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(ActorInfo->AvatarActor.Get()))
 	{
-		if (ABasePickup* CurrentPickup = PlayerCharacter->GetCurrentPickup())
+		if (UPickupComponent* PickupComponent = PlayerCharacter->GetPickupComponent())
 		{
-			if (IInteractionInterface* Interactable = Cast<IInteractionInterface>(CurrentPickup))
+			if (ABasePickup* CurrentPickup = PickupComponent->GetCurrentPickup())
 			{
-				Interactable->Interact(PlayerCharacter);
-				PlayerCharacter->SetCurrentPickup(nullptr);
+				if (IInteractionInterface* Interactable = Cast<IInteractionInterface>(CurrentPickup))
+				{
+					Interactable->Interact(PlayerCharacter);
+					PlayerCharacter->GetPickupComponent()->SetCurrentPickup(nullptr);
+				}
 			}
 		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("No pickup available to interact with."));
-		}
 	}
-
-	// Current haline getirdim bir hata alırsan bundan olabilir
+	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 

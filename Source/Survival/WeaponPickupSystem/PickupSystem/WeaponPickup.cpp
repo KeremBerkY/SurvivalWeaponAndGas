@@ -5,9 +5,8 @@
 
 // #include "WeaponBase.h"
 #include "Survival/SurvivalCharacter.h"
-#include "Survival/WeaponPickupSystem/Character/WeaponInventory.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
-#include "WeaponBases/WeaponBase.h"
+// #include "WeaponBases/WeaponBase.h"
 
 
 AWeaponPickup::AWeaponPickup()

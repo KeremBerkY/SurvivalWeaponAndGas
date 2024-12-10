@@ -68,26 +68,26 @@ void UCharacterAbilitySystemComponent::InitializeSpecialAttributes(const TArray<
 	}
 }
 
-void UCharacterAbilitySystemComponent::AbilityActorInfoSet()
-{
-	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UCharacterAbilitySystemComponent::EffectApplied);
-	
-}
-
-void UCharacterAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
-{
-	if (!GEngine)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("GEngine is nullptr, cannot display on-screen messages."));
-		return;
-	}
-	
-	FGameplayTagContainer TagContainer;
-	EffectSpec.GetAllAssetTags(TagContainer);
-
-	for (const FGameplayTag Tag : TagContainer)
-	{
-		const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
-		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Blue, Msg);
-	}
-}
+// void UCharacterAbilitySystemComponent::AbilityActorInfoSet()
+// {
+// 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UCharacterAbilitySystemComponent::EffectApplied);
+// 	
+// }
+//
+// void UCharacterAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle)
+// {
+// 	if (!GEngine)
+// 	{
+// 		UE_LOG(LogTemp, Warning, TEXT("GEngine is nullptr, cannot display on-screen messages."));
+// 		return;
+// 	}
+// 	
+// 	FGameplayTagContainer TagContainer;
+// 	EffectSpec.GetAllAssetTags(TagContainer);
+//
+// 	for (const FGameplayTag Tag : TagContainer)
+// 	{
+// 		const FString Msg = FString::Printf(TEXT("GE Tag: %s"), *Tag.ToString());
+// 		GEngine->AddOnScreenDebugMessage(-1, 8.f, FColor::Blue, Msg);
+// 	}
+// }

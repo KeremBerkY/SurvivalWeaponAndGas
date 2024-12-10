@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "WeaponInventoryWidget.generated.h"
 
 class UImage;
@@ -18,6 +19,7 @@ class SURVIVAL_API UWeaponInventoryWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UFUNCTION()
 	void BindCallback(UWeaponInventory* WeaponInventory);
 	
 	UFUNCTION()
@@ -33,8 +35,8 @@ protected:
 private:
 	// Silah kategorisini slot indeksine eşleştiren yardımcı fonksiyon
 	int32 GetSlotIndexForCategory(EWeaponCategories WeaponCategory) const;
-
-
+	
+	
 	// UPROPERTY(meta = (BindWidget))
 	// UImage* DefaultSlotImage;
 

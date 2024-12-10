@@ -4,7 +4,7 @@
 #include "RaycastWeaponSwitchAbility.h"
 
 #include "Survival/SurvivalCharacter.h"
-#include "Survival/WeaponPickupSystem/Character/WeaponInventory.h"
+#include "Survival/WeaponPickupSystem/Character/Components/WeaponInventory.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
 
 void URaycastWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

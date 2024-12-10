@@ -32,11 +32,6 @@ void AProjectileWeapons::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AProjectileWeapons::Equip(ACharacter* Character)
-{
-	Super::Equip(Character);
-	
-}
 
 
 void AProjectileWeapons::Fire()

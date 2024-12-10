@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
 #include "UObject/Interface.h"
 #include "FireMode.generated.h"
 
+class AWeaponBase;
 // This class does not need to be modified.
 UINTERFACE()
 class UFireMode : public UInterface

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Survival/WeaponPickupSystem/Character/CharacterTypes.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "CharacterWeaponComponent.generated.h"
 
 class UWeaponAttachmentManager;
@@ -43,22 +43,14 @@ public:
 	UFUNCTION()
 	void UpdateWeaponState(AWeaponBase* EquippedWeapon);
 	
-	void DropWeapon(ASurvivalCharacter* PlayerCharacter, AWeaponBase* WeaponToDrop = nullptr); // Parametre olarak PlayerCharacter'i ver. Diğer bütün sınıflar bını çağıracak Drop işleminde.EXP; WeaponInventory
+	void DropWeapon(ASurvivalCharacter* PlayerCharacter, AWeaponBase* WeaponToDrop = nullptr);
 
 	// Calling from Abilities
 	bool CanSwitchWeapon() const;
 	void UpdateLastSwitchTime();
-
-	// YAZILACAKLAR:
+	
 	void AddWeaponToCharacter(AWeaponBase* NewWeapon, ASurvivalCharacter* PlayerCharacter);
-
-	// DENEMELER:
-	// void EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, bool bFromInventory, FName CustomSocketName); // 2
-	void EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, FName SocketName, bool bSetAsCurrent = true); // 3
-
-	// DENEME:
-	// void EquipWeapon(AWeaponBase* NewWeapon, ASurvivalCharacter* PlayerCharacter);
-	// // void SetWeaponOwner(ASurvivalCharacter* NewOwner); TODO: Bunu kaldırabiliriz test et WeaponBase de
+	void EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, FName SocketName, bool bSetAsCurrent = true); 
 	void AddWeapon(const TSubclassOf<AWeaponBase>& WeaponInstance, ASurvivalCharacter* PlayerCharacter);
 protected:
 
@@ -70,11 +62,9 @@ private:
 	UPROPERTY()
 	UWeaponAttachmentManager* WeaponAttachmentManager;
 	
-	/** Mevcut silah durumu */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	ECharacterWeaponStates CharacterWeaponState;
-
-	/** Sahip olunan silah referansı */
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	AWeaponBase* CurrentWeapon;
 

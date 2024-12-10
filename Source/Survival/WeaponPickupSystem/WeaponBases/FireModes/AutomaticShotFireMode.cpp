@@ -3,7 +3,7 @@
 
 #include "AutomaticShotFireMode.h"
 
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 
 
 void UAutomaticShotFireMode::StartFire(AWeaponBase* Weapon)
@@ -51,7 +51,7 @@ void UAutomaticShotFireMode::StopFire(AWeaponBase* Weapon)
 
 void UAutomaticShotFireMode::AutomaticFire()
 {
-	if (!CurrentWeapon || CurrentWeapon->WeaponAttributes.GetCurrentAmmo() <= 0) return;
+	if (!CurrentWeapon || CurrentWeapon->GetWeaponAttributes().GetCurrentAmmo() <= 0) return;
 	
 	CurrentWeapon->Fire();
 	CurrentWeapon->ExecuteFire();

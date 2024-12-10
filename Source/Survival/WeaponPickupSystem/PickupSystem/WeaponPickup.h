@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BasePickup.h"
-#include "WeaponBases/WeaponBase.h"
+// #include "WeaponBases/WeaponBase.h"
 #include "WeaponPickup.generated.h"
 
 class AWeaponBase;

@@ -25,10 +25,6 @@ void ARocketLauncher::Fire()
 	Super::Fire();
 }
 
-void ARocketLauncher::Equip(ACharacter* Character)
-{
-	Super::Equip(Character);
-}
 
 void ARocketLauncher::HandleExplosion(AProjectile* SpawnedProjectile)
 {

@@ -4,8 +4,8 @@
 #include "AssaultRifleWeapon.h"
 
 #include "Survival/SurvivalCharacter.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/FireModes/AutomaticShotFireMode.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/FireModes/BurstShotFireMode.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/FireModes/AutomaticShotFireMode.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/FireModes/BurstShotFireMode.h"
 
 
 // Sets default values
@@ -59,12 +59,6 @@ void AAssaultRifleWeapon::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AAssaultRifleWeapon::Equip(ACharacter* Character)
-{
-	Super::Equip(Character);
-	
-
-}
 
 void AAssaultRifleWeapon::Fire()
 {

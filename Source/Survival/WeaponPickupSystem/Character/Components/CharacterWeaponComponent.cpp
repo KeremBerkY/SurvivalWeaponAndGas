@@ -6,10 +6,10 @@
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/CharacterAnimInstance.h"
 #include "Survival/WeaponPickupSystem/Character/CharacterTypes.h"
-#include "Survival/WeaponPickupSystem/Character/WeaponInventory.h"
+#include "Survival/WeaponPickupSystem/Character/Components/WeaponInventory.h"
 #include "Survival/WeaponPickupSystem/PickupSystem/WeaponPickup.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponBase.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponAttechmentManager/WeaponAttachmentManager.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponAttechmentManager/WeaponAttachmentManager.h"
 
 
 // Sets default values for this component's properties
@@ -44,7 +44,7 @@ void UCharacterWeaponComponent::UpdateWeaponState(AWeaponBase* EquippedWeapon)
 		return;
 	}
 	
-	switch (EquippedWeapon->WeaponCategory)
+	switch (EquippedWeapon->GetWeaponCategory())
 	{
 	case EWeaponCategories::EWC_RaycastWeapons:
 		CharacterWeaponState = ECharacterWeaponStates::ECS_CurrentWeaponRaycast;

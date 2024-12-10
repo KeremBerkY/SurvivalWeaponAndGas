@@ -10,7 +10,7 @@
 class UCharacterAttributeSet;
 class UCharacterAbilitySystemComponent;
 /**
- * 
+ *  !! It's necessary for multiplayer games not for single player games. !!
  */
 UCLASS()
 class SURVIVAL_API ACharacterPlayerState : public APlayerState, public IAbilitySystemInterface

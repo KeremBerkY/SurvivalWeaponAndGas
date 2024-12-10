@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Projectiles/Projectile.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/WeaponBases/WeaponCategories/ProjectileWeapons.h"
+#include "Survival/WeaponPickupSystem//WeaponBases/WeaponCategories/ProjectileWeapons.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/ProjectileWeapons.h"
 #include "RocketLauncher.generated.h"
 
 UCLASS()
@@ -18,7 +19,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Fire() override;
-	virtual void Equip(ACharacter* Character) override;
 
 protected:
 	virtual void BeginPlay() override;
