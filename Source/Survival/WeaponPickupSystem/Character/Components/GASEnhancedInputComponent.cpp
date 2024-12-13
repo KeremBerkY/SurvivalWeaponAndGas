@@ -214,6 +214,7 @@ void UGASEnhancedInputComponent::HandleMeleeActionReleased()
 void UGASEnhancedInputComponent::HandleToggleFireModeActionReleased()
 {
 	SendInputActionToASC(false, EGASAbilityInputID::ToggleFireMode);
+	UE_LOG(LogTemp, Log, TEXT("Toggel Fire released..."));
 }
 
 void UGASEnhancedInputComponent::HandleSprintActionReleased()

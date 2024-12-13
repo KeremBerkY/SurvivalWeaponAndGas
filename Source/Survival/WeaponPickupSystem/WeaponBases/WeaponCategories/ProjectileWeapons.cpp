@@ -37,7 +37,7 @@ void AProjectileWeapons::Tick(float DeltaTime)
 void AProjectileWeapons::Fire()
 {
 	Super::Fire();
-	UE_LOG(LogTemp, Error, TEXT("Projectile Weapons Fire() Called!"));
+	UE_LOG(LogTemp, Warning, TEXT("Projectile Weapons Fire() Called!"));
 	
 	if (ProjectileClass)
 	{

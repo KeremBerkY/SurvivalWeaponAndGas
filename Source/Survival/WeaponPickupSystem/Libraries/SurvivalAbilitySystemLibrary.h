@@ -22,6 +22,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	static UCharacterClassInfo* GetCharacterClassDefaultInfo(const UObject* WorldContextObject);
 
-	UFUNCTION(BlueprintPure)
-	static UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent(const AActor* Actor);
+	// UFUNCTION(BlueprintPure)
+	// static UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent(const AActor* Actor);
 };

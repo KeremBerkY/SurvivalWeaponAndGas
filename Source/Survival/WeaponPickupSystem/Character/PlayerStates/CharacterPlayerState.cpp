@@ -12,7 +12,7 @@ ACharacterPlayerState::ACharacterPlayerState()
 
 	CharacterAbilitySystemComponent = CreateDefaultSubobject<UCharacterAbilitySystemComponent>("AbilitySystemComponent");
 	CharacterAbilitySystemComponent->SetIsReplicated(true); // not required for single-player gameplay
-	CharacterAbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal); // not required for single-player gameplay ! Mixed but Minimal is optimal
+	CharacterAbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed); // not required for single-player gameplay ! Mixed but Minimal is optimal
 
 	CharacterAttributes = CreateDefaultSubobject<UCharacterAttributeSet>("AttributeSet");
 }

@@ -6,6 +6,7 @@
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/FireModes/AutomaticShotFireMode.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/FireModes/BurstShotFireMode.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/FireModes/FireModeFactory.h"
 
 
 // Sets default values
@@ -22,8 +23,6 @@ void AAssaultRifleWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitializeFireModes();
-
 	if (CurrentFireMode.GetObject())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Current Fire Mode initialized: %s"), *CurrentFireMode.GetObject()->GetName());
@@ -32,25 +31,6 @@ void AAssaultRifleWeapon::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Current Fire Mode is not initialized."));
 	}
-	
-	// FireSettings.SupportedFireModes = { EFireMode::SingleShot, EFireMode::BurstFire, EFireMode::Automatic };
-	// FireSettings.CurrentFireModeIndex = 0;
-}
-
-void AAssaultRifleWeapon::InitializeFireModes()
-{
-	Super::InitializeFireModes();
-	
-	
-	TScriptInterface<IFireMode> BurstFireMode;
-	BurstFireMode.SetObject(NewObject<UBurstShotFireMode>(this));
-	BurstFireMode.SetInterface(Cast<IFireMode>(BurstFireMode.GetObject()));
-	FireModeMap.Add(EFireMode::BurstFire, BurstFireMode);
-	
-	TScriptInterface<IFireMode> AutomaticFireMode;
-	AutomaticFireMode.SetObject(NewObject<UAutomaticShotFireMode>(this));
-	AutomaticFireMode.SetInterface(Cast<IFireMode>(AutomaticFireMode.GetObject()));
-	FireModeMap.Add(EFireMode::Automatic, AutomaticFireMode);
 }
 
 

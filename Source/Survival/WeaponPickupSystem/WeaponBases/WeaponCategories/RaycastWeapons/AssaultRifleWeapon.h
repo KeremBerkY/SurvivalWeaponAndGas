@@ -27,7 +27,6 @@ protected:
 	void StartAutoFire();
 	void ExecuteFire();
 
-	virtual void InitializeFireModes() final;
 private:
 	FTimerHandle AutoFireTimerHandle;
 	float FireRate = 0.1f;

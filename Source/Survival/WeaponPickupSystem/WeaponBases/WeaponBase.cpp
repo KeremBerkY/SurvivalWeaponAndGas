@@ -21,7 +21,8 @@ AWeaponBase::AWeaponBase()
 
 	MuzzleLocation = CreateDefaultSubobject<USceneComponent>(TEXT("MuzzleLocation"));
 	MuzzleLocation->SetupAttachment(WeaponMesh);
-	
+
+	SupportedFireModes.Add(EFireMode::SingleShot);
 }
 
 void AWeaponBase::BeginPlay()
@@ -35,10 +36,7 @@ void AWeaponBase::InitializeFireModes()
 {
 	FireModeMap.Empty();
 	
-	TScriptInterface<IFireMode> SingleShotMode;
-	SingleShotMode.SetObject(NewObject<USingleShotFireMode>(this));
-	SingleShotMode.SetInterface(Cast<IFireMode>(SingleShotMode.GetObject()));
-	FireModeMap.Add(EFireMode::SingleShot, SingleShotMode);
+	FireModeMap = UFireModeFactory::CreateFireModes(this, SupportedFireModes);
 	
 	if (FireModeMap.Contains(EFireMode::SingleShot))
 	{
@@ -147,7 +145,7 @@ void AWeaponBase::ToggleFireMode()
 {
 	if (FireModeMap.Num() == 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("FireModeMap is empty. Cannot toggle fire mode."));
+		UE_LOG(LogTemp, Warning, TEXT("FireModeMap is empty. Cannot toggle fire mode."));
 		return;
 	}
 	
@@ -168,7 +166,7 @@ void AWeaponBase::ToggleFireMode()
 			}
 			else
 			{
-				UE_LOG(LogTemp, Error, TEXT("Failed to retrieve new fire mode. NewFireMode is nullptr."));
+				UE_LOG(LogTemp, Warning, TEXT("Failed to retrieve new fire mode. NewFireMode is nullptr."));
 			}
 			
 			CurrentFireMode = NewFireMode;

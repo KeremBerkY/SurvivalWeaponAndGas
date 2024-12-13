@@ -25,9 +25,6 @@ void USprintAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 		UE_LOG(LogTemp, Warning, TEXT("DefaultMovementSpeed saved: %f"), DefaultMovementSpeed);
 	}
 	
-	FGameplayTag SprintTag = FGameplayTag::RequestGameplayTag(FName("State.Sprint"));
-	CharacterASC->AddLooseGameplayTag(SprintTag);
-	
 
 	ActiveSprintEffectHandle = ApplyGameplayEffect(CharacterASC, SprintEffect, 1);
 
@@ -67,13 +64,7 @@ void USprintAbility::OnInputRelease(float TimeHeld)
 void USprintAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 
-	UCharacterAbilitySystemComponent* CharacterASC = Cast<UCharacterAbilitySystemComponent>(ActorInfo->AbilitySystemComponent);
-	if (CharacterASC)
-	{
-		FGameplayTag SprintTag = FGameplayTag::RequestGameplayTag(FName("State.Sprint"));
-		CharacterASC->RemoveLooseGameplayTag(SprintTag);
-	}
-
+	
 	if (ACharacter* Character = Cast<ACharacter>(ActorInfo->AvatarActor))
 	{
 		
@@ -82,12 +73,15 @@ void USprintAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const F
 		
 	}
 
-	if (ActiveSprintEffectHandle.IsValid())
+	if (UCharacterAbilitySystemComponent* CharacterASC = Cast<UCharacterAbilitySystemComponent>(ActorInfo->AbilitySystemComponent))
 	{
-		CharacterASC->RemoveActiveGameplayEffect(ActiveSprintEffectHandle);
-	}
+		if (ActiveSprintEffectHandle.IsValid())
+		{
+			CharacterASC->RemoveActiveGameplayEffect(ActiveSprintEffectHandle);
+		}
 
-	UE_LOG(LogTemp, Warning, TEXT("Sprint END"));
+		UE_LOG(LogTemp, Warning, TEXT("Sprint END"));
+	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

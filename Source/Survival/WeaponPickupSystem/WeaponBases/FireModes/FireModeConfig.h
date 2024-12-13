@@ -1,6 +1,6 @@
 #pragma once
 
-#pragma once
+// #pragma once
 
 #include "CoreMinimal.h"
 #include "FireModeConfig.generated.h"

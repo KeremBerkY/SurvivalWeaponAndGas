@@ -40,13 +40,13 @@ void UCharacterAnimInstance::UpdateWeaponType(AWeaponBase* Weapon) // TODO: Buna
 		{
 			PlayerCharacter->GetCharacterWeaponComponent()->SetCharacterWeaponState(ECharacterWeaponStates::ECS_Unarmed);
 			SetCurrentWeaponType(EWeaponType::Ewt_Unarmed);
-			UE_LOG(LogTemp, Error, TEXT("SetCurrentWeaponType(EWeaponType::EWT_Unarmed);"))
+			UE_LOG(LogTemp, Warning, TEXT("SetCurrentWeaponType(EWeaponType::EWT_Unarmed);"))
 		}
 		else
 		{
 			EWeaponType NewWeaponType = Weapon->GetWeaponType();
 			SetCurrentWeaponType(NewWeaponType);
-			UE_LOG(LogTemp, Warning, TEXT("Update Weapon Type: %d"), static_cast<uint8>(CurrentWeaponType));
+			UE_LOG(LogTemp, Warning, TEXT("Update Weapon Type: %d"), static_cast<uint8>(ActiveWeaponType));
 			PlayerCharacter->GetCharacterWeaponComponent()->UpdateWeaponState(Weapon);
 		}
 	}

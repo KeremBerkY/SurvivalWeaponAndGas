@@ -19,22 +19,10 @@ ARaycastWeapons::ARaycastWeapons()
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ARaycastWeapons::InitializeFireModes()
-{
-	Super::InitializeFireModes();
-
-	TScriptInterface<IFireMode> BurstFireMode;
-	BurstFireMode.SetObject(NewObject<UBurstShotFireMode>(this));
-	BurstFireMode.SetInterface(Cast<IFireMode>(BurstFireMode.GetObject()));
-	FireModeMap.Add(EFireMode::BurstFire, BurstFireMode);
-}
-
-
 void ARaycastWeapons::BeginPlay()
 {
 	Super::BeginPlay();
-
-	InitializeFireModes();
+	
 
 }
 
@@ -119,12 +107,12 @@ void ARaycastWeapons::ApplyDecal(const FHitResult& HitResult)
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("Decal spawn failed."));
+			UE_LOG(LogTemp, Warning, TEXT("Decal spawn failed."));
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("No Decal Material assigned."));
+		UE_LOG(LogTemp, Warning, TEXT("No Decal Material assigned."));
 	}
 }
 

@@ -18,7 +18,7 @@ void UResourceComponent::InitializeWithGAS(UCharacterAbilitySystemComponent* ASC
 {
 	if (!ASC || !AttributeSet)
 	{
-		UE_LOG(LogTemp, Error, TEXT("HealthComponent: Invalid AbilitySystemComponent or AttributeSet"));
+		UE_LOG(LogTemp, Warning, TEXT("HealthComponent: Invalid AbilitySystemComponent or AttributeSet"));
 		return;
 	}
 

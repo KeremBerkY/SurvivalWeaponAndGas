@@ -22,7 +22,7 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	FORCEINLINE void SetCurrentWeaponType(EWeaponType NewWeaponType) { CurrentWeaponType = NewWeaponType; }
+	FORCEINLINE void SetCurrentWeaponType(EWeaponType NewWeaponType) { ActiveWeaponType = NewWeaponType; }
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void UpdateWeaponType(AWeaponBase* Weapon);
@@ -36,8 +36,11 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float GroundSpeed;
 
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
+	// EWeaponType CurrentWeaponType;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	EWeaponType CurrentWeaponType;
+	EWeaponType ActiveWeaponType;
 protected:
 	
 

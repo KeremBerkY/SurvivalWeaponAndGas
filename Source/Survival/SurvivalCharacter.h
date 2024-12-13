@@ -28,9 +28,9 @@ class AWeaponBase;
 class ABasePickup;
 class USpringArmComponent;
 class UCameraComponent;
-class UInputMappingContext;
-class UInputAction;
-struct FInputActionValue;
+// class UInputMappingContext;
+// class UInputAction;
+// struct FInputActionValue;
 class USphereComponent;
 struct FGameplayAbilitySpecHandle;
 
@@ -77,6 +77,8 @@ public:
 	FORCEINLINE UPickupComponent* GetPickupComponent() const { return PickupComponent; }
 	// PickupSphere
 	FORCEINLINE USphereComponent* GetPickupSphere() const { return PickupSphere; }
+	// Inputs
+	FORCEINLINE UGASEnhancedInputComponent* GetGASEnhancedInputComponent() const { return GASEnhancedInputComponent; }
 	
 	/* HUD */
 	ASurvivalSystemHUD* GetSurvivalHUD() const;
@@ -98,7 +100,9 @@ protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
 
-
+// Movement Speed
+	void OnMovementSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData);
+	
 // Health Component
 	UFUNCTION()
 	void InitializeResourceComponent();
@@ -121,7 +125,7 @@ private:
 	
 	void InitAbilityActorInfo();
 	void InitClassDefaults();
-	// void BindAbilityInput();
+	void BindResourceInitialization();
 	
 	
 // -------
@@ -156,6 +160,7 @@ private:
 	UPickupComponent* PickupComponent;
 	
 	FTimerHandle InitializeDelayTimerHandle;
-	
+
+	uint32 bIsCharacterInitialized:1;
 };
 

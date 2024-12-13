@@ -13,7 +13,7 @@ void UWeaponInventoryWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	UE_LOG(LogTemp, Error, TEXT("Weapon Inventory WIDGET Inventory initialize..."));
+	UE_LOG(LogTemp, Warning, TEXT("Weapon Inventory WIDGET Inventory initialize..."));
 
 	
 	if (APawn* OwnerPawn = GetOwningPlayerPawn())
@@ -48,7 +48,7 @@ void UWeaponInventoryWidget::BindCallback(UWeaponInventory* WeaponInventory)
 	WeaponInventory->OnResetSlot.AddDynamic(this, &UWeaponInventoryWidget::ResetSlotToDefault);
 	WeaponInventory->OnUpdateInventory.AddDynamic(this, &UWeaponInventoryWidget::UpdateInventory);
 	
-	UE_LOG(LogTemp, Error, TEXT("Callback functions successfully bound to WeaponInventory!"));
+	UE_LOG(LogTemp, Warning, TEXT("Callback functions successfully bound to WeaponInventory!"));
 }
 
 void UWeaponInventoryWidget::UpdateInventory(AWeaponBase* Weapon)
@@ -112,7 +112,7 @@ void UWeaponInventoryWidget::ResetSlotToDefault(EWeaponCategories WeaponCategory
 	
 	if (!DefaultSlotTexture)
 	{
-		UE_LOG(LogTemp, Error, TEXT("DefaultSlotTexture is nullptr! Please check if it is correctly assigned."));
+		UE_LOG(LogTemp, Warning, TEXT("DefaultSlotTexture is nullptr! Please check if it is correctly assigned."));
 		return;
 	}
 

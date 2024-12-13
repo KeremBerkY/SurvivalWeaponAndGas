@@ -18,7 +18,6 @@ class SURVIVAL_API USingleShotFireMode : public UObject, public IFireMode
 
 public:
 	FORCEINLINE void SetCurrentWeapon(AWeaponBase* Weapon) { CurrentWeapon = Weapon; }
-
 	
 	virtual void StartFire(AWeaponBase* Weapon) override;
 	virtual void StopFire(AWeaponBase* Weapon) override;

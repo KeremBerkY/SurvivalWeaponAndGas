@@ -32,7 +32,6 @@ protected:
 	virtual void PlayWeaponEffect() override;
 	void PlayImpactEffect(const FHitResult& HitResult);
 	virtual void ApplyRecoilEffect() override;
-	virtual void InitializeFireModes() override;
 	
 	void FireAtTarget(const FVector& Start, const FVector& End);
 	void ApplyDecal(const FHitResult& HitResult);

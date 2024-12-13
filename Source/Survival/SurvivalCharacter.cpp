@@ -81,16 +81,20 @@ ASurvivalCharacter::ASurvivalCharacter()
 void ASurvivalCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+
+	if (!bIsCharacterInitialized)
+	{
+		InitAbilityActorInfo();
 	
-	InitAbilityActorInfo();
-	
+		bIsCharacterInitialized = true;		
+	}
 }
 
 void ASurvivalCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	InitAbilityActorInfo();
+	//InitAbilityActorInfo();
 }
 	
 void ASurvivalCharacter::InitAbilityActorInfo()
@@ -171,24 +175,42 @@ void ASurvivalCharacter::InitializeResourceComponent()
 void ASurvivalCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 
-	HUD = Cast<ASurvivalSystemHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
-	if (!HUD) return;
-	HUD->OnHUDReady.AddDynamic(this, &ASurvivalCharacter::InitializeResourceComponent);
+	BindResourceInitialization();
 	
 	GetMesh()->HideBoneByName(TEXT("weapon_r"), PBO_None);
 
 	GetCharacterWeaponComponent()->SetCurrentWeapon(nullptr);
 	CharacterAnimInstance = Cast<UCharacterAnimInstance>(GetMesh()->GetAnimInstance());
-	
+
+	if (GetCharacterAbilitySystemComponent())
+	{
+		GetCharacterAbilitySystemComponent()->GetGameplayAttributeValueChangeDelegate(
+			CharacterAttributes->GetMovementSpeedAttribute()
+			).AddUObject(this, &ASurvivalCharacter::OnMovementSpeedChanged);
+	}
 }
 
+void ASurvivalCharacter::BindResourceInitialization()
+{
+	HUD = Cast<ASurvivalSystemHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
+	if (!HUD) return;
+	
+	HUD->OnHUDReady.AddDynamic(this, &ASurvivalCharacter::InitializeResourceComponent);
+}
 
 void ASurvivalCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	
+}
+
+void ASurvivalCharacter::OnMovementSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->MaxWalkSpeed = OnAttributeChangeData.NewValue;
+	}
 }
 
 ASurvivalSystemHUD* ASurvivalCharacter::GetSurvivalHUD() const

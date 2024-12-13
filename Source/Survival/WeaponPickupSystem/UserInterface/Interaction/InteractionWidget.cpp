@@ -61,10 +61,6 @@ void UInteractionWidget::BindUpdateWidgetCallbacks(UPickupComponent* PickupCompo
 
 void UInteractionWidget::ShowWidget()
 {
-	if (this && !IsInViewport())
-	{
-		AddToViewport();
-	}
 	SetVisibility(ESlateVisibility::Visible);
 }
 

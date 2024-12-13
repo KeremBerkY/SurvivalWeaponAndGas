@@ -16,7 +16,10 @@ class SURVIVAL_API UFireAbility : public UCharacterGameplayAbility
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-
+	
+	UFUNCTION()
+	void OnInputRelease(float TimeHeld);
+	
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 	void FireHandleController(const FGameplayAbilityActorInfo* ActorInfo, bool bPressed);
 };

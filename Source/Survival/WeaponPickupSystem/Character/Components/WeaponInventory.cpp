@@ -14,7 +14,7 @@ UWeaponInventory::UWeaponInventory()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 	
-	UE_LOG(LogTemp, Error, TEXT("Weapon Inventory initialize..."));
+	UE_LOG(LogTemp, Log, TEXT("Weapon Inventory initialize..."));
 	
 }
 

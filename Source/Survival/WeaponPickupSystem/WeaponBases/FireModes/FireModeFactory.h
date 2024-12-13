@@ -21,6 +21,10 @@ class SURVIVAL_API UFireModeFactory : public UObject
 	GENERATED_BODY()
 
 public:
-	static TScriptInterface<IFireMode> CreateFireMode(EFireMode FireModeType, UObject* Outer);
-	
+	static TMap<EFireMode, TScriptInterface<IFireMode>> CreateFireModes(UObject* Outer, const TArray<EFireMode>& SupportedFireModes);
+
+private:
+	static TMap<EFireMode, TScriptInterface<IFireMode>> AddSingleShot(UObject* Outer, TScriptInterface<IFireMode> FireModeInstance, TMap<EFireMode, TScriptInterface<IFireMode>> FireModeMap);
+	static TMap<EFireMode, TScriptInterface<IFireMode>> AddBurstShot(UObject* Outer, TScriptInterface<IFireMode> FireModeInstance, TMap<EFireMode, TScriptInterface<IFireMode>> FireModeMap);
+	static TMap<EFireMode, TScriptInterface<IFireMode>> AddAutomaticShotMode(UObject* Outer, TScriptInterface<IFireMode> FireModeInstance, TMap<EFireMode, TScriptInterface<IFireMode>> FireModeMap);
 };

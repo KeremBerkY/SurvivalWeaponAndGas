@@ -14,14 +14,14 @@ FName UWeaponAttachmentManager::GetWeaponSocketName(UCharacterWeaponComponent* W
 	if (CurrentWeapon == nullptr)
 	{
 		Socketname = "WeaponSocket";
-		UE_LOG(LogTemp, Error, TEXT("CurrentWeapon == nullptr: FName = WeaponSocket"));
+		UE_LOG(LogTemp, Warning, TEXT("CurrentWeapon == nullptr: FName = WeaponSocket"));
 		WeaponComponent->UpdateWeaponState(Weapon);
-		UE_LOG(LogTemp, Error, TEXT("UpdateCharacterState()"));
+		UE_LOG(LogTemp, Warning, TEXT("UpdateCharacterState()"));
 
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("GetWeaponSocketName called!! Switch Case"));
+		UE_LOG(LogTemp, Warning, TEXT("GetWeaponSocketName called!! Switch Case"));
 
 		switch (Weapon->GetWeaponType())
 		{
@@ -51,7 +51,7 @@ FName UWeaponAttachmentManager::GetWeaponSocketName(UCharacterWeaponComponent* W
 			break;
 		}
 	}
-	UE_LOG(LogTemp, Error, TEXT("SocketName: %s"), *Socketname.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("SocketName: %s"), *Socketname.ToString());
 	return Socketname;
 }
 

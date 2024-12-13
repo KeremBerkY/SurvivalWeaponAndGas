@@ -63,7 +63,7 @@ void UPickupComponent::UpdateCurrentPickup(ABasePickup* NewPickup)
 
 	CurrentPickup = NewPickup;
 	SetCurrentPickup(NewPickup);
-
+	
 	if (CurrentPickup)
 	{
 		CurrentPickup->SetCustomDepth(true);
@@ -73,7 +73,6 @@ void UPickupComponent::UpdateCurrentPickup(ABasePickup* NewPickup)
 	}
 	else
 	{
-		
 		HideWidget.Broadcast();
 	}
 }

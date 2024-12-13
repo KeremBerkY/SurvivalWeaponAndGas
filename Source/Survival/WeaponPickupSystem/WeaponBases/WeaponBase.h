@@ -195,7 +195,7 @@ protected:
 	UFUNCTION()
 	virtual void ApplyRecoilEffect();
 	UFUNCTION()
-	virtual void InitializeFireModes();
+	void InitializeFireModes();
 
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon | Effects")
@@ -203,13 +203,15 @@ protected:
 	
 	UPROPERTY()
 	TScriptInterface<IFireMode> CurrentFireMode;
-
+	
 	UPROPERTY()
 	TMap<EFireMode, TScriptInterface<IFireMode>> FireModeMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon")
 	EFireMode CurrentFireModeType = EFireMode::SingleShot;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Fire Settings")
+	TArray<EFireMode> SupportedFireModes;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon | Categories", meta = (AllowPrivateAccess = "true"))
 	EWeaponCategories WeaponCategory;
