@@ -34,7 +34,7 @@ void AWeaponPickup::Interact(AActor* Actor) //TODO: Yeni versiyon CharacterWeapo
 
 	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(Actor))
 	{
-		PlayerCharacter->GetCharacterWeaponComponent()->AddWeapon(WeaponClass, PlayerCharacter);
+		PlayerCharacter->GetCharacterWeaponComponent()->SpawnAndAddWeapon(WeaponClass, PlayerCharacter);
 	}
 	Destroy();
 }

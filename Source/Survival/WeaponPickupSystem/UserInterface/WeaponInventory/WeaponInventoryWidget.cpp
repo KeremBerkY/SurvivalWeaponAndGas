@@ -59,11 +59,11 @@ void UWeaponInventoryWidget::UpdateInventory(AWeaponBase* Weapon)
 		return;
 	}
 
-	int32 SlotIndex = GetSlotIndexForCategory(Weapon->GetWeaponCategory());
+	int32 SlotIndex = GetSlotIndexForCategory(Weapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory);
 
 	if (SlotIndex == INDEX_NONE || SlotIndex >= SlotImages.Num())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid SlotIndex for WeaponCategory: %d"), static_cast<int32>(Weapon->GetWeaponCategory()));
+		UE_LOG(LogTemp, Warning, TEXT("Invalid SlotIndex for WeaponCategory: %d"), static_cast<int32>(Weapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory));
 		return;
 	}
 
@@ -80,9 +80,9 @@ void UWeaponInventoryWidget::UpdateInventory(AWeaponBase* Weapon)
 		UE_LOG(LogTemp, Warning, TEXT("Cleared existing image from SlotIndex: %d"), SlotIndex);
 	}
 
-	if (Weapon->GetWeaponAttributes().GetWeaponImage())
+	if (Weapon->GetWeaponDataAsset()->WeaponAttributes.GetWeaponImage())
 	{
-		SlotImage->SetBrushFromTexture(Weapon->GetWeaponAttributes().GetWeaponImage());
+		SlotImage->SetBrushFromTexture(Weapon->GetWeaponDataAsset()->WeaponAttributes.GetWeaponImage());
 		UE_LOG(LogTemp, Log, TEXT("Added new image to SlotIndex: %d for Weapon: %s"), SlotIndex, *Weapon->GetName());
 	}
 	else
@@ -90,10 +90,22 @@ void UWeaponInventoryWidget::UpdateInventory(AWeaponBase* Weapon)
 		UE_LOG(LogTemp, Warning, TEXT("Weapon image not found for Weapon: %s"), *Weapon->GetName());
 		// SlotImage->SetBrushTintColor(FLinearColor::White); // Varsayılan beyaz renk
 	}
+
+	/* ESKİ HALİ */
+	// if (Weapon->GetWeaponAttributes().GetWeaponImage())
+	// {
+	// 	SlotImage->SetBrushFromTexture(Weapon->GetWeaponAttributes().GetWeaponImage());
+	// 	UE_LOG(LogTemp, Log, TEXT("Added new image to SlotIndex: %d for Weapon: %s"), SlotIndex, *Weapon->GetName());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Warning, TEXT("Weapon image not found for Weapon: %s"), *Weapon->GetName());
+	// 	// SlotImage->SetBrushTintColor(FLinearColor::White); // Varsayılan beyaz renk
+	// }
 	
 }
 
-void UWeaponInventoryWidget::ResetSlotToDefault(EWeaponCategories WeaponCategory)
+void UWeaponInventoryWidget::ResetSlotToDefault(EWeaponCategory WeaponCategory)
 {
 	int32 SlotIndex = GetSlotIndexForCategory(WeaponCategory);
 
@@ -121,19 +133,19 @@ void UWeaponInventoryWidget::ResetSlotToDefault(EWeaponCategories WeaponCategory
 }
 
 
-int32 UWeaponInventoryWidget::GetSlotIndexForCategory(EWeaponCategories WeaponCategory) const // TODO: Bunu WeaponInventory'e taşımalı mıyız ??
+int32 UWeaponInventoryWidget::GetSlotIndexForCategory(EWeaponCategory WeaponCategory) const // TODO: Bunu WeaponInventory'e taşımalı mıyız ??
 {
 	switch (WeaponCategory) {
-	case EWeaponCategories::EWC_RaycastWeapons:
+	case EWeaponCategory::Ewc_RaycastWeapons:
 		return 0; // Slot1Image
 		break;
-	case EWeaponCategories::EWC_ProjectileWeapons:
+	case EWeaponCategory::Ewc_ProjectileWeapons:
 		return 1; // Slot2Image
 		break;
-	case EWeaponCategories::EWC_MeleeWeapons:
+	case EWeaponCategory::Ewc_MeleeWeapons:
 		return 2; // Slot3Image
 		break;
-	case EWeaponCategories::EWC_MAX:
+	case EWeaponCategory::Ewc_Max:
 		break;
 	}
 	

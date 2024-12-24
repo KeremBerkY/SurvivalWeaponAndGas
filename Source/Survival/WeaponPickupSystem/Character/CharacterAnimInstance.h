@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RaycastWeapons.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "CharacterAnimInstance.generated.h"
 
+enum class EWeaponTypes : uint8;
+class AWeaponBase;
 class UCharacterMovementComponent;
 class ASurvivalCharacter;
 /**
@@ -22,7 +24,7 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	FORCEINLINE void SetCurrentWeaponType(EWeaponType NewWeaponType) { ActiveWeaponType = NewWeaponType; }
+	FORCEINLINE void SetCurrentWeaponType(EWeaponTypes NewWeaponType) { ActiveWeaponType = NewWeaponType; }
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void UpdateWeaponType(AWeaponBase* Weapon);
@@ -40,7 +42,7 @@ public:
 	// EWeaponType CurrentWeaponType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	EWeaponType ActiveWeaponType;
+	EWeaponTypes ActiveWeaponType;
 protected:
 	
 

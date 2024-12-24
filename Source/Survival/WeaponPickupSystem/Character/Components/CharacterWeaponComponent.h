@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/CharacterTypes.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "CharacterWeaponComponent.generated.h"
@@ -12,7 +13,11 @@ class UWeaponAttachmentManager;
 class ASurvivalCharacter;
 class AWeaponBase;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponUpdated, AWeaponBase*, Weapon); 
+// DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponUpdated, AWeaponBase*, Weapon); 
+// DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCurrentWeaponShowUI);
+// DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOtherWeaponHideUI);
+// DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCurrentWeaponTaken, AWeaponBase*, NewWeapon);
+
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -24,9 +29,11 @@ public:
 	UCharacterWeaponComponent();
 
 	/* DELEGATES */
-	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnWeaponUpdated OnWeaponUpdated; 
-	
+	// FOnWeaponUpdated OnWeaponUpdated;
+	// FOnCurrentWeaponShowUI ShowUI;
+	// FOnOtherWeaponHideUI HideUI;
+	// FOnCurrentWeaponTaken CurrentWeaponTaken;
+	//
 
 						/* Getters / Setters */
 	// Weapon State
@@ -36,26 +43,29 @@ public:
 	FORCEINLINE AWeaponBase* GetCurrentWeapon() const { return CurrentWeapon; }
 	FORCEINLINE void SetCurrentWeapon(AWeaponBase* NewWeapon) { CurrentWeapon = NewWeapon; }
 	FORCEINLINE UWeaponAttachmentManager* GetWeaponAttachmentManager() const { return WeaponAttachmentManager; }
-	
-	
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	FORCEINLINE ASurvivalCharacter* GetOwningCharacter() const { return Cast<ASurvivalCharacter>(GetOwner()); }
+
+
+	//DENEM:
+	void UpdateCurrentWeaponUI() const;
+	void RemoveCurrentWeaponUI() const;
+	void BindUICallbacks(AWeaponBase* WeaponBase, ASurvivalCharacter* PlayerCharacter) const;
 	
 	UFUNCTION()
 	void UpdateWeaponState(AWeaponBase* EquippedWeapon);
 	
-	void DropWeapon(ASurvivalCharacter* PlayerCharacter, AWeaponBase* WeaponToDrop = nullptr);
+	void DropWeapon(const ASurvivalCharacter* PlayerCharacter, AWeaponBase* WeaponToDrop = nullptr);
 
 	// Calling from Abilities
 	bool CanSwitchWeapon() const;
 	void UpdateLastSwitchTime();
 	
+	void SpawnAndAddWeapon(const TSubclassOf<AWeaponBase>& WeaponInstance, ASurvivalCharacter* PlayerCharacter);
+	void EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, FName SocketName, bool bSetAsCurrent = true) const; 
 	void AddWeaponToCharacter(AWeaponBase* NewWeapon, ASurvivalCharacter* PlayerCharacter);
-	void EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, FName SocketName, bool bSetAsCurrent = true); 
-	void AddWeapon(const TSubclassOf<AWeaponBase>& WeaponInstance, ASurvivalCharacter* PlayerCharacter);
-protected:
 
-	virtual void BeginPlay() override;
-
+	// void CurrentWeaponUICheck();
+	// void CurrentWeaponUIRemove();
 
 private:
 
@@ -69,7 +79,7 @@ private:
 	AWeaponBase* CurrentWeapon;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Switching", meta = (AllowPrivateAccess = "true"))
-	float WeaponSwitchCooldown = 1.0f;
+	float WeaponSwitchCooldown = 2.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon Switching")
 	float LastSwitchTime;

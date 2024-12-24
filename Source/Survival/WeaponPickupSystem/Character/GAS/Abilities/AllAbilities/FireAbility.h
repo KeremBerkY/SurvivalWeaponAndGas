@@ -21,5 +21,5 @@ protected:
 	void OnInputRelease(float TimeHeld);
 	
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
-	void FireHandleController(const FGameplayAbilityActorInfo* ActorInfo, bool bPressed);
+	// void FireHandleController(const FGameplayAbilityActorInfo* ActorInfo, bool bPressed);
 };

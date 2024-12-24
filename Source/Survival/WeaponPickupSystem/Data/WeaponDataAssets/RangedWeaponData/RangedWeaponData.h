@@ -7,9 +7,38 @@
 #include "RangedWeaponData.generated.h"
 
 USTRUCT(BlueprintType)
-struct FRecoilSettingsData
+struct FWeaponAmmoAttributes
 {
 	GENERATED_USTRUCT_BODY()
+
+	FWeaponAmmoAttributes() :
+			   AmmoCapacity(0),
+			   AmmoInMagazine(0),
+			   CurrentAmmo(0)
+	{}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	int32 AmmoCapacity; // Taşınabilir maksimum mermi miktarı, yani karakterin üzerinde bulundurabileceği toplam mermi kapasitesi.
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	int32 AmmoInMagazine; // Şarjörün tam kapasitesi, yani her reload işleminde şarjöre dolan mermi miktarı
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
+	int32 CurrentAmmo; // Şarjörde şu anda bulunan mermi miktarı.
+};
+
+USTRUCT(BlueprintType)
+struct FRecoilSettings
+{
+	GENERATED_USTRUCT_BODY()
+
+	FRecoilSettings() :
+			   BaseRecoilAmount(0),
+			   PitchMultiplier(0),
+			   YawMultiplier(0),
+			   RandomRecoilRange(0),
+			   RecoilCooldown(0)
+	{}
 
 	UPROPERTY(EditAnywhere, Category = "Recoil Settings")
 	float BaseRecoilAmount = 1.0f; // Genel geri tepme kuvveti
@@ -25,35 +54,24 @@ struct FRecoilSettingsData
 
 	UPROPERTY(EditAnywhere, Category = "Recoil Settings")
 	float RecoilCooldown = 0.1f; // Recoil soğuma süresi
-	
-	UPROPERTY(VisibleAnywhere, Category = "Weapon | Recoil Settings")
-	bool bCanApplyRecoil = true; // Recoil'in uygulanabilir olup olmadığını kontrol eder
-	
-	FTimerHandle RecoilCooldownTimerHandle;
 };
 
-USTRUCT(BlueprintType)
-struct FDecalSettingsData
-{
-	GENERATED_USTRUCT_BODY()
 
-	FDecalSettingsData() :
-			DecalMaterial(nullptr),
-			DecalSize(FVector(10.0f, 10.0f, 10.0f)),
-			DecalLifeSpan(10.f) {} ;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Effects")
-	UMaterialInterface* DecalMaterial; // Decal için materyal
-
-	UPROPERTY(EditDefaultsOnly, Category = "Effects")
-	FVector DecalSize; // Decal boyutu
-
-	UPROPERTY(EditDefaultsOnly, Category = "Effects")
-	float DecalLifeSpan; // Decal'in sahnede kalma süresi
-};
-
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class SURVIVAL_API URangedWeaponData : public UWeaponData
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, Category = "Ranged Weapon Data | AmmoAttributes")
+	FWeaponAmmoAttributes WeaponAmmoAttributes;
+	
+	UPROPERTY(EditAnywhere, Category = "Ranged Weapon Data | FireSettings")
+	float FireRate;
+	
+	UPROPERTY(EditAnywhere, Category = "Ranged Weapon Data | RecoilSettings")
+	FRecoilSettings RecoilSettings;
+	
+
 };

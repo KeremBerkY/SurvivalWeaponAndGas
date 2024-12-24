@@ -6,7 +6,7 @@
 
 #include "Survival/WeaponPickupSystem/UserInterface/Crosshair/CrosshairBaseWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/Interaction/InteractionWidget.h"
-
+#include "Survival/WeaponPickupSystem/UserInterface/WeaponHeat/WeaponHeatBar.h"
 
 
 void UGameHUDWidget::NativeConstruct()
@@ -16,6 +16,11 @@ void UGameHUDWidget::NativeConstruct()
 	if (InteractionWidget)
 	{
 		InteractionWidget->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
+	if (HeatProgressBar)
+	{
+		HeatProgressBar->SetVisibility(ESlateVisibility::Collapsed);
 	}
 	
 }

@@ -6,6 +6,7 @@
 #include "Components/CharacterWeaponComponent.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/WeaponData.h"
 
 void UCharacterAnimInstance::NativeInitializeAnimation()
 {
@@ -39,12 +40,12 @@ void UCharacterAnimInstance::UpdateWeaponType(AWeaponBase* Weapon) // TODO: Buna
 		if (CurrentWeapon == nullptr)
 		{
 			PlayerCharacter->GetCharacterWeaponComponent()->SetCharacterWeaponState(ECharacterWeaponStates::ECS_Unarmed);
-			SetCurrentWeaponType(EWeaponType::Ewt_Unarmed);
+			SetCurrentWeaponType(EWeaponTypes::Ewt_Unarmed);
 			UE_LOG(LogTemp, Warning, TEXT("SetCurrentWeaponType(EWeaponType::EWT_Unarmed);"))
 		}
 		else
 		{
-			EWeaponType NewWeaponType = Weapon->GetWeaponType();
+			EWeaponTypes NewWeaponType = Weapon->GetWeaponDataAsset()->WeaponAttributes.WeaponTypes;
 			SetCurrentWeaponType(NewWeaponType);
 			UE_LOG(LogTemp, Warning, TEXT("Update Weapon Type: %d"), static_cast<uint8>(ActiveWeaponType));
 			PlayerCharacter->GetCharacterWeaponComponent()->UpdateWeaponState(Weapon);

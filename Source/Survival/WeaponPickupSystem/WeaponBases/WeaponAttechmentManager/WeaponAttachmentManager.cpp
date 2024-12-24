@@ -4,6 +4,7 @@
 #include "WeaponAttachmentManager.h"
 
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
+#include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/WeaponData.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 
 FName UWeaponAttachmentManager::GetWeaponSocketName(UCharacterWeaponComponent* WeaponComponent, AWeaponBase* Weapon) // TODO: Bunu CharacterWeaponComponent'a taşıma !! bu silahın socket ismini alıyor!!
@@ -23,27 +24,28 @@ FName UWeaponAttachmentManager::GetWeaponSocketName(UCharacterWeaponComponent* W
 	{
 		UE_LOG(LogTemp, Warning, TEXT("GetWeaponSocketName called!! Switch Case"));
 
-		switch (Weapon->GetWeaponType())
+		
+		switch (Weapon->GetWeaponDataAsset()->WeaponAttributes.WeaponTypes)
 		{
-		case EWeaponType::Ewt_AssaultRifle:
+		case EWeaponTypes::Ewt_AssaultRifle:
 			Socketname = "RaycastSocket";
 			break;
-		case EWeaponType::Ewt_Pistol:
+		case EWeaponTypes::Ewt_Pistol:
 			Socketname = "RaycastPistolSocket";
 			break;
-		case EWeaponType::Ewt_Shotgun:
+		case EWeaponTypes::Ewt_Shotgun:
 			Socketname = "RaycastSocket";
 			break;
-		case EWeaponType::EWT_GrenadeLauncher:
+		case EWeaponTypes::Ewt_GrenadeLauncher:
 			Socketname = "ProjectileSocket";
 			break;
-		case EWeaponType::Ewt_RocketLauncher:
+		case EWeaponTypes::Ewt_RocketLauncher:
 			Socketname = "ProjectileSocket";
 			break;
-		case EWeaponType::EWT_Sword:
+		case EWeaponTypes::Ewt_Sword:
 			Socketname = "MeleeSocket";
 			break;
-		case EWeaponType::EWT_Axe:
+		case EWeaponTypes::Ewt_Axe:
 			Socketname = "MeleeSocket";
 			break;
 		default:
@@ -76,18 +78,18 @@ void UWeaponAttachmentManager::AttachWeaponToSocket(AWeaponBase* NewWeapon, ASur
 	UE_LOG(LogTemp, Warning, TEXT("AttachWeaponToSocket called! SocketName: %s"), *SocketName.ToString())
 	
 	// FName SocketName = NewWeapon->GetWeaponSocketName(PlayerCharacter);
-	switch (NewWeapon->GetWeaponCategory())
+	switch (NewWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory)
 	{
-	case EWeaponCategories::EWC_RaycastWeapons:
+	case EWeaponCategory::Ewc_RaycastWeapons:
 		AttachMeshToSocket(PlayerCharacter->GetMesh(), SocketName, NewWeapon);
 		break;
-	case EWeaponCategories::EWC_ProjectileWeapons:
+	case EWeaponCategory::Ewc_ProjectileWeapons:
 		AttachMeshToSocket(PlayerCharacter->GetMesh(), SocketName, NewWeapon);
 		break;
-	case EWeaponCategories::EWC_MeleeWeapons:
+	case EWeaponCategory::Ewc_MeleeWeapons:
 		UE_LOG(LogTemp, Warning, TEXT("Melee Weapon added to socket"))
 		break;
-	case EWeaponCategories::EWC_MAX:
+	case EWeaponCategory::Ewc_Max:
 		UE_LOG(LogTemp, Warning, TEXT("Cannot add to socket! Empty NewWeapon Category!!"))
 		break;
 	default: ;

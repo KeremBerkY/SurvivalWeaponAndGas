@@ -33,12 +33,12 @@ void UWeaponInventory::NotifyWeaponInventoryReady()
 
 void UWeaponInventory::InitializeCategoryMap()
 {
-	CategoryToSlotMap.Add(EWeaponCategories::EWC_RaycastWeapons, 1);
-	CategoryToSlotMap.Add(EWeaponCategories::EWC_ProjectileWeapons, 2);
-	CategoryToSlotMap.Add(EWeaponCategories::EWC_MeleeWeapons, 3);
+	CategoryToSlotMap.Add(EWeaponCategory::Ewc_RaycastWeapons, 1);
+	CategoryToSlotMap.Add(EWeaponCategory::Ewc_ProjectileWeapons, 2);
+	CategoryToSlotMap.Add(EWeaponCategory::Ewc_MeleeWeapons, 3);
 }
 
-void UWeaponInventory::SwapToBackWeapon(AWeaponBase* CurrentWeapon, ASurvivalCharacter* PlayerCharacter, EWeaponCategories DesiredCategory)
+void UWeaponInventory::SwapToBackWeapon(AWeaponBase* CurrentWeapon, ASurvivalCharacter* PlayerCharacter, EWeaponCategory DesiredCategory)
 {
 	// if (!ValidateInputs(PlayerCharacter)) return;
 	if (!PlayerCharacter) return;
@@ -68,14 +68,14 @@ void UWeaponInventory::SwapToBackWeapon(AWeaponBase* CurrentWeapon, ASurvivalCha
 	}
 
 	// If there is a weapon of the same category on the back, swap them
-	if (CurrentWeapon && BackWeapon && CurrentWeapon->GetWeaponCategory() == DesiredCategory)
+	if (CurrentWeapon && BackWeapon && CurrentWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory == DesiredCategory)
 	{
 		SwapWeapons(CurrentWeapon, BackWeapon, PlayerCharacter, DesiredSlotIndex);
 		return;
 	}
 
 	// I have a ProjectileWeapon but, I wanted to put a RaycastWeapon by pressing the 1 button.
-	if (CurrentWeapon && CurrentWeapon->GetWeaponCategory() != DesiredCategory)
+	if (CurrentWeapon && CurrentWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory != DesiredCategory)
 	{
 		HandleDifferentCategorySwap(CurrentWeapon, BackWeapon, PlayerCharacter, DesiredSlotIndex, DesiredCategory);
 		return;
@@ -90,8 +90,8 @@ void UWeaponInventory::EquipBackWeapon(AWeaponBase* BackWeapon, ASurvivalCharact
 	
 	PlayerCharacter->GetCharacterWeaponComponent()->EquipWeapon(BackWeapon, PlayerCharacter, WeaponSocket ,true);
 	
-	OnResetSlot.Broadcast(BackWeapon->GetWeaponCategory());
-	UE_LOG(LogTemp, Warning, TEXT("Broadcasting OnResetSlot for category: %d"), static_cast<int32>(BackWeapon->GetWeaponCategory()));
+	OnResetSlot.Broadcast(BackWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory);
+	UE_LOG(LogTemp, Warning, TEXT("Broadcasting OnResetSlot for category: %d"), static_cast<int32>(BackWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory));
 
 	WeaponSlots.Remove(DesiredSlotIndex);
 	UE_LOG(LogTemp, Warning, TEXT("Equipped back weapon: %s"), *BackWeapon->GetName());
@@ -119,21 +119,22 @@ void UWeaponInventory::SwapWeapons(AWeaponBase* CurrentWeapon, AWeaponBase* Back
 	WeaponSlots.Remove(DesiredSlotIndex);
 	WeaponSlots.Add(DesiredSlotIndex, CurrentWeapon);
 	
-	OnResetSlot.Broadcast(BackWeapon->GetWeaponCategory());
+	OnResetSlot.Broadcast(BackWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory);
 	OnUpdateInventory.Broadcast(CurrentWeapon);
 	
 	UE_LOG(LogTemp, Warning, TEXT("Swapped weapons: %s -> %s"), *CurrentWeapon->GetName(), *BackWeapon->GetName());
 }
 
-void UWeaponInventory::HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeaponForDesiredCategory,ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex, EWeaponCategories DesiredCategory)
+void UWeaponInventory::HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeaponForDesiredCategory,ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex, EWeaponCategory DesiredCategory)
 {
     if (!CurrentWeapon || !PlayerCharacter) return;
 	
     // Find slots by category of current weapon
-    int32 SlotIndex = GetSlotIndex(CurrentWeapon->GetWeaponCategory());
+    // int32 SlotIndex = GetSlotIndex(CurrentWeapon->GetWeaponCategory());
+    int32 SlotIndex = GetSlotIndex(CurrentWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory);
     if (SlotIndex == INDEX_NONE)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Invalid Current Weapon Category: %d"), static_cast<int32>(CurrentWeapon->GetWeaponCategory()));
+        UE_LOG(LogTemp, Warning, TEXT("Invalid Current Weapon Category: %d"), static_cast<int32>(CurrentWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory));
         return;
     }
 
@@ -145,7 +146,8 @@ void UWeaponInventory::HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, A
     if (BackSlotWeaponForCurrentWeaponCategory)
     {
 		PlayerCharacter->GetCharacterWeaponComponent()->DropWeapon(PlayerCharacter, BackSlotWeaponForCurrentWeaponCategory);
-        OnResetSlot.Broadcast(BackSlotWeaponForCurrentWeaponCategory->GetWeaponCategory());
+        // OnResetSlot.Broadcast(BackSlotWeaponForCurrentWeaponCategory->GetWeaponCategory());
+        OnResetSlot.Broadcast(BackSlotWeaponForCurrentWeaponCategory->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory);
     	
         UE_LOG(LogTemp, Warning, TEXT("DropWeapon() called for: %s"), *BackSlotWeaponForCurrentWeaponCategory->GetName());
     }
@@ -160,7 +162,8 @@ void UWeaponInventory::HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, A
     if (BackWeaponForDesiredCategory)
     {
     	PlayerCharacter->GetCharacterWeaponComponent()->EquipWeapon(BackWeaponForDesiredCategory, PlayerCharacter, WeaponSocket, true);
-        OnResetSlot.Broadcast(BackWeaponForDesiredCategory->GetWeaponCategory());
+        // OnResetSlot.Broadcast(BackWeaponForDesiredCategory->GetWeaponCategory());
+        OnResetSlot.Broadcast(BackWeaponForDesiredCategory->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory);
     	
         WeaponSlots.Remove(DesiredSlotIndex);
 
@@ -182,9 +185,10 @@ void UWeaponInventory::AddWeaponToSlot(AWeaponBase* NewWeapon, ASurvivalCharacte
 	}
 	
 	// Finding the slot number corresponding to the category with SlotIndexPtr
-	int32* SlotIndexPtr = CategoryToSlotMap.Find(NewWeapon->GetWeaponCategory());
+	// int32* SlotIndexPtr = CategoryToSlotMap.Find(NewWeapon->GetWeaponCategory());
+	int32* SlotIndexPtr = CategoryToSlotMap.Find(NewWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory);
 
-	if (!SlotIndexPtr) { UE_LOG(LogTemp, Warning, TEXT("Invalid WeaponCategory: %d"), static_cast<int32>(NewWeapon->GetWeaponCategory())); return; }
+	if (!SlotIndexPtr) { UE_LOG(LogTemp, Warning, TEXT("Invalid WeaponCategory: %d"), static_cast<int32>(NewWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory)); return; }
 
 	int32 SlotIndex = *SlotIndexPtr;
 	
@@ -197,12 +201,12 @@ void UWeaponInventory::AddWeaponToSlot(AWeaponBase* NewWeapon, ASurvivalCharacte
 		if (ExistingWeapon)
 		{
 			// Drop if there is a weapon from the same category
-			if (ExistingWeapon && ExistingWeapon->GetWeaponCategory() == NewWeapon->GetWeaponCategory())
+			if (ExistingWeapon && ExistingWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory == NewWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory)
 			{
 				PlayerCharacter->GetCharacterWeaponComponent()->DropWeapon(PlayerCharacter, ExistingWeapon);
 			}
 			
-			OnResetSlot.Broadcast(NewWeapon->GetWeaponCategory());
+			OnResetSlot.Broadcast(NewWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory);
 		}
 	}
 	
@@ -213,7 +217,7 @@ void UWeaponInventory::AddWeaponToSlot(AWeaponBase* NewWeapon, ASurvivalCharacte
 	
 }
 
-int32 UWeaponInventory::GetSlotIndex(EWeaponCategories Category) const
+int32 UWeaponInventory::GetSlotIndex(EWeaponCategory Category) const
 {
 	const int32* SlotIndexPtr = CategoryToSlotMap.Find(Category);
 	return SlotIndexPtr ? *SlotIndexPtr : INDEX_NONE;
@@ -228,10 +232,11 @@ void UWeaponInventory::RemoveFromSlot(AWeaponBase* WeaponToRemove)
 	}
 
 	// We find the slot index using the category of WeaponToRemove
-	int32 SlotIndex = GetSlotIndex(WeaponToRemove->GetWeaponCategory());
+	// int32 SlotIndex = GetSlotIndex(WeaponToRemove->GetWeaponCategory());
+	int32 SlotIndex = GetSlotIndex(WeaponToRemove->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory);
 	if (SlotIndex == INDEX_NONE)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Invalid Weapon Category: %d"), static_cast<int32>(WeaponToRemove->GetWeaponCategory()));
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Weapon Category: %d"), static_cast<int32>(WeaponToRemove->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory));
 		return;
 	}
 	

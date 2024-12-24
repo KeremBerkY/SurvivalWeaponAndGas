@@ -7,6 +7,7 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "WeaponInventoryWidget.generated.h"
 
+enum class EWeaponCategory : uint8;
 class UImage;
 class UWeaponInventory;
 class AWeaponBase;
@@ -23,7 +24,7 @@ public:
 	void BindCallback(UWeaponInventory* WeaponInventory);
 	
 	UFUNCTION()
-	void ResetSlotToDefault(EWeaponCategories WeaponCategory);
+	void ResetSlotToDefault(EWeaponCategory WeaponCategory);
 	
 	UFUNCTION()
 	void UpdateInventory(AWeaponBase* Weapon);
@@ -34,7 +35,7 @@ protected:
 
 private:
 	// Silah kategorisini slot indeksine eşleştiren yardımcı fonksiyon
-	int32 GetSlotIndexForCategory(EWeaponCategories WeaponCategory) const;
+	int32 GetSlotIndexForCategory(EWeaponCategory WeaponCategory) const;
 	
 	
 	// UPROPERTY(meta = (BindWidget))

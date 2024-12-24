@@ -6,7 +6,7 @@
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/PickupComponent.h"
 #include "Survival/WeaponPickupSystem/PickupSystem/BasePickup.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/Interfaces/InteractionInterface.h"
+#include "Survival/WeaponPickupSystem/Interfaces/InteractionInterface.h"
 
 
 void UInteractAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

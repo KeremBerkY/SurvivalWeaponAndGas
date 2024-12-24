@@ -71,6 +71,7 @@ void ABasePickup::SetCustomDepth(bool bRenderCustomDepth) const
 	if (Mesh)
 	{
 		Mesh->SetRenderCustomDepth(bRenderCustomDepth);
+		Mesh->SetCustomDepthStencilValue(1);
 	}
 }
 

@@ -8,6 +8,7 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "GameHUDWidget.generated.h"
 
+class UWeaponHeatBar;
 class UResourceWidget;
 class UWeaponInventoryWidget;
 class UCrosshairBaseWidget;
@@ -26,6 +27,7 @@ public:
 	FORCEINLINE UInteractionWidget* GetInteractionWidget() const { return InteractionWidget; }
 	FORCEINLINE UWeaponInventoryWidget* GetWeaponInventoryWidget() const { return WeaponInventoryWidget; }
 	FORCEINLINE UResourceWidget* GetHealthWidget() const { return ResourceWidget; }
+	FORCEINLINE UWeaponHeatBar* GetHeatProgressBar() const { return HeatProgressBar; }
 
 protected:
 	
@@ -39,5 +41,8 @@ protected:
 	
 	UPROPERTY(meta = (BindWidget))
 	UResourceWidget* ResourceWidget;
+	
+	UPROPERTY(meta = (BindWidget))
+	UWeaponHeatBar* HeatProgressBar;
 	
 };

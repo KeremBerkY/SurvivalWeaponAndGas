@@ -5,6 +5,7 @@
 
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RangedWeapon.h"
 
 void UReloadAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -14,10 +15,11 @@ void UReloadAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 	{
 		if (UCharacterWeaponComponent* WeaponComponent = PlayerCharacter->GetCharacterWeaponComponent())
 		{
-			if (AWeaponBase* CurrentWeapon = WeaponComponent->GetCurrentWeapon())
+			if (ARangedWeapon* CurrentWeapon = Cast<ARangedWeapon>(WeaponComponent->GetCurrentWeapon()))
 			{
 				CurrentWeapon->Reload();
 			}
+				// CurrentWeapon->Reload();
 		}
 	}
 

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/InteractionInterface.h"
+#include "Survival/WeaponPickupSystem/Interfaces/InteractionInterface.h"
 #include "BasePickup.generated.h"
 
 class UBoxComponent;

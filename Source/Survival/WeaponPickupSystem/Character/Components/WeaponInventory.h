@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/WeaponData.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "WeaponInventory.generated.h"
 
 // TODO: Change class name with WeaponInventoryComponent
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponInventoryReady);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnResetSlot, EWeaponCategories, WeaponCategory);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnResetSlot, EWeaponCategory, WeaponCategory);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateInventory, AWeaponBase*, WeaponToUpdate);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -30,12 +31,12 @@ public:
 	FORCEINLINE UTexture2D* GetDefaultSlotTexture() const { return DefaultSlotTexture; }
 
 	UFUNCTION()
-	void SwapToBackWeapon(AWeaponBase* CurrentWeapon, ASurvivalCharacter* PlayerCharacter, EWeaponCategories DesiredCategory);
+	void SwapToBackWeapon(AWeaponBase* CurrentWeapon, ASurvivalCharacter* PlayerCharacter, EWeaponCategory DesiredCategory);
 	void InitializeCategoryMap();
 	void AddWeaponToSlot(AWeaponBase* NewWeapon, ASurvivalCharacter* PlayerCharacter);
 	void RemoveFromSlot(AWeaponBase* WeaponToRemove);
 
-	int32 GetSlotIndex(EWeaponCategories Category) const;
+	int32 GetSlotIndex(EWeaponCategory Category) const;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -44,7 +45,7 @@ protected:
 	TMap<int32, AWeaponBase*> WeaponSlots;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Inventory")
-	TMap<EWeaponCategories, int32> CategoryToSlotMap;
+	TMap<EWeaponCategory, int32> CategoryToSlotMap;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Animation")
 	UCharacterAnimInstance* CharacterAnimInstance;
@@ -55,7 +56,7 @@ private:
 	void EquipBackWeapon(AWeaponBase* BackWeapon, ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex);
 	void MoveCurrentWeaponToBack(AWeaponBase* CurrentWeapon, ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex);
 	void SwapWeapons(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeapon, ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex);
-	void HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeaponForDesiredCategory,ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex, EWeaponCategories DesiredCategory);
+	void HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeaponForDesiredCategory,ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex, EWeaponCategory DesiredCategory);
 
 	void NotifyWeaponInventoryReady();
 	

@@ -18,7 +18,7 @@ void URaycastWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHand
 		const UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
 		if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon())
 		{
-			PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), PlayerCharacter, EWeaponCategories::EWC_RaycastWeapons);
+			PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), PlayerCharacter, EWeaponCategory::Ewc_RaycastWeapons);
 			PlayerCharacter->GetCharacterWeaponComponent()->UpdateLastSwitchTime(); // SORU: CharacterWeaponComponent ile UpdateLastSwitchTime() çağıramadım neden?
 		}
 	}

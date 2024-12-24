@@ -17,7 +17,7 @@ void UProjectileWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecH
 		const UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
 		if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon())
 		{
-			PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), PlayerCharacter, EWeaponCategories::EWC_ProjectileWeapons);
+			PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), PlayerCharacter, EWeaponCategory::Ewc_ProjectileWeapons);
 			PlayerCharacter->GetCharacterWeaponComponent()->UpdateLastSwitchTime();
 		}
 	}

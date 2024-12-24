@@ -8,7 +8,7 @@
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/PickupComponent.h"
 #include "Survival/WeaponPickupSystem/PickupSystem/BasePickup.h"
-#include "Survival/WeaponPickupSystem/PickupSystem/Interfaces/InteractionInterface.h"
+#include "Survival/WeaponPickupSystem/Interfaces/InteractionInterface.h"
 
 void UInteractionWidget::NativeOnInitialized()
 {
@@ -23,7 +23,6 @@ void UInteractionWidget::NativeOnInitialized()
 			if (UPickupComponent* PickupComponent = PlayerCharacter->GetPickupComponent())
 			{
 				BindShowAndHideCallbacks(PickupComponent);
-			
 			}
 		}
 	}
