@@ -22,7 +22,7 @@ void UResourceComponent::InitializeWithGAS(UCharacterAbilitySystemComponent* ASC
 		return;
 	}
 
-	if (CharacterAbilitySystemComponent && CharacterAbilitySystemComponent == ASC)
+	if (CharacterAbilitySystemComponent.IsValid() && CharacterAbilitySystemComponent == ASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HealthComponent: AbilitySystemComponent is already initialized."));
 		return;
@@ -62,7 +62,7 @@ void UResourceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void UResourceComponent::HandleHealthChanged(const FOnAttributeChangeData& Data)
 {
-	if (CharacterAttributes)
+	if (CharacterAttributes.IsValid())
 	{
 		float NewHealth = Data.NewValue;
 		float MaxHealth = CharacterAttributes->GetMaxHealth();
@@ -75,7 +75,7 @@ void UResourceComponent::HandleHealthChanged(const FOnAttributeChangeData& Data)
 
 void UResourceComponent::HandleManaChanged(const FOnAttributeChangeData& Data)
 {
-	if (CharacterAttributes)
+	if (CharacterAttributes.IsValid())
 	{
 		float NewMana = Data.NewValue;
 		float MaxMana = CharacterAttributes->GetMaxMana();
@@ -86,7 +86,7 @@ void UResourceComponent::HandleManaChanged(const FOnAttributeChangeData& Data)
 
 void UResourceComponent::HandleStaminaChanged(const FOnAttributeChangeData& Data)
 {
-	if (CharacterAttributes)
+	if (CharacterAttributes.IsValid())
 	{
 		float NewStamina = Data.NewValue;
 		float MaxStamina = CharacterAttributes->GetMaxStamina();
@@ -97,7 +97,7 @@ void UResourceComponent::HandleStaminaChanged(const FOnAttributeChangeData& Data
 
 void UResourceComponent::BroadCastInitialResourceValues()
 {
-	if (CharacterAttributes)
+	if (CharacterAttributes.IsValid())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Resource Values Health, Mana, Stamina Initialized."));
 		InitializeHealthValues();
@@ -137,7 +137,7 @@ void UResourceComponent::InitializeStaminaValues()
 
 float UResourceComponent::GetLowHealthThreshold() const
 {
-	return CharacterAttributes ? CharacterAttributes->GetMaxHealth() * 0.25f : 0.f;
+	return CharacterAttributes.IsValid() ? CharacterAttributes->GetMaxHealth() * 0.25f : 0.f;
 }
 
 void UResourceComponent::CheckHealthState(float NewHealth, float MaxHealth)
@@ -154,7 +154,7 @@ void UResourceComponent::CheckHealthState(float NewHealth, float MaxHealth)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Character is fully healed!"));
 		
-		OnFullyHealed.Broadcast();
+		OnFullyHealed.Broadcast(); // TODO: Armor artmaya başlayabilir?
 		return;
 	}
 	

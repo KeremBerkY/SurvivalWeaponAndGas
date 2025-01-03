@@ -11,6 +11,8 @@ ASurvivalCharacterBase::ASurvivalCharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// AbilitySystemComponent = CreateDefaultSubobject<UCharacterAbilitySystemComponent>("AbilitySystemComponent");
+	
+
 }
 
 UAbilitySystemComponent* ASurvivalCharacterBase::GetAbilitySystemComponent() const

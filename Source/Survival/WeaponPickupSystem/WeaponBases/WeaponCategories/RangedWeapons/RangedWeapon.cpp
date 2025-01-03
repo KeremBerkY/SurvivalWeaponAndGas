@@ -3,6 +3,8 @@
 
 #include "RangedWeapon.h"
 
+#include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RangedWeaponData.h"
+
 
 ARangedWeapon::ARangedWeapon()
 {
@@ -29,6 +31,11 @@ void ARangedWeapon::Tick(float DeltaTime)
 
 void ARangedWeapon::PerformFire()
 {
+	if (URangedWeaponData* WeaponData = Cast<URangedWeaponData>(GetWeaponDataAsset()))
+	{
+		RangedWeaponData = WeaponData;
+	}
+
 }
 
 void ARangedWeapon::Attack()
@@ -45,35 +52,36 @@ void ARangedWeapon::EndAttack()
 
 void ARangedWeapon::Reload()
 {
-	// if (bIsReloading)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("Reloading is already in progress."));
-	// 	return;
-	// }
-	//
-	// if (WeaponAttributes.GetCurrentAmmo() >= WeaponAttributes.GetAmmoMagazine())
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("The magazine is already loaded!"));
-	// 	return;
-	// }
-	//
-	// if (WeaponAttributes.GetAmmoCapacity() <= 0)
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("Not enough ammo!"));
-	// 	return;
-	// }
-	//
-	// bIsReloading = true;
-	//
-	// int32 AmmoNeeded = WeaponAttributes.GetAmmoMagazine() - WeaponAttributes.GetCurrentAmmo();
-	// int32 AmmoToReload = FMath::Min(AmmoNeeded, WeaponAttributes.GetAmmoCapacity());
-	//
-	// WeaponAttributes.CurrentAmmo += AmmoToReload;
-	// WeaponAttributes.AmmoCapacity -= AmmoToReload;
-	//
-	// UE_LOG(LogTemp, Log, TEXT("Reloaded: Magazine: %d, Total Ammo: %d"), WeaponAttributes.CurrentAmmo, WeaponAttributes.AmmoCapacity);
-	//
-	// GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ARangedWeapon::FinishReload, ReloadDuration, false);
+	if (bIsReloading)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Reloading is already in progress."));
+		return;
+	}
+	
+	
+	if (CurrentAmmo >= RangedWeaponData->WeaponAmmoAttributes.AmmoInMagazine)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("The magazine is already loaded!"));
+		return;
+	}
+	
+	if (RangedWeaponData->WeaponAmmoAttributes.AmmoCapacity <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not enough ammo!"));
+		return;
+	}
+	
+	bIsReloading = true;
+	
+	int32 AmmoNeeded = RangedWeaponData->WeaponAmmoAttributes.AmmoInMagazine - CurrentAmmo;
+	int32 AmmoToReload = FMath::Min(AmmoNeeded, RangedWeaponData->WeaponAmmoAttributes.AmmoCapacity);
+	
+	CurrentAmmo += AmmoToReload;
+	RangedWeaponData->WeaponAmmoAttributes.AmmoCapacity -= AmmoToReload;
+	
+	UE_LOG(LogTemp, Log, TEXT("Reloaded: Magazine: %d, Total Ammo: %d"), CurrentAmmo, RangedWeaponData->WeaponAmmoAttributes.AmmoCapacity);
+	
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ARangedWeapon::FinishReload, ReloadDuration, false);
 }
 
 void ARangedWeapon::FinishReload()

@@ -47,6 +47,10 @@ protected:
 	virtual void SetupUI(AWeaponBase* Weapon) override;
 	UFUNCTION()
 	virtual void RemoveUI(AWeaponBase* Weapon) override;
+
+private:
+	UPROPERTY()
+	ARaycastWeapons* OwnedWeapon;
 	
 	
 };

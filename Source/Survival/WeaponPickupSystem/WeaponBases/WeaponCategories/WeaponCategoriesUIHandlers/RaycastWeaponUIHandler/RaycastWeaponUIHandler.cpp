@@ -6,6 +6,7 @@
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
+#include "Survival/WeaponPickupSystem/Libraries/CustomDepthHelper.h"
 #include "Survival/WeaponPickupSystem/UserInterface/MainHUDWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/SurvivalSystemHUD.h"
 #include "Survival/WeaponPickupSystem/UserInterface/GameHUD/GameHUDWidget.h"

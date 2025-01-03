@@ -12,6 +12,7 @@
 #include "SurvivalCharacter.generated.h"
 
 
+class ULockonComponent;
 class UPickupComponent;
 class UGASEnhancedInputComponent;
 class UResourceComponent;
@@ -79,6 +80,8 @@ public:
 	FORCEINLINE USphereComponent* GetPickupSphere() const { return PickupSphere; }
 	// Inputs
 	FORCEINLINE UGASEnhancedInputComponent* GetGASEnhancedInputComponent() const { return GASEnhancedInputComponent; }
+	// Lockon Component
+	FORCEINLINE ULockonComponent* GetLockonComponent() const { return LockonComponent; }
 	
 	/* HUD */
 	ASurvivalSystemHUD* GetSurvivalHUD() const;
@@ -158,6 +161,9 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, Category = "Components | Pickups" )
 	UPickupComponent* PickupComponent;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Components | Character Lockon" )
+	ULockonComponent* LockonComponent;
 	
 	FTimerHandle InitializeDelayTimerHandle;
 

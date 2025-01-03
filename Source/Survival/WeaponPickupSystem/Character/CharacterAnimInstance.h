@@ -28,27 +28,33 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Weapon")
 	void UpdateWeaponType(AWeaponBase* Weapon);
+
+	UFUNCTION(BlueprintCallable, Category = "Rotation")
+	void UpdateCharacterRotation();
+
 	
 	UPROPERTY(BlueprintReadOnly)
-	ASurvivalCharacter* PlayerCharacter;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	UCharacterMovementComponent* PlayerCharacterMovement;
+	TWeakObjectPtr<ASurvivalCharacter> PlayerCharacterPtr;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float GroundSpeed;
 
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
-	// EWeaponType CurrentWeaponType;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon")
 	EWeaponTypes ActiveWeaponType;
 protected:
-	
 
 	UPROPERTY(BlueprintReadWrite, Category = "Movement")
 	float Speed;
 	UPROPERTY(BlueprintReadWrite, Category = "Movement")
 	float Angle;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "Rotation")
+	float AimPitch;
+	UPROPERTY(BlueprintReadWrite, Category = "Rotation")
+	float AimPitchForNeck;
+	UPROPERTY(BlueprintReadWrite, Category = "Rotation")
+	float AimYaw;
+	UPROPERTY(BlueprintReadWrite, Category = "Rotation")
+	float AimRoll;
 	
 };

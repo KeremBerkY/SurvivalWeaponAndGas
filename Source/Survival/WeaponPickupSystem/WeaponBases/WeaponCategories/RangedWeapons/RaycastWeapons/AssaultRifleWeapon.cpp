@@ -4,8 +4,11 @@
 #include "AssaultRifleWeapon.h"
 
 
+#include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
+#include "Survival/WeaponPickupSystem/PickupSystem/BasePickup.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/FireModesComponent/AutomaticShotModeComponent.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/FireModesComponent/BurstShotModeComponent.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/HeatComponent/HeatComponent.h"
 
 
 // Sets default values
@@ -56,10 +59,8 @@ void AAssaultRifleWeapon::Tick(float DeltaTime)
 void AAssaultRifleWeapon::PerformFire()
 {
 	Super::PerformFire();
-	
-	FVector LocalMuzzleLocation = GetMuzzleLocation()->GetComponentLocation();
-	FVector MuzzleForward = GetMuzzleLocation()->GetForwardVector();
-	FVector TraceEnd = LocalMuzzleLocation + (MuzzleForward * 10000.0f);
+
+	if (GetHeatComponent()->GetCurrentHeat() >= GetRaycastWeaponDataAsset()->FiringHeatSettings.MaxHeatCapacity || GetHeatComponent()->IsOverHeated() ) { return; }
 	
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
@@ -71,8 +72,8 @@ void AAssaultRifleWeapon::PerformFire()
 	
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
-		LocalMuzzleLocation,
-		TraceEnd,
+		RaycastMuzzleLocation,
+		RaycastTraceEnd,
 		ECC_Visibility,
 		QueryParams
 		);
@@ -94,7 +95,6 @@ void AAssaultRifleWeapon::PerformFire()
 		UE_LOG(LogTemp, Warning, TEXT("Raycast missed. No hit detected."));
 	}
 	
-	DrawDebugVisuals(LocalMuzzleLocation, TraceEnd, HitResult);
+	DrawDebugVisuals(RaycastMuzzleLocation, RaycastTraceEnd, HitResult);
 }
-
 

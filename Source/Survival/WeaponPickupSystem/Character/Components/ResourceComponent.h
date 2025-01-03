@@ -86,9 +86,9 @@ private:
 
 	
 	UPROPERTY()
-	UCharacterAbilitySystemComponent* CharacterAbilitySystemComponent;
+	TWeakObjectPtr<UCharacterAbilitySystemComponent> CharacterAbilitySystemComponent;
 	UPROPERTY()
-	UCharacterAttributeSet* CharacterAttributes;
+	TWeakObjectPtr<UCharacterAttributeSet> CharacterAttributes;
 	
 	bool bRegenerationActive;
 	

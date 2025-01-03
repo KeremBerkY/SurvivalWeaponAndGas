@@ -44,25 +44,3 @@ void UWeaponHeatBar::UpdateHeatBar(float Heat, float MaxHeat)
 		HeatProgressBar->SetPercent(HeatPercentage);
 	}
 }
-
-// void UWeaponHeatBar::HalfHeat()
-// {
-// 	UStaticMeshComponent* WeaponMesh = Weapon->GetWeaponMesh();
-// 	if (WeaponMesh)
-// 	{
-// 		WeaponMesh->SetRenderCustomDepth(true);
-// 	}
-// }
-//
-// void UWeaponHeatBar::OverHeat()
-// {
-// 	UStaticMeshComponent* WeaponMesh = Weapon->GetWeaponMesh();
-// 	if (WeaponMesh)
-// 	{
-// 		WeaponMesh->SetRenderCustomDepth(false);
-// 	}
-// }
-
-// void UWeaponHeatBar::RemoveHeat(float Heat, float MaxHeat)
-// {
-// }

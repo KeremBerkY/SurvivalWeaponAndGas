@@ -10,9 +10,6 @@
 class ARaycastWeapons;
 class URaycastWeaponData;
 
-// DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnUpdateHeatBar, float, Heat, float, MaxHeat);
-// DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRemoveHeat, float, Heat, float, MaxHeat);
-
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SURVIVAL_API UHeatComponent : public UActorComponent
 {
@@ -21,13 +18,9 @@ class SURVIVAL_API UHeatComponent : public UActorComponent
 public:
 	UHeatComponent();
 
-	// FOnUpdateHeatBar UpdateHeatBar;
-	// FOnRemoveHeat RemoveHeat;
-
 	FORCEINLINE float GetCurrentHeat() const { return CurrentHeat; }
 	FORCEINLINE void SetCurrentHeat(const float NewHeat) { CurrentHeat = NewHeat; }
 	FORCEINLINE bool IsOverHeated() const { return bIsOverHeated; }
-	// FORCEINLINE FTimerHandle GetCoolingTimerHandle()
 
 	UFUNCTION()
 	void UpdateHeat();
@@ -58,8 +51,7 @@ protected:
 	
 	UPROPERTY()
 	URaycastWeaponData* WeaponDataAsset;
-
-	// FTimerHandle HeatTimerHandle;
+	
 	FTimerHandle CoolingTimerHandle;
 
 	bool bIsCoolingDown;

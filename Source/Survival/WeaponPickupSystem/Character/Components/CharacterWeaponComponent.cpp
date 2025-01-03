@@ -105,19 +105,19 @@ void UCharacterWeaponComponent::DropWeapon(const ASurvivalCharacter* PlayerChara
 	AWeaponBase* Weapon = (WeaponToDrop == nullptr) ? GetCurrentWeapon() : WeaponToDrop;
 		if (Weapon)
 		{
-			if (TSubclassOf<AWeaponPickup> WeaponPickupClass = Weapon->GetWeaponDataAsset()->WeaponAttributes.WeaponPickupClass)
+			if (const TSubclassOf<AWeaponPickup> WeaponPickupClass = Weapon->GetWeaponDataAsset()->WeaponAttributes.WeaponPickupClass)
 			{
 				const FVector DropLocation = PlayerCharacter->GetActorLocation() + PlayerCharacter->GetActorForwardVector() * 100.0f;
 				const FRotator DropRotation = PlayerCharacter->GetActorRotation();
 
-				if (AWeaponPickup* WeaponPickup = GetWorld()->SpawnActor<AWeaponPickup>(WeaponPickupClass, DropLocation, DropRotation))
+				if (const AWeaponPickup* WeaponPickup = GetWorld()->SpawnActor<AWeaponPickup>(WeaponPickupClass, DropLocation, DropRotation))
 				{
 					 if (UStaticMeshComponent* WeaponPickupStaticMeshComponent = WeaponPickup->GetStaticMeshComponent())
 					 {
 						WeaponPickupStaticMeshComponent->SetSimulatePhysics(true);
 					 	WeaponPickupStaticMeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
-					 	FVector ForwardImpulse = PlayerCharacter->GetActorForwardVector() * DropDistance;
+						const FVector ForwardImpulse = PlayerCharacter->GetActorForwardVector() * DropDistance;
 					 	WeaponPickupStaticMeshComponent->AddImpulse(ForwardImpulse);
 					 }
 					
@@ -191,7 +191,7 @@ void UCharacterWeaponComponent::AddWeaponToCharacter(AWeaponBase* NewWeapon, ASu
 }
 
 
-void UCharacterWeaponComponent::EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, FName SocketName, bool bSetAsCurrent) const
+void UCharacterWeaponComponent::EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, FName SocketName, bool bSetAsCurrent)
 {
 	if (Weapon)
 	{
@@ -199,7 +199,18 @@ void UCharacterWeaponComponent::EquipWeapon(AWeaponBase* Weapon, ASurvivalCharac
 		
 		WeaponAttachmentManager->AttachWeaponToSocket(Weapon, PlayerCharacter, SocketName);
 		
-		PlayerCharacter->GetCharacterWeaponComponent()->SetCurrentWeapon(bSetAsCurrent ? Weapon : nullptr);
+		// PlayerCharacter->GetCharacterWeaponComponent()->SetCurrentWeapon(bSetAsCurrent ? Weapon : nullptr);
+		if (bSetAsCurrent)
+		{
+			SetCurrentWeapon(Weapon);
+			Weapon->SetOwner(PlayerCharacter);
+			Weapon->SetOwningCharacter(PlayerCharacter);
+		}
+		else
+		{
+			SetCurrentWeapon(nullptr);
+		}
+		
 		
 		UCharacterAnimInstance* AnimInstance = PlayerCharacter->GetCharacterAnimInstance();
 		if (AnimInstance)

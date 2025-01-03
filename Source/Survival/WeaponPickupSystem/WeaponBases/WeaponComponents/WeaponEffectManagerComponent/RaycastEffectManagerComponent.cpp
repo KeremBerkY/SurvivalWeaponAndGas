@@ -9,7 +9,8 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RangedWeapon.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 #include "Components/DecalComponent.h"
-
+#include "Survival/WeaponPickupSystem/Enemy/EnemyBase.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/HeatComponent/HeatComponent.h"
 
 
 URaycastEffectManagerComponent::URaycastEffectManagerComponent()
@@ -45,12 +46,16 @@ void URaycastEffectManagerComponent::InitializeEffects()
 
 void URaycastEffectManagerComponent::PlayWeaponEffects()
 {
+	// if (Weapon->GetHeatComponent()->GetCurrentHeat() >= RaycastWeaponData->FiringHeatSettings.MaxHeatCapacity || Weapon->GetHeatComponent()->IsOverHeated() ) { return; }
+	
 	WeaponEffect();
 	// ApplyRecoilEffect();
 }
 
 void URaycastEffectManagerComponent::PlayImpactEffects(const FHitResult& HitResult)
 {
+	// if (Weapon->GetHeatComponent()->GetCurrentHeat() >= RaycastWeaponData->FiringHeatSettings.MaxHeatCapacity || Weapon->GetHeatComponent()->IsOverHeated() ) { return; }
+
 	ImpactEffect(HitResult);
 	ApplyDecal(HitResult);
 }
@@ -114,12 +119,25 @@ void URaycastEffectManagerComponent::ResetWeaponPosition(FVector OriginalLocatio
 
 void URaycastEffectManagerComponent::ImpactEffect(const FHitResult& HitResult) const
 {
-	if (RaycastWeaponData->WeaponEffects.ImpactEffect)
+	if (HitResult.GetActor()->IsA(AEnemyBase::StaticClass()))
 	{
-		FVector ImpactLocation = HitResult.ImpactPoint;
-		FRotator ImpactRotation = HitResult.ImpactNormal.Rotation();
-	
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RaycastWeaponData->WeaponEffects.ImpactEffect, ImpactLocation, ImpactRotation);
+		if (RaycastWeaponData->BloodEffect)
+		{
+			const FVector ImpactLocation = HitResult.ImpactPoint;
+			const FRotator ImpactRotation = HitResult.ImpactNormal.Rotation();
+		
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RaycastWeaponData->BloodEffect, ImpactLocation, ImpactRotation);
+		}
+	}
+	else
+	{
+		if (RaycastWeaponData->WeaponEffects.ImpactEffect)
+		{
+			const FVector ImpactLocation = HitResult.ImpactPoint;
+			const FRotator ImpactRotation = HitResult.ImpactNormal.Rotation();
+		
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RaycastWeaponData->WeaponEffects.ImpactEffect, ImpactLocation, ImpactRotation);
+		}
 	}
 }
 

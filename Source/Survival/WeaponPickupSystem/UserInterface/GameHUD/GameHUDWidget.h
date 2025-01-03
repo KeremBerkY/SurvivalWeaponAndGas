@@ -45,4 +45,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UWeaponHeatBar* HeatProgressBar;
 	
+	UPROPERTY(meta = (BindWidget))
+	UCrosshairBaseWidget* CrosshairBase;
 };

@@ -13,12 +13,6 @@ class UWeaponAttachmentManager;
 class ASurvivalCharacter;
 class AWeaponBase;
 
-// DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponUpdated, AWeaponBase*, Weapon); 
-// DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnCurrentWeaponShowUI);
-// DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOtherWeaponHideUI);
-// DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCurrentWeaponTaken, AWeaponBase*, NewWeapon);
-
-
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SURVIVAL_API UCharacterWeaponComponent : public UActorComponent
@@ -27,14 +21,7 @@ class SURVIVAL_API UCharacterWeaponComponent : public UActorComponent
 
 public:
 	UCharacterWeaponComponent();
-
-	/* DELEGATES */
-	// FOnWeaponUpdated OnWeaponUpdated;
-	// FOnCurrentWeaponShowUI ShowUI;
-	// FOnOtherWeaponHideUI HideUI;
-	// FOnCurrentWeaponTaken CurrentWeaponTaken;
-	//
-
+	
 						/* Getters / Setters */
 	// Weapon State
 	FORCEINLINE ECharacterWeaponStates GetWeaponState() const { return CharacterWeaponState; }
@@ -61,7 +48,7 @@ public:
 	void UpdateLastSwitchTime();
 	
 	void SpawnAndAddWeapon(const TSubclassOf<AWeaponBase>& WeaponInstance, ASurvivalCharacter* PlayerCharacter);
-	void EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, FName SocketName, bool bSetAsCurrent = true) const; 
+	void EquipWeapon(AWeaponBase* Weapon, ASurvivalCharacter* PlayerCharacter, FName SocketName, bool bSetAsCurrent = true); 
 	void AddWeaponToCharacter(AWeaponBase* NewWeapon, ASurvivalCharacter* PlayerCharacter);
 
 	// void CurrentWeaponUICheck();

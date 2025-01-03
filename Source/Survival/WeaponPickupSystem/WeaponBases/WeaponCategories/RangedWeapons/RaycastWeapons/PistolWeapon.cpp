@@ -4,6 +4,9 @@
 #include "PistolWeapon.h"
 
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/FireModesComponent/FireModeBaseComponent.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/HeatComponent/HeatComponent.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/WeaponEffectManagerComponent/RaycastEffectManagerComponent.h"
 
 
@@ -20,6 +23,21 @@ void APistolWeapon::BeginPlay()
 
 }
 
+void APistolWeapon::AddFireModes()
+{
+	Super::AddFireModes();
+
+	if (FireModeComponents.Num() > 0)
+	{
+		CurrentFireModeIndex = 0;
+		CurrentFireModeComponent = FireModeComponents[CurrentFireModeIndex];
+		UE_LOG(LogTemp, Log, TEXT("Initialized fire mode: %s"), *CurrentFireModeComponent->GetClass()->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No fire modes found on %s"), *GetName());
+	}
+}
 
 
 void APistolWeapon::Tick(float DeltaTime)
@@ -31,9 +49,7 @@ void APistolWeapon::PerformFire()
 {
 	Super::PerformFire();
 
-	FVector LocalMuzzleLocation = GetMuzzleLocation()->GetComponentLocation();
-	FVector MuzzleForward = GetMuzzleLocation()->GetForwardVector();
-	FVector TraceEnd = LocalMuzzleLocation + (MuzzleForward * 10000.0f);
+	if (GetHeatComponent()->GetCurrentHeat() >= GetRaycastWeaponDataAsset()->FiringHeatSettings.MaxHeatCapacity || GetHeatComponent()->IsOverHeated() ) { return; }
 	
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
@@ -45,8 +61,8 @@ void APistolWeapon::PerformFire()
 	
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
-		LocalMuzzleLocation,
-		TraceEnd,
+		RaycastMuzzleLocation,
+		RaycastTraceEnd,
 		ECC_Visibility,
 		QueryParams
 		);
@@ -68,7 +84,7 @@ void APistolWeapon::PerformFire()
 		UE_LOG(LogTemp, Warning, TEXT("Raycast missed. No hit detected."));
 	}
 	
-	DrawDebugVisuals(LocalMuzzleLocation, TraceEnd, HitResult);
+	DrawDebugVisuals(RaycastMuzzleLocation, RaycastTraceEnd, HitResult);
 }
 
 

@@ -84,4 +84,7 @@ class SURVIVAL_API UWeaponData : public UPrimaryDataAsset
 public:
 	UPROPERTY(EditAnywhere, Category = "Weapon Data")
 	FWeaponAttributes WeaponAttributes;
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* BloodEffect;
 };

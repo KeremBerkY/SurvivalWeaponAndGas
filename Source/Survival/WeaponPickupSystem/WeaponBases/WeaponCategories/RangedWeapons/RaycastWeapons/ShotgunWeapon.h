@@ -6,6 +6,8 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 #include "ShotgunWeapon.generated.h"
 
+class UBurstShotModeComponent;
+
 UCLASS()
 class SURVIVAL_API AShotgunWeapon : public ARaycastWeapons
 {
@@ -20,5 +22,9 @@ protected:
 
 	virtual void PerformFire() override;
 	virtual void AddFireModes() override;
+
+private:
+	UPROPERTY()
+	UBurstShotModeComponent* BurstShotModeComponent;
 
 };

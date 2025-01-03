@@ -67,6 +67,11 @@ void UGASEnhancedInputComponent::BeginPlay()
 				EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &UGASEnhancedInputComponent::HandleSprintActionHold);
 				EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &UGASEnhancedInputComponent::HandleSprintActionReleased);
 				
+				EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Started, this, &UGASEnhancedInputComponent::HandleAimingButtonPressed);
+				EnhancedInputComponent->BindAction(AimingAction, ETriggerEvent::Completed, this, &UGASEnhancedInputComponent::HandleAimingButtonReleased);
+				
+				EnhancedInputComponent->BindAction(LockonAction, ETriggerEvent::Started, this, &UGASEnhancedInputComponent::HandleLockonButtonPressed);
+				EnhancedInputComponent->BindAction(LockonAction, ETriggerEvent::Completed, this, &UGASEnhancedInputComponent::HandleLockonButtonReleased);
 			}
 		}
 	}
@@ -169,6 +174,20 @@ void UGASEnhancedInputComponent::HandleSprintActionHold()
 	SendInputActionToASC(true, EGASAbilityInputID::Sprint);
 }
 
+void UGASEnhancedInputComponent::HandleAimingButtonPressed()
+{
+	UE_LOG(LogTemp, Log, TEXT("Aiming"));
+	SendInputActionToASC(true, EGASAbilityInputID::Aiming);
+}
+
+void UGASEnhancedInputComponent::HandleLockonButtonPressed()
+{
+	SendInputActionToASC(true, EGASAbilityInputID::Lockon);
+	UE_LOG(LogTemp, Log, TEXT("Lockon Pressed"));
+}
+
+// -------------------------------------------------------------------------------
+
 
 void UGASEnhancedInputComponent::HandleJumpActionReleased()
 {
@@ -220,7 +239,19 @@ void UGASEnhancedInputComponent::HandleToggleFireModeActionReleased()
 void UGASEnhancedInputComponent::HandleSprintActionReleased()
 {
 	SendInputActionToASC(false, EGASAbilityInputID::Sprint);
-	UE_LOG(LogTemp, Log, TEXT("Released..."));
+	UE_LOG(LogTemp, Log, TEXT("Sprinting Released..."));
+}
+
+void UGASEnhancedInputComponent::HandleAimingButtonReleased()
+{
+	SendInputActionToASC(false, EGASAbilityInputID::Aiming);
+	UE_LOG(LogTemp, Log, TEXT("Aiming Released"));
+}
+
+void UGASEnhancedInputComponent::HandleLockonButtonReleased()
+{
+	SendInputActionToASC(false, EGASAbilityInputID::Lockon);
+	UE_LOG(LogTemp, Log, TEXT("Lockon Released"));
 }
 
 

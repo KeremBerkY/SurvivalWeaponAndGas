@@ -19,6 +19,7 @@
 #include "WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "WeaponPickupSystem/UserInterface/SurvivalSystemHUD.h"
 #include "WeaponPickupSystem/Character/Components/GASEnhancedInputComponent.h"
+#include "WeaponPickupSystem/Character/Components/LockonComponent.h"
 #include "WeaponPickupSystem/Character/Components/PickupComponent.h"
 #include "WeaponPickupSystem/Character/Components/ResourceComponent.h"
 #include "WeaponPickupSystem/Character/PlayerStates/CharacterPlayerState.h"
@@ -75,6 +76,7 @@ ASurvivalCharacter::ASurvivalCharacter()
 	GASEnhancedInputComponent = CreateDefaultSubobject<UGASEnhancedInputComponent>(TEXT("GASEnhancedInputComponent"));
 	ResourceComponent = CreateDefaultSubobject<UResourceComponent>(TEXT("HealthComponent"));
 	PickupComponent = CreateDefaultSubobject<UPickupComponent>(TEXT("PickupComponent"));
+	LockonComponent = CreateDefaultSubobject<ULockonComponent>(TEXT("LockonComponent"));
 	
 }
 
@@ -167,8 +169,7 @@ void ASurvivalCharacter::InitializeResourceComponent()
 		ResourceComponent->OnHealthChanged.AddDynamic(ResourceWidget, &UResourceWidget::UpdateHealthBar);
 		ResourceComponent->OnManaChanged.AddDynamic(ResourceWidget, &UResourceWidget::UpdateManaBar);
 		ResourceComponent->OnStaminaChanged.AddDynamic(ResourceWidget, &UResourceWidget::UpdateStaminaBar);
-
-		// CharacterAbilitySystemComponent->AbilityActorInfoSet(); // Kaldır test içindi!
+		
 	}
 }
 

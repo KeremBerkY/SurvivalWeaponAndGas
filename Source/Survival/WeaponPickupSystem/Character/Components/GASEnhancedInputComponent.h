@@ -61,8 +61,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	UInputAction* SprintAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* AimingAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* LockonAction;
+	
 	virtual void BeginPlay() override;
-
 	
 	void HandleJumpActionPressed();
 	void Move(const FInputActionValue& Value);
@@ -76,6 +81,8 @@ protected:
 	void HandleMeleeActionPressed();
 	void HandleToggleFireModeActionPressed();
 	void HandleSprintActionHold();
+	void HandleAimingButtonPressed();
+	void HandleLockonButtonPressed();
 
 	void HandleJumpActionReleased();
 	void HandleInteractActionReleased();
@@ -87,6 +94,9 @@ protected:
 	void HandleMeleeActionReleased();
 	void HandleToggleFireModeActionReleased();
 	void HandleSprintActionReleased();
+	void HandleAimingButtonReleased();
+	void HandleLockonButtonReleased();
+
 
 private:
 	void SendInputActionToASC(bool bIsPressed, const EGASAbilityInputID AbilityInputID) const;

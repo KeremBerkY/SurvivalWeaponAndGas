@@ -20,5 +20,7 @@ enum class EGASAbilityInputID : uint8
 	ProjectileAction,
 	MeleeAction,
 	ToggleFireMode,
+	Aiming,
+	Lockon
 	
 };

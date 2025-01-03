@@ -1,13 +1,14 @@
-// // Fill out your copyright notice in the Description page of Project Settings.
-//
-// #pragma once
-//
-// #include "CoreMinimal.h"
-// #include "Blueprint/UserWidget.h"
-// #include "CrosshairBaseWidget.generated.h"
-//
-// class ASurvivalCharacter;
-//
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
+#include "CrosshairBaseWidget.generated.h"
+
+class UImage;
+class ASurvivalCharacter;
+
 // USTRUCT(BlueprintType)
 // struct FWeaponCrosshairSettings
 // {
@@ -25,23 +26,23 @@
 // 	float SprintingSpread; // While running
 // 	
 // };
-//
-// UCLASS()
-// class SURVIVAL_API UCrosshairBaseWidget : public UUserWidget
-// {
-// 	GENERATED_BODY()
-//
-// public:
-//
-// 	virtual void SetCrosshairWidget(ASurvivalCharacter* PlayerCharacter);
-// 	virtual void UpdateCrosshairWidget(float Spread);
-//
-//
-// protected:
-// 	virtual void NativeOnInitialized() override;
-// 	virtual void NativeConstruct() override;
-//
-// 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Crosshair Settings")
-// 	FWeaponCrosshairSettings CrosshairSettings;
-// 	
-// };
+
+UCLASS()
+class SURVIVAL_API UCrosshairBaseWidget : public UUserWidget
+{
+	GENERATED_BODY()
+
+public:
+	UFUNCTION()
+	virtual void SetCrosshairWidget(ASurvivalCharacter* PlayerCharacter);
+	virtual void UpdateCrosshairWidget(float Spread);
+
+
+protected:
+	virtual void NativeOnInitialized() override;
+	virtual void NativeConstruct() override;
+
+	UPROPERTY(meta = (BindWidget))
+	UImage* Crosshair;
+	
+};

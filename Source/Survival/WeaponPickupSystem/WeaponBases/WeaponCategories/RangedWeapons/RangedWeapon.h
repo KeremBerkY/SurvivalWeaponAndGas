@@ -6,6 +6,7 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "RangedWeapon.generated.h"
 
+class URangedWeaponData;
 class UHeatComponent;
 class URaycastEffectManagerComponent;
 class USingleShotModeComponent;
@@ -58,6 +59,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	float ReloadDuration = 2.0f;
+
+	UPROPERTY()
+	URangedWeaponData* RangedWeaponData;
 	
 	FTimerHandle ReloadTimerHandle;
 };

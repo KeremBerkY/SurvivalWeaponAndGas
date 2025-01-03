@@ -5,6 +5,7 @@
 
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
+#include "Survival/WeaponPickupSystem/Libraries/CustomDepthHelper.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/WeaponCategoriesUIHandlers/RaycastWeaponUIHandler/RaycastWeaponUIHandler.h"
 
@@ -65,12 +66,17 @@ void UHeatComponent::UpdateHeat()
 		const float HeatToAdd = WeaponDataAsset->FiringHeatSettings.HeatGeneratedPerShot;
 		CurrentHeat = FMath::Clamp(CurrentHeat + HeatToAdd, 0.0f, WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity);
 
-		// UpdateHeatBar.Broadcast(CurrentHeat, WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity); Çalışıyor ama RaycastUIHandler üzerinden yapmalıyız.
+		// if (CurrentHeat >=  WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity * 0.6f)
+		// {
+		// 	UCustomDepthHelper::SetCustomDepth(Weapon->GetWeaponMesh(), true, 2);
+		// }
+		
 		Weapon->GetRaycastWeaponUIHandler()->UpdateHeatBar(CurrentHeat, WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity);
 		ResetHeatState();
 
 		if (IsOverheated())
 		{
+			// UCustomDepthHelper::SetCustomDepth(Weapon->GetWeaponMesh(), true, 3);
 			bIsOverHeated = true;
 			StartCooling();
 		}
@@ -85,7 +91,6 @@ bool UHeatComponent::CanStartCooling() const
 
 bool UHeatComponent::IsOverheated() const
 {
-	
 	return CurrentHeat >= WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity;
 }
 
@@ -105,9 +110,14 @@ void UHeatComponent::StartCooling()
 
 void UHeatComponent::ApplyCooling()
 {
-	
 	const float AddCooler = (WeaponDataAsset->FiringHeatSettings.HeatGeneratedPerShot * 2);
 	CurrentHeat = FMath::Clamp(CurrentHeat - AddCooler, 0, WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity);
+
+	// if (CurrentHeat <= WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity * 0.6f)
+	// {
+	// 	UCustomDepthHelper::ResetCustomDepth(Weapon->GetWeaponMesh());
+	//
+	// }
 	
 	if (CurrentHeat <= 0.f)
 	{
@@ -115,9 +125,8 @@ void UHeatComponent::ApplyCooling()
 		bIsOverHeated = false;
 		GetWorld()->GetTimerManager().ClearTimer(CoolingTimerHandle);
 	}
-	// UpdateHeatBar.Broadcast(CurrentHeat, WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity); // Çalışıyor.
+	
 	Weapon->GetRaycastWeaponUIHandler()->UpdateHeatBar(CurrentHeat, WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity);
-
 }
 
 void UHeatComponent::ClearHeatCoolerTimer()

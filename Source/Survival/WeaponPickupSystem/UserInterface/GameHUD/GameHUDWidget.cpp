@@ -22,6 +22,11 @@ void UGameHUDWidget::NativeConstruct()
 	{
 		HeatProgressBar->SetVisibility(ESlateVisibility::Collapsed);
 	}
+
+	if (CrosshairBase)
+	{
+		CrosshairBase->SetVisibility(ESlateVisibility::Collapsed);
+	}
 	
 }
 

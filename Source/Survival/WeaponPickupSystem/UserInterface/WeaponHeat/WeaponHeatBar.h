@@ -34,12 +34,7 @@ protected:
 	
 	UFUNCTION()
 	void UpdateHeatBar(float Heat, float MaxHeat);
-	// UFUNCTION()
-	// void RemoveHeat(float Heat, float MaxHeat);
+	
+	// ARaycastWeapons* Weapon;
 
-private:
-	ARaycastWeapons* Weapon;
-	//
-	// void HalfHeat();
-	// void OverHeat();
 };

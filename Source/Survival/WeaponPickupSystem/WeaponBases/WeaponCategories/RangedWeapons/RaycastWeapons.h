@@ -7,6 +7,8 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "RaycastWeapons.generated.h"
 
+class UWeaponTargetingComponent;
+class AEnemyBase;
 class UFireModeBaseComponent;
 class URaycastWeaponUIHandler;
 class UWeaponAnimationsComponent;
@@ -62,6 +64,8 @@ protected:
 	void DrawDebugVisuals(const FVector& Start, const FVector& End, const FHitResult& HitResult) const;
 	
 	virtual void AddFireModes();
+
+	void CalculateTargetPoint();
 	
 	UPROPERTY(VisibleAnywhere, Category = "EffectManager")
 	URaycastEffectManagerComponent* EffectManagerComponent;
@@ -72,7 +76,13 @@ protected:
 	UPROPERTY()
 	UFireModeBaseComponent* CurrentFireModeComponent;
 
+	// TWeakObjectPtr<ASurvivalCharacter> PlayerCharacterPtr;
+	
 	int32 CurrentFireModeIndex;
+	
+	FVector RaycastMuzzleLocation;
+	FVector RaycastMuzzleForward;
+	FVector RaycastTraceEnd;
 
 private:
 	
@@ -96,6 +106,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "FireMode")
 	USingleShotModeComponent* SingleShotModeComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "FireMode")
+	UWeaponTargetingComponent* WeaponTargetingComponent;
+
+
+	// DENEME
+	TWeakObjectPtr<AEnemyBase> EnemyPtr;
 
 	
 };
