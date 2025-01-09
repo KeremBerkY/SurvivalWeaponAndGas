@@ -9,6 +9,8 @@
 #include "Survival/WeaponPickupSystem/Libraries/CustomDepthHelper.h"
 #include "Survival/WeaponPickupSystem/UserInterface/MainHUDWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/SurvivalSystemHUD.h"
+#include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponWidget.h"
+#include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponRangedWidgets/RaycastWeaponWidget/RaycastCurrentWeaponWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/GameHUD/GameHUDWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/WeaponHeat/WeaponHeatBar.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
@@ -36,9 +38,13 @@ void URaycastWeaponUIHandler::InitializeCallbacks(AWeaponBase* Weapon, ASurvival
 	{
 		if (PlayerCharacter)
 		{
-			if (UWeaponHeatBar* HeatProgressBar = PlayerCharacter->GetSurvivalHUD()->GetMainHUDWidget()->GetGameHUDWidget()->GetHeatProgressBar())
+			UWeaponHeatBar* HeatProgressBar = PlayerCharacter->GetSurvivalHUD()->GetMainHUDWidget()->GetGameHUDWidget()->GetHeatProgressBar();
+			URaycastCurrentWeaponWidget* RaycastCurrentWeaponWidget = PlayerCharacter->GetSurvivalHUD()->GetMainHUDWidget()->GetGameHUDWidget()->GetCurrentWeaponWidget()->GetRaycastCurrentWeaponWidget();
+			if (HeatProgressBar && RaycastCurrentWeaponWidget)
 			{
 				HeatProgressBar->BindUICallbacks(RaycastWeapon);
+				// TODO: Burada CurrentWeaponWidget çağırıcaz ve RaycastWeapon göndericez! O da diğerlerini Hide edip RaycastUI Visible yapıcak.
+				RaycastCurrentWeaponWidget->BindUICallbacks(RaycastWeapon);
 				// OnInitializeCallbacks.Broadcast(Weapon);
 			}
 			else
@@ -57,7 +63,9 @@ void URaycastWeaponUIHandler::InitializeCallbacks(AWeaponBase* Weapon, ASurvival
 void URaycastWeaponUIHandler::UpdateUI(AWeaponBase* Weapon)
 {
 	IWeaponUIHandler::UpdateUI(Weapon);
+	// UCurrentWeaponWidget* CurrentWeaponWidget = PlayerCharacter->GetSurvivalHUD()->GetMainHUDWidget()->GetGameHUDWidget()->GetCurrentWeaponWidget();
 
+	
 	if (ARaycastWeapons* RaycastWeapon = Cast<ARaycastWeapons>(Weapon))
 	{
 		// RaycastWeapon->GetHeatComponent()->UpdateHeatBar.Broadcast(0.f, RaycastWeapon->GetRaycastWeaponDataAsset()->FiringHeatSettings.MaxHeatCapacity);
@@ -65,11 +73,13 @@ void URaycastWeaponUIHandler::UpdateUI(AWeaponBase* Weapon)
 		if (ShowUI.IsBound())
 		{
 			ShowUI.Broadcast();
+			// TODO burada show çalışacak.
 		}
 		else
 		{
 			UE_LOG(LogTemp, Error, TEXT("ShowUI delegate is not bound!"));
-		}	}
+		}
+	}
 	else
 	{
 		HideUI.Broadcast();

@@ -60,7 +60,7 @@ void AAssaultRifleWeapon::PerformFire()
 {
 	Super::PerformFire();
 
-	if (GetHeatComponent()->GetCurrentHeat() >= GetRaycastWeaponDataAsset()->FiringHeatSettings.MaxHeatCapacity || GetHeatComponent()->IsOverHeated() ) { return; }
+	if (GetHeatComponent()->GetCurrentHeat() >= GetRaycastWeaponDataAsset()->FiringHeatSettings.MaxHeatCapacity || GetHeatComponent()->IsOverHeated() || GetCurrentAmmo() <= 0) { return; }
 	
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;

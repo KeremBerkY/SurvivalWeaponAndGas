@@ -15,12 +15,14 @@ ARangedWeapon::ARangedWeapon()
 	MuzzleLocation->SetupAttachment(WeaponMesh);
 
 	bCanFire = true;
+	bIsInitialized = false;
+
 }
 
 void ARangedWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 }
 
 
@@ -31,12 +33,23 @@ void ARangedWeapon::Tick(float DeltaTime)
 
 void ARangedWeapon::PerformFire()
 {
-	if (URangedWeaponData* WeaponData = Cast<URangedWeaponData>(GetWeaponDataAsset()))
+	if (!bIsInitialized) // Deneme
 	{
-		RangedWeaponData = WeaponData;
+		if (URangedWeaponData* WeaponData = Cast<URangedWeaponData>(GetWeaponDataAsset()))
+		{
+			RangedWeaponData = WeaponData;
+			InitializeAmmo();
+			bIsInitialized = true;
+		}
 	}
-
 }
+
+void ARangedWeapon::InitializeAmmo() // Deneme
+{
+	SetTotalAmmo(RangedWeaponData->WeaponAmmoAttributes.AmmoCapacity);
+	SetCurrentAmmo(RangedWeaponData->WeaponAmmoAttributes.CurrentAmmo);
+}
+
 
 void ARangedWeapon::Attack()
 {
@@ -49,6 +62,7 @@ void ARangedWeapon::EndAttack()
 {
 	Super::EndAttack();
 }
+
 
 void ARangedWeapon::Reload()
 {
@@ -77,9 +91,16 @@ void ARangedWeapon::Reload()
 	int32 AmmoToReload = FMath::Min(AmmoNeeded, RangedWeaponData->WeaponAmmoAttributes.AmmoCapacity);
 	
 	CurrentAmmo += AmmoToReload;
-	RangedWeaponData->WeaponAmmoAttributes.AmmoCapacity -= AmmoToReload;
+	SetCurrentAmmo(CurrentAmmo);
 	
-	UE_LOG(LogTemp, Log, TEXT("Reloaded: Magazine: %d, Total Ammo: %d"), CurrentAmmo, RangedWeaponData->WeaponAmmoAttributes.AmmoCapacity);
+	// RangedWeaponData->WeaponAmmoAttributes.AmmoCapacity -= AmmoToReload;
+	TotalAmmo -= AmmoToReload; // DENEME
+	SetTotalAmmo(TotalAmmo);
+
+	OnAmmoChange.Broadcast(CurrentAmmo, TotalAmmo	);
+	
+	// UE_LOG(LogTemp, Log, TEXT("Reloaded: Magazine: %d, Total Ammo: %d"), CurrentAmmo, RangedWeaponData->WeaponAmmoAttributes.AmmoCapacity);
+	UE_LOG(LogTemp, Log, TEXT("Reloaded: Magazine: %d, Total Ammo: %d"), CurrentAmmo, TotalAmmo); // DENEME
 	
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &ARangedWeapon::FinishReload, ReloadDuration, false);
 }

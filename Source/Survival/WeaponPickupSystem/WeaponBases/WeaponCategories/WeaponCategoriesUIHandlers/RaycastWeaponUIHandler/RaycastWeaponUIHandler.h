@@ -19,8 +19,6 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInitializeCallbacks, AWeaponBase*
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnUpdateHeatBar, float, Heat, float, MaxHeat);
 // DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateHeatBar, AWeaponBase*, Weapon);
 
-
-
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SURVIVAL_API URaycastWeaponUIHandler : public UWeaponUIHandlerBase
 {
@@ -28,8 +26,7 @@ class SURVIVAL_API URaycastWeaponUIHandler : public UWeaponUIHandlerBase
 
 public:
 	URaycastWeaponUIHandler();
-
-
+	
 	FOnShowUI ShowUI;
 	FOnHideUI HideUI;
 	FOnInitializeCallbacks OnInitializeCallbacks;

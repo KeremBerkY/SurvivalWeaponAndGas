@@ -5,6 +5,7 @@
 
 
 #include "Survival/WeaponPickupSystem/UserInterface/Crosshair/CrosshairBaseWidget.h"
+#include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/Interaction/InteractionWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/WeaponHeat/WeaponHeatBar.h"
 
@@ -27,7 +28,6 @@ void UGameHUDWidget::NativeConstruct()
 	{
 		CrosshairBase->SetVisibility(ESlateVisibility::Collapsed);
 	}
-	
 }
 
 

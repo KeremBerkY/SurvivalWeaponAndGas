@@ -4,13 +4,20 @@
 #include "LockonComponent.h"
 
 #include "CharacterCameraComponent.h"
+#include "CharacterWeaponComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/WeaponData.h"
 #include "Survival/WeaponPickupSystem/Enemy/EnemyBase.h"
 #include "Survival/WeaponPickupSystem/Enemy/EnemyComponents/LockedWidgetComponent.h"
 #include "Survival/WeaponPickupSystem/Enemy/EnemyComponents/SelectedWidgetComponent.h"
+#include "Survival/WeaponPickupSystem/UserInterface/MainHUDWidget.h"
+#include "Survival/WeaponPickupSystem/UserInterface/SurvivalSystemHUD.h"
+#include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponWidget.h"
+#include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponRangedWidgets/RaycastWeaponWidget/RaycastCurrentWeaponWidget.h"
+#include "Survival/WeaponPickupSystem/UserInterface/GameHUD/GameHUDWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/Lockon/FocusCrosshair/FocusCrosshair.h"
 
 
@@ -65,31 +72,12 @@ void ULockonComponent::AddFocusCrosshair() const
 void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	CheckCurrentWeaponAndCategory();
 	
-	if (!IsValid(CurrentTargetActor) && !PlayerCharacterPtr->GetCharacterCameraComponent()->IsAiming())
-	{
-		PerformSelect();
-	}
-
+	CheckAndPerformTargetSelection(DeltaTime);
 	
-	if (!IsValid(CurrentTargetActor) || !PlayerCharacterPtr.IsValid()) { return; }
-
-	const FVector CurrentLocation = PlayerCharacterPtr.Get()->GetActorLocation();
-	FVector TargetLocation = CurrentTargetActor->GetActorLocation();
-
-	TargetLocation.Z -= 125;
-	
-	const FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(CurrentLocation, TargetLocation);
-
-	if (ControllerPtr.IsValid())
-	{
-		const FRotator CurrentRotation = ControllerPtr.Get()->GetControlRotation();
-
-		constexpr float InterpSpeed = 5.0f;
-		const FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, InterpSpeed);
-
-		ControllerPtr->SetControlRotation(NewRotation);
-	}
+	RotateTowardsTarget(DeltaTime);
 	
 }
 
@@ -136,6 +124,7 @@ void ULockonComponent::StartLockon() // TODO: Bu rakip çok yakına gelirse çal
 			{
 				FocusCrosshair->HideFocusCrosshair();
 				EndSelect();
+				UpdateTargetState(ETargetWidgetState::GetOutFromTarget);
 				CurrentTargetActor->GetLockedWidgetComponent()->ShowLockWidget();
 			}
 			
@@ -195,14 +184,19 @@ void ULockonComponent::PerformSelect()
 				if (SelectedActor != HitEnemy)
 				{
 					EndSelect();
-					
+
 					SelectedActor = HitEnemy;
-					SelectedActor->GetSelectedWidgetComponent()->ShowSelectedWidget();
+					if (!PlayerCharacterPtr->GetCharacterCameraComponent()->IsAiming())
+					{
+						SelectedActor->GetSelectedWidgetComponent()->ShowSelectedWidget();
+					}
+					UpdateTargetState(ETargetWidgetState::TargetFound);
 				}
 			}
 			else if (SelectedActor)
 			{
 				EndSelect();
+				UpdateTargetState(ETargetWidgetState::NoTargetFound);
 				SelectedActor = nullptr;
 			}
 		}
@@ -221,6 +215,69 @@ void ULockonComponent::EndSelect() const
 	if (SelectedActor)
 	{
 		SelectedActor->GetSelectedWidgetComponent()->HideSelectedWidget();
+	}
+}
+
+void ULockonComponent::CheckCurrentWeaponAndCategory() const
+{
+	if (!PlayerCharacterPtr.IsValid()) {return;}
+	
+	const auto CurrentWeapon = PlayerCharacterPtr.Get()->GetCharacterWeaponComponent()->GetCurrentWeapon();
+	if (!CurrentWeapon || CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory != EWeaponCategory::Ewc_RaycastWeapons) {return;}
+}
+
+void ULockonComponent::CheckAndPerformTargetSelection(float DeltaTime)
+{
+	if (!IsValid(CurrentTargetActor)) // TODO:  && !PlayerCharacterPtr->GetCharacterCameraComponent()->IsAiming() Bunu düşün!
+	{
+		static float TimeSinceLastCheck = 0.0f;
+		constexpr float Interval = 0.25f;
+
+		TimeSinceLastCheck += DeltaTime;
+
+		if (TimeSinceLastCheck >= Interval)
+		{
+			TimeSinceLastCheck = 0.0f;
+			PerformSelect();
+		}
+	}
+}
+
+void ULockonComponent::UpdateTargetState(const ETargetWidgetState NewState) const
+{
+	switch (NewState)
+	{
+	case ETargetWidgetState::NoTargetFound:
+		PlayerCharacterPtr.Get()->GetSurvivalHUD()->GetMainHUDWidget()->GetGameHUDWidget()->GetCurrentWeaponWidget()->GetRaycastCurrentWeaponWidget()->SetWidgetState(ETargetWidgetState::NoTargetFound);
+		break;
+	case ETargetWidgetState::TargetFound:
+		PlayerCharacterPtr.Get()->GetSurvivalHUD()->GetMainHUDWidget()->GetGameHUDWidget()->GetCurrentWeaponWidget()->GetRaycastCurrentWeaponWidget()->SetWidgetState(ETargetWidgetState::TargetFound);
+		break;
+	case ETargetWidgetState::GetOutFromTarget:
+		PlayerCharacterPtr.Get()->GetSurvivalHUD()->GetMainHUDWidget()->GetGameHUDWidget()->GetCurrentWeaponWidget()->GetRaycastCurrentWeaponWidget()->SetWidgetState(ETargetWidgetState::GetOutFromTarget);
+		break;
+	}
+}
+
+void ULockonComponent::RotateTowardsTarget(float DeltaTime) const
+{
+	if (!IsValid(CurrentTargetActor) || !PlayerCharacterPtr.IsValid()) { return; }
+
+	const FVector CurrentLocation = PlayerCharacterPtr.Get()->GetActorLocation();
+	FVector TargetLocation = CurrentTargetActor->GetActorLocation();
+
+	TargetLocation.Z -= 125;
+	
+	const FRotator TargetRotation = UKismetMathLibrary::FindLookAtRotation(CurrentLocation, TargetLocation);
+
+	if (ControllerPtr.IsValid())
+	{
+		const FRotator CurrentRotation = ControllerPtr.Get()->GetControlRotation();
+
+		constexpr float InterpSpeed = 5.0f;
+		const FRotator NewRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, DeltaTime, InterpSpeed);
+
+		ControllerPtr->SetControlRotation(NewRotation);
 	}
 }
 

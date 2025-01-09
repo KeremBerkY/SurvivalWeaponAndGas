@@ -18,7 +18,7 @@ void UWeaponInventoryWidget::NativeConstruct()
 	
 	if (APawn* OwnerPawn = GetOwningPlayerPawn())
 	{
-		if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(OwnerPawn))
+		if (const ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(OwnerPawn))
 		{
 			if (UWeaponInventory* WeaponInventory = PlayerCharacter->GetWeaponInventory())
 			{
@@ -91,18 +91,6 @@ void UWeaponInventoryWidget::UpdateInventory(AWeaponBase* Weapon)
 		// SlotImage->SetBrushTintColor(FLinearColor::White); // Varsayılan beyaz renk
 	}
 
-	/* ESKİ HALİ */
-	// if (Weapon->GetWeaponAttributes().GetWeaponImage())
-	// {
-	// 	SlotImage->SetBrushFromTexture(Weapon->GetWeaponAttributes().GetWeaponImage());
-	// 	UE_LOG(LogTemp, Log, TEXT("Added new image to SlotIndex: %d for Weapon: %s"), SlotIndex, *Weapon->GetName());
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("Weapon image not found for Weapon: %s"), *Weapon->GetName());
-	// 	// SlotImage->SetBrushTintColor(FLinearColor::White); // Varsayılan beyaz renk
-	// }
-	
 }
 
 void UWeaponInventoryWidget::ResetSlotToDefault(EWeaponCategory WeaponCategory)

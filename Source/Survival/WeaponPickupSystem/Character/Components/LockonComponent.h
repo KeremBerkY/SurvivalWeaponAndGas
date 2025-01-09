@@ -6,10 +6,13 @@
 #include "Components/ActorComponent.h"
 #include "LockonComponent.generated.h"
 
+enum class ETargetWidgetState : uint8;
 class AEnemyBase;
 class UFocusCrosshair;
 class UCharacterMovementComponent;
 class ASurvivalCharacter;
+
+// DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetFound, ETargetWidgetState, NewState);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SURVIVAL_API ULockonComponent : public UActorComponent
@@ -17,6 +20,8 @@ class SURVIVAL_API ULockonComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	
+	
 	ULockonComponent();
 
 	FORCEINLINE bool IsLocked() const { return bIsLocked; }
@@ -44,6 +49,11 @@ protected:
 	void FocusCrosshairInitialize();
 
 private:
+	void CheckCurrentWeaponAndCategory() const;
+	void CheckAndPerformTargetSelection(float DeltaTime);
+	void UpdateTargetState(ETargetWidgetState NewState) const;
+	void RotateTowardsTarget(float DeltaTime) const;
+	
 	UPROPERTY()
 	UFocusCrosshair* FocusCrosshair;
 	

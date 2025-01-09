@@ -14,6 +14,7 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/WeaponAnimationsComponent/WeaponAnimationsComponent.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/WeaponEffectManagerComponent/RaycastEffectManagerComponent.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/WeaponTargetingComponent/WeaponTargetingComponent.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RangedWeapon.h"
 
 
 ARaycastWeapons::ARaycastWeapons()
@@ -90,8 +91,11 @@ void ARaycastWeapons::PerformFire()
 
 	CalculateTargetPoint();
 	
-	UpdateHeat.Broadcast();
 	DecreaseCurrentAmmo();
+	
+	UpdateHeat.Broadcast();
+
+	OnAmmoChange.Broadcast(GetCurrentAmmo(), GetTotalAmmo());
 }
 
 void ARaycastWeapons::CalculateTargetPoint()

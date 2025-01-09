@@ -8,7 +8,6 @@
 #include "CharacterCameraComponent.generated.h"
 
 class ASurvivalCharacter;
-
 class USpringArmComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAiming, ASurvivalCharacter*, Character);
