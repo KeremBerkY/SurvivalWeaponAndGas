@@ -14,16 +14,23 @@ FName UWeaponAttachmentManager::GetWeaponSocketName(UCharacterWeaponComponent* W
 	FName Socketname;
 	if (CurrentWeapon == nullptr)
 	{
-		Socketname = "WeaponSocket";
-		UE_LOG(LogTemp, Warning, TEXT("CurrentWeapon == nullptr: FName = WeaponSocket"));
-		WeaponComponent->UpdateWeaponState(Weapon);
-		UE_LOG(LogTemp, Warning, TEXT("UpdateCharacterState()"));
+		if (Weapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+		{
+			Socketname = "MeleeWeaponSocket";
+			UE_LOG(LogTemp, Warning, TEXT("CurrentWeapon == nullptr: FName = MeleeWeaponSocket"));
+			WeaponComponent->UpdateWeaponState(Weapon);
+		}
+		else
+		{
+			Socketname = "WeaponSocket";
+			UE_LOG(LogTemp, Warning, TEXT("CurrentWeapon == nullptr: FName = WeaponSocket"));
+			WeaponComponent->UpdateWeaponState(Weapon);
+		}
 
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("GetWeaponSocketName called!! Switch Case"));
-
 		
 		switch (Weapon->GetWeaponDataAsset()->WeaponAttributes.WeaponTypes)
 		{
@@ -71,9 +78,26 @@ void UWeaponAttachmentManager::AttachWeaponToSocket(AWeaponBase* NewWeapon, ASur
 		return;
 	}
 	
-	FName SocketName = (CustomSocketName != NAME_None)
-		? CustomSocketName
-		: GetWeaponSocketName(PlayerCharacter->GetCharacterWeaponComponent(), NewWeapon); // TODO: NewWeapon'u argüman olarak göndermelisin.
+	// FName SocketName = (CustomSocketName != NAME_None)
+	// 	? CustomSocketName
+	// 	: GetWeaponSocketName(PlayerCharacter->GetCharacterWeaponComponent(), NewWeapon);
+
+	FName SocketName;
+	if (CustomSocketName != EName::None)
+	{
+		if (NewWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+		{
+			SocketName = "MeleeWeaponSocket";
+		}
+		else
+		{
+			SocketName = CustomSocketName;
+		}
+	}
+	else
+	{
+		SocketName = GetWeaponSocketName(PlayerCharacter->GetCharacterWeaponComponent(), NewWeapon);
+	}
 	
 	UE_LOG(LogTemp, Warning, TEXT("AttachWeaponToSocket called! SocketName: %s"), *SocketName.ToString())
 	
@@ -87,7 +111,7 @@ void UWeaponAttachmentManager::AttachWeaponToSocket(AWeaponBase* NewWeapon, ASur
 		AttachMeshToSocket(PlayerCharacter->GetMesh(), SocketName, NewWeapon);
 		break;
 	case EWeaponCategory::Ewc_MeleeWeapons:
-		UE_LOG(LogTemp, Warning, TEXT("Melee Weapon added to socket"))
+		AttachMeshToSocket(PlayerCharacter->GetMesh(), SocketName, NewWeapon);
 		break;
 	case EWeaponCategory::Ewc_Max:
 		UE_LOG(LogTemp, Warning, TEXT("Cannot add to socket! Empty NewWeapon Category!!"))

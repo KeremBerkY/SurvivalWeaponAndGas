@@ -3,11 +3,13 @@
 
 #include "GASEnhancedInputComponent.h"
 
+#include "CharacterWeaponComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/WeaponData.h"
 
 
 UGASEnhancedInputComponent::UGASEnhancedInputComponent()
@@ -128,8 +130,26 @@ void UGASEnhancedInputComponent::HandleInteractActionPressed()
 
 void UGASEnhancedInputComponent::HandleFireActionPressed()
 {
-	UE_LOG(LogTemp, Log, TEXT("Fire Ability fired"));
-	SendInputActionToASC(true, EGASAbilityInputID::Fire);
+	if (const ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(GetOwner()))
+	{
+		if (const AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
+		{
+			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+			{
+				SendInputActionToASC(true, EGASAbilityInputID::Attack);
+				UE_LOG(LogTemp, Log, TEXT("Attack Ability fired"));
+			}
+			else
+			{
+				SendInputActionToASC(true, EGASAbilityInputID::Fire);
+				UE_LOG(LogTemp, Log, TEXT("Fire Ability fired"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Character has no weapon! input Action part"));
+		}
+	}
 }
 
 void UGASEnhancedInputComponent::HandleReloadActionPressed()
@@ -201,7 +221,26 @@ void UGASEnhancedInputComponent::HandleInteractActionReleased()
 
 void UGASEnhancedInputComponent::HandleFireActionReleased()
 {
-	SendInputActionToASC(false, EGASAbilityInputID::Fire);
+	if (const ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(GetOwner()))
+	{
+		if (const AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
+		{
+			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+			{
+				SendInputActionToASC(false, EGASAbilityInputID::Attack);
+				UE_LOG(LogTemp, Log, TEXT("Attack Ability fired"));
+			}
+			else
+			{
+				SendInputActionToASC(false, EGASAbilityInputID::Fire);
+				UE_LOG(LogTemp, Log, TEXT("Fire Ability fired"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Character has no weapon! input Action part"));
+		}
+	}
 }
 
 void UGASEnhancedInputComponent::HandleReloadActionReleased()

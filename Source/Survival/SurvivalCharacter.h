@@ -86,7 +86,6 @@ public:
 	/* HUD */
 	ASurvivalSystemHUD* GetSurvivalHUD() const;
 	
-
 	/* GAS */
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
@@ -98,7 +97,6 @@ public:
 	UPROPERTY()
 	ABasePickup* CurrentPickup; // TODO: TScriptInterface<IInteractionInterface>* CurrentPickup; Change with this!!! ??
 
-	
 protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
