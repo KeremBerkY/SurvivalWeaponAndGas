@@ -21,17 +21,18 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	FORCEINLINE UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent() const { return CharacterAbilitySystemComponent; }
-	FORCEINLINE UCharacterAttributeSet* GetAttributeSet() const { return CharacterAttributeSet; }
+	// FORCEINLINE UCharacterAttributeSet* GetAttributeSet() const { return CharacterAttributeSet; }
+	FORCEINLINE UCharacterAttributeSet* GetCharacterAttributes() const { return CharacterAttributes; }
 	
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void PossessedBy(AController* NewController) override;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem", meta = (AllowPrivateAccess = true))
 	UCharacterAbilitySystemComponent* CharacterAbilitySystemComponent;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AbilitySystem", meta = (AllowPrivateAccess = true))
-	UCharacterAttributeSet* CharacterAttributeSet;
+	UCharacterAttributeSet* CharacterAttributes;
 };

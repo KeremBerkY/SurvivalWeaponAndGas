@@ -23,5 +23,4 @@ void USurvivalEventTagAnimNotif::Notify(USkeletalMeshComponent* MeshComp, UAnimS
 FString USurvivalEventTagAnimNotif::GetNotifyName_Implementation() const
 {
 	return EventTag.GetTagName().ToString();
-
 }

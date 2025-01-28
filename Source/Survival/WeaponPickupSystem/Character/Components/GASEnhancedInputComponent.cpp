@@ -137,12 +137,12 @@ void UGASEnhancedInputComponent::HandleFireActionPressed()
 			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
 			{
 				SendInputActionToASC(true, EGASAbilityInputID::Attack);
-				UE_LOG(LogTemp, Log, TEXT("Attack Ability fired"));
+				UE_LOG(LogTemp, Log, TEXT("Attack Ability Pressed"));
 			}
 			else
 			{
 				SendInputActionToASC(true, EGASAbilityInputID::Fire);
-				UE_LOG(LogTemp, Log, TEXT("Fire Ability fired"));
+				UE_LOG(LogTemp, Log, TEXT("Fire Ability Pressed"));
 			}
 		}
 		else
@@ -228,12 +228,12 @@ void UGASEnhancedInputComponent::HandleFireActionReleased()
 			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
 			{
 				SendInputActionToASC(false, EGASAbilityInputID::Attack);
-				UE_LOG(LogTemp, Log, TEXT("Attack Ability fired"));
+				UE_LOG(LogTemp, Log, TEXT("Attack Ability Released"));
 			}
 			else
 			{
 				SendInputActionToASC(false, EGASAbilityInputID::Fire);
-				UE_LOG(LogTemp, Log, TEXT("Fire Ability fired"));
+				UE_LOG(LogTemp, Log, TEXT("Fire Ability Released"));
 			}
 		}
 		else

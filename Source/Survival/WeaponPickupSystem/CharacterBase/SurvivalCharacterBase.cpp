@@ -4,14 +4,15 @@
 #include "SurvivalCharacterBase.h"
 
 #include "Survival/WeaponPickupSystem/Character/GAS/CharacterAbilitySystemComponent.h"
+#include "Survival/WeaponPickupSystem/Character/GAS/Attributes/CharacterAttributeSet.h"
 
 
 ASurvivalCharacterBase::ASurvivalCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	// AbilitySystemComponent = CreateDefaultSubobject<UCharacterAbilitySystemComponent>("AbilitySystemComponent");
-	
+	CharacterAbilitySystemComponent = CreateDefaultSubobject<UCharacterAbilitySystemComponent>("AbilitySystemComponent");
+	CharacterAttributes = CreateDefaultSubobject<UCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
 
 }
 
@@ -39,5 +40,4 @@ void ASurvivalCharacterBase::PossessedBy(AController* NewController)
 		CharacterAbilitySystemComponent->InitAbilityActorInfo(this, this);
 	}
 }
-
 

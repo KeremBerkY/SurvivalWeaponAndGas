@@ -3,6 +3,7 @@
 
 #include "SurvivalAbilitySystemLibrary.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/SurvivalGameMode.h"
@@ -17,60 +18,36 @@ UCharacterClassInfo* USurvivalAbilitySystemLibrary::GetCharacterClassDefaultInfo
 	return nullptr;
 }
 
-// UCharacterAbilitySystemComponent* USurvivalAbilitySystemLibrary::GetCharacterAbilitySystemComponent(const AActor* Actor)
-// {
-// 	
-// 		if (!Actor)
-// 		{
-// 			UE_LOG(LogTemp, Warning, TEXT("GetCharacterAbilitySystemComponent: Actor is null!"));
-// 			return nullptr;
-// 		}
-//
-// 		// Check if Actor is a SurvivalCharacter
-// 		if (!Actor->IsA(ASurvivalCharacter::StaticClass()))
-// 		{
-// 			UE_LOG(LogTemp, Warning, TEXT("GetCharacterAbilitySystemComponent: Actor is not a SurvivalCharacter."));
-// 			return nullptr;
-// 		}
-//
-// 		const ACharacter* Character = Cast<ACharacter>(Actor);
-// 		if (!Character)
-// 		{
-// 			UE_LOG(LogTemp, Warning, TEXT("GetCharacterAbilitySystemComponent: Failed to cast Actor to ACharacter."));
-// 			return nullptr;
-// 		}
-//
-// 		// Find the Ability System Component
-// 		UActorComponent* Component = Character->GetComponentByClass(UCharacterAbilitySystemComponent::StaticClass());
-// 		if (!Component)
-// 		{
-// 			UE_LOG(LogTemp, Warning, TEXT("GetCharacterAbilitySystemComponent: AbilitySystemComponent not found."));
-// 			return nullptr;
-// 		}
-//
-// 		// Cast to UCharacterAbilitySystemComponent
-// 		UCharacterAbilitySystemComponent* AbilitySystemComponent = Cast<UCharacterAbilitySystemComponent>(Component);
-// 		if (!AbilitySystemComponent)
-// 		{
-// 			UE_LOG(LogTemp, Warning, TEXT("GetCharacterAbilitySystemComponent: Found component is not a UCharacterAbilitySystemComponent."));
-// 			return nullptr;
-// 		}
-//
-// 		return AbilitySystemComponent;
-// 	
-//
-// 	// if (!Actor)
-// 	// {
-// 	// 	UE_LOG(LogTemp, Warning, TEXT("GetCharacterAbilitySystemComponent: Actor is null!"));
-// 	// 	return nullptr;
-// 	// }
-// 	//
-// 	// // Oyuncunun AbilitySystemComponent'ini al
-// 	// if (const ACharacter* Character = Cast<ASurvivalCharacter>(Actor))
-// 	// {
-// 	// 	return Cast<UCharacterAbilitySystemComponent>(Character->GetComponentByClass(UCharacterAbilitySystemComponent::StaticClass()));
-// 	// }
-// 	//
-// 	// UE_LOG(LogTemp, Warning, TEXT("GetCharacterAbilitySystemComponent: Actor is not a Character or does not have UCharacterAbilitySystemComponent."));
-// 	// return nullptr;
-// }
+UCharacterAbilitySystemComponent* USurvivalAbilitySystemLibrary::NativeGetWarriorASCFromActor(AActor* InActor)
+{
+	check(InActor);
+
+	return CastChecked<UCharacterAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InActor));
+}
+
+void USurvivalAbilitySystemLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTag TagToAdd)
+{
+	UCharacterAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
+
+	if (!ASC->HasMatchingGameplayTag(TagToAdd))
+	{
+		ASC->AddLooseGameplayTag(TagToAdd);
+	}
+}
+
+void USurvivalAbilitySystemLibrary::RemoveGameplayTagFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove)
+{
+	UCharacterAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
+
+	if (ASC->HasMatchingGameplayTag(TagToRemove))
+	{
+		ASC->RemoveLooseGameplayTag(TagToRemove);
+	}
+}
+
+bool USurvivalAbilitySystemLibrary::NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck)
+{
+	UCharacterAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
+
+	return ASC->HasMatchingGameplayTag(TagToCheck);
+}

@@ -12,7 +12,9 @@
  * 
  */
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAbilityEndedDelegate,  UCharacterGameplayAbility*, InAbility, bool, bIsCancelled);
+class ASurvivalCharacter;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAbilityEndedDelegate, UCharacterGameplayAbility*, InAbility, bool,
+                                             bIsCancelled);
 
 UCLASS()
 class SURVIVAL_API UCharacterGameplayAbility : public UGameplayAbility
@@ -39,6 +41,7 @@ public:
 	virtual void OnAvatarSet(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec) override;
 	
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+	ASurvivalCharacter* GetPlayerCharacterFromCharacterGameplayAbility();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Cooldown")
@@ -52,6 +55,8 @@ protected:
 
 	UPROPERTY(Transient)
 	FGameplayTagContainer TempCooldownTags;
+
+	TWeakObjectPtr<ASurvivalCharacter> CachedSurvivalCharacter;
 
 	
 	virtual const FGameplayTagContainer* GetCooldownTags() const override;

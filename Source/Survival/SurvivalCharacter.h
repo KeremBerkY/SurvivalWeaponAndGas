@@ -115,10 +115,10 @@ protected:
 private:
 
 //GAS-----
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UCharacterAbilitySystemComponent> CharacterAbilitySystemComponent;
 	
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UCharacterAttributeSet* CharacterAttributes;
 
 	UPROPERTY(EditAnywhere, Category = "Custom values | Character Info")

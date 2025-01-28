@@ -91,4 +91,12 @@ void UCharacterGameplayAbility::EndAbility(const FGameplayAbilitySpecHandle Hand
 	OnAbilityEnded.Broadcast(this, bWasCancelled);
 }
 
+ASurvivalCharacter* UCharacterGameplayAbility::GetPlayerCharacterFromCharacterGameplayAbility()
+{
+	if (!CachedSurvivalCharacter.IsValid())
+	{
+		CachedSurvivalCharacter = Cast<ASurvivalCharacter>(CurrentActorInfo->AvatarActor);
+	}
 
+	return CachedSurvivalCharacter.IsValid() ? CachedSurvivalCharacter.Get() : nullptr;
+}
