@@ -27,6 +27,7 @@ ULockonComponent::ULockonComponent()
 
 	bIsLocked = false;
 	CurrentTargetActor = nullptr;
+	bIsNotRaycast = false;
 }
 
 void ULockonComponent::BeginPlay()
@@ -63,7 +64,7 @@ void ULockonComponent::RemoveFocusCrosshair() const
 
 void ULockonComponent::AddFocusCrosshair() const
 {
-	if (FocusCrosshair)
+	if (FocusCrosshair && !bIsLocked)
 	{
 		FocusCrosshair->ShowFocusCrosshair();
 	}
@@ -74,6 +75,16 @@ void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	CheckCurrentWeaponAndCategory();
+
+	if (!bIsNotRaycast)
+	{
+		AddFocusCrosshair();
+	}
+	else
+	{
+		RemoveFocusCrosshair();
+		return;
+	}
 	
 	CheckAndPerformTargetSelection(DeltaTime);
 	
@@ -122,7 +133,8 @@ void ULockonComponent::StartLockon() // TODO: Bu rakip çok yakına gelirse çal
 			
 			if (CurrentTargetActor)
 			{
-				FocusCrosshair->HideFocusCrosshair();
+				// FocusCrosshair->HideFocusCrosshair();
+				RemoveFocusCrosshair();
 				EndSelect();
 				UpdateTargetState(ETargetWidgetState::GetOutFromTarget);
 				CurrentTargetActor->GetLockedWidgetComponent()->ShowLockWidget();
@@ -218,12 +230,21 @@ void ULockonComponent::EndSelect() const
 	}
 }
 
-void ULockonComponent::CheckCurrentWeaponAndCategory() const
+void ULockonComponent::CheckCurrentWeaponAndCategory()
 {
 	if (!PlayerCharacterPtr.IsValid()) {return;}
-	
+
 	const auto CurrentWeapon = PlayerCharacterPtr.Get()->GetCharacterWeaponComponent()->GetCurrentWeapon();
-	if (!CurrentWeapon || CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory != EWeaponCategory::Ewc_RaycastWeapons) {return;}
+	
+	if (!CurrentWeapon || CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory != EWeaponCategory::Ewc_RaycastWeapons)
+	{
+		bIsNotRaycast = true;
+	}
+	else
+	{
+		bIsNotRaycast = false;
+	}
+	
 }
 
 void ULockonComponent::CheckAndPerformTargetSelection(float DeltaTime)

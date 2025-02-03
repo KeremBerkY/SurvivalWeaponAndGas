@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "WeaponPickupSystem/Character/CharacterTypes.h"
 #include "WeaponPickupSystem/Character/GAS/CharacterAbilitySystemComponent.h"
+#include "WeaponPickupSystem/CharacterBase/SurvivalCharacterBase.h"
 
 
 #include "SurvivalCharacter.generated.h"
@@ -39,7 +40,7 @@ struct FGameplayAbilitySpecHandle;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class ASurvivalCharacter : public ACharacter
+class ASurvivalCharacter : public ASurvivalCharacterBase
 {
 	GENERATED_BODY()
 
@@ -70,7 +71,7 @@ public:
 	// Character Weapon Component
 	FORCEINLINE UCharacterWeaponComponent* GetCharacterWeaponComponent() const { return CharacterWeaponComponent; }
 	// Ability System Component
-	FORCEINLINE UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent() const { return  CharacterAbilitySystemComponent; }
+	// FORCEINLINE UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent() const { return  CharacterAbilitySystemComponent; }
 	// Current Pickup
 	FORCEINLINE ABasePickup* GetCurrentPickup() const { return CurrentPickup; } // TODO: Pickup Component'a al!		
 	FORCEINLINE void SetCurrentPickup(ABasePickup* NewPickup) { CurrentPickup = NewPickup; } // TODO: Pickup Component'a al!
@@ -115,11 +116,11 @@ protected:
 private:
 
 //GAS-----
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UCharacterAbilitySystemComponent> CharacterAbilitySystemComponent;
-	
-	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	UCharacterAttributeSet* CharacterAttributes;
+	// UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	// TObjectPtr<UCharacterAbilitySystemComponent> CharacterAbilitySystemComponent;
+	//
+	// UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	// UCharacterAttributeSet* CharacterAttributes;
 
 	UPROPERTY(EditAnywhere, Category = "Custom values | Character Info")
 	FGameplayTag CharacterTag; // Represents Character class (Tags like; Warrior, Mage, Archer...)

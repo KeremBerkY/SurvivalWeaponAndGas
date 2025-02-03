@@ -196,8 +196,27 @@ void UGASEnhancedInputComponent::HandleSprintActionHold()
 
 void UGASEnhancedInputComponent::HandleAimingButtonPressed()
 {
-	UE_LOG(LogTemp, Log, TEXT("Aiming"));
-	SendInputActionToASC(true, EGASAbilityInputID::Aiming);
+	if (const ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(GetOwner()))
+	{
+		if (const AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
+		{
+			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+			{
+				SendInputActionToASC(true, EGASAbilityInputID::HeavyAttack);
+				UE_LOG(LogTemp, Log, TEXT("Heavy Attack Ability Pressed"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Log, TEXT("Aiming"));
+				SendInputActionToASC(true, EGASAbilityInputID::Aiming);
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Character has no weapon! input Action part"));
+		}
+	}
+
 }
 
 void UGASEnhancedInputComponent::HandleLockonButtonPressed()
@@ -283,8 +302,27 @@ void UGASEnhancedInputComponent::HandleSprintActionReleased()
 
 void UGASEnhancedInputComponent::HandleAimingButtonReleased()
 {
-	SendInputActionToASC(false, EGASAbilityInputID::Aiming);
-	UE_LOG(LogTemp, Log, TEXT("Aiming Released"));
+	if (const ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(GetOwner()))
+	{
+		if (const AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
+		{
+			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+			{
+				SendInputActionToASC(false, EGASAbilityInputID::HeavyAttack);
+				UE_LOG(LogTemp, Log, TEXT("Heavy Attack Ability Released"));
+			}
+			else
+			{
+				SendInputActionToASC(false, EGASAbilityInputID::Aiming);
+				UE_LOG(LogTemp, Log, TEXT("Aiming Released"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("Character has no weapon! input Action part"));
+		}
+	}
+
 }
 
 void UGASEnhancedInputComponent::HandleLockonButtonReleased()

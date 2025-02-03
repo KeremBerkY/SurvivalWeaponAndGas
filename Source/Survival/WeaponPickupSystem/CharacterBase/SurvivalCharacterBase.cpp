@@ -13,7 +13,6 @@ ASurvivalCharacterBase::ASurvivalCharacterBase()
 
 	CharacterAbilitySystemComponent = CreateDefaultSubobject<UCharacterAbilitySystemComponent>("AbilitySystemComponent");
 	CharacterAttributes = CreateDefaultSubobject<UCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
-
 }
 
 UAbilitySystemComponent* ASurvivalCharacterBase::GetAbilitySystemComponent() const

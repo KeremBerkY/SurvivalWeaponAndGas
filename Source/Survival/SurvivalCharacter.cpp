@@ -99,24 +99,39 @@ void ASurvivalCharacter::OnRep_PlayerState()
 	//InitAbilityActorInfo();
 }
 	
+// void ASurvivalCharacter::InitAbilityActorInfo()
+// {
+// 	if (ACharacterPlayerState* CharacterPlayerState = GetPlayerState<ACharacterPlayerState>())
+// 	{
+// 		CharacterAbilitySystemComponent = CharacterPlayerState->GetCharacterAbilitySystemComponent();
+// 		CharacterAttributes = CharacterPlayerState->GetCharacterAttributes();
+//
+// 		if (IsValid(CharacterAbilitySystemComponent))
+// 		{
+// 			CharacterAbilitySystemComponent->InitAbilityActorInfo(CharacterPlayerState, this);
+//
+// 			// Class Info is coming from the GameMode you only want to this one on the Server
+// 			if (HasAuthority())
+// 			{
+// 				InitClassDefaults();
+// 			}
+// 		}
+// 	}
+// }
+
 void ASurvivalCharacter::InitAbilityActorInfo()
 {
-	if (ACharacterPlayerState* CharacterPlayerState = GetPlayerState<ACharacterPlayerState>())
+	if (IsValid(CharacterAbilitySystemComponent))
 	{
-		CharacterAbilitySystemComponent = CharacterPlayerState->GetCharacterAbilitySystemComponent();
-		CharacterAttributes = CharacterPlayerState->GetCharacterAttributes();
+		CharacterAbilitySystemComponent->InitAbilityActorInfo(this, this);
 
-		if (IsValid(CharacterAbilitySystemComponent))
+		// Class Info is coming from the GameMode you only want to this one on the Server
+		if (HasAuthority())
 		{
-			CharacterAbilitySystemComponent->InitAbilityActorInfo(CharacterPlayerState, this);
-
-			// Class Info is coming from the GameMode you only want to this one on the Server
-			if (HasAuthority())
-			{
-				InitClassDefaults();
-			}
+			InitClassDefaults();
 		}
 	}
+	
 }
 
 void ASurvivalCharacter::InitClassDefaults()

@@ -49,7 +49,7 @@ protected:
 	void FocusCrosshairInitialize();
 
 private:
-	void CheckCurrentWeaponAndCategory() const;
+	void CheckCurrentWeaponAndCategory();
 	void CheckAndPerformTargetSelection(float DeltaTime);
 	void UpdateTargetState(ETargetWidgetState NewState) const;
 	void RotateTowardsTarget(float DeltaTime) const;
@@ -71,4 +71,5 @@ private:
 
 	bool bIsLocked;
 
+	bool bIsNotRaycast;
 };
