@@ -3,13 +3,17 @@
 
 #include "GASEnhancedInputComponent.h"
 
+#include "CharacterCameraComponent.h"
 #include "CharacterWeaponComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "LockonComponent.h"
+#include "WeaponInventory.h"
 
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/WeaponData.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 
 
 UGASEnhancedInputComponent::UGASEnhancedInputComponent()
@@ -130,19 +134,34 @@ void UGASEnhancedInputComponent::HandleInteractActionPressed()
 
 void UGASEnhancedInputComponent::HandleFireActionPressed()
 {
-	if (const ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(GetOwner()))
+	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(GetOwner()))
 	{
-		if (const AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
+		if (AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
 		{
-			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_RaycastWeapons &&
+				PlayerCharacter->GetCharacterCameraComponent()->IsAiming() || PlayerCharacter->GetLockonComponent()->IsLocked())
 			{
-				SendInputActionToASC(true, EGASAbilityInputID::Attack);
-				UE_LOG(LogTemp, Log, TEXT("Attack Ability Pressed"));
+				SendInputActionToASC(true, EGASAbilityInputID::Fire);
 			}
 			else
 			{
-				SendInputActionToASC(true, EGASAbilityInputID::Fire);
-				UE_LOG(LogTemp, Log, TEXT("Fire Ability Pressed"));
+				if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory != EWeaponCategory::Ewc_MeleeWeapons &&
+					PlayerCharacter->GetWeaponInventory()->HasWeaponInCategory(EWeaponCategory::Ewc_MeleeWeapons))
+				{
+					PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CurrentWeapon, PlayerCharacter, EWeaponCategory::Ewc_MeleeWeapons);
+				}
+				else
+				{
+					if (!PlayerCharacter->GetWeaponInventory()->HasWeaponInCategory(EWeaponCategory::Ewc_MeleeWeapons) &&
+						CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory != EWeaponCategory::Ewc_MeleeWeapons)
+					{
+						UE_LOG(LogTemp, Log, TEXT("Character should aim or focus for fire!"));
+					}
+					else
+					{
+						SendInputActionToASC(true, EGASAbilityInputID::Attack);
+					}
+				}
 			}
 		}
 		else
@@ -244,15 +263,14 @@ void UGASEnhancedInputComponent::HandleFireActionReleased()
 	{
 		if (const AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
 		{
-			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_RaycastWeapons &&
+				PlayerCharacter->GetCharacterCameraComponent()->IsAiming() || PlayerCharacter->GetLockonComponent()->IsLocked())
 			{
-				SendInputActionToASC(false, EGASAbilityInputID::Attack);
-				UE_LOG(LogTemp, Log, TEXT("Attack Ability Released"));
+				SendInputActionToASC(false, EGASAbilityInputID::Fire);
 			}
 			else
 			{
-				SendInputActionToASC(false, EGASAbilityInputID::Fire);
-				UE_LOG(LogTemp, Log, TEXT("Fire Ability Released"));
+				SendInputActionToASC(false, EGASAbilityInputID::Attack);
 			}
 		}
 		else

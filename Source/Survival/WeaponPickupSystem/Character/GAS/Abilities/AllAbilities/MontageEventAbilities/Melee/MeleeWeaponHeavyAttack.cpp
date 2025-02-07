@@ -4,6 +4,7 @@
 #include "MeleeWeaponHeavyAttack.h"
 
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/Libraries/SurvivalAbilitySystemLibrary.h"
 
 UMeleeWeaponHeavyAttack::UMeleeWeaponHeavyAttack()
 {
@@ -25,6 +26,10 @@ void UMeleeWeaponHeavyAttack::ActivateAbility(const FGameplayAbilitySpecHandle H
 	{
 		ClearComboResetTimer();
 
+		if (USurvivalAbilitySystemLibrary::NativeDoesActorHaveTag(GetPlayerCharacterFromCharacterGameplayAbility(), FGameplayTag::RequestGameplayTag(FName("Character.Player.Status.JumpToFinisher"))))
+		{
+			CurrentHeavyAttackComboCount = AttackMontagesMap.Num();
+		}
 		UsedComboCount = CurrentHeavyAttackComboCount;
 		
 		HandleComboAndSetMontage();
@@ -52,10 +57,10 @@ void UMeleeWeaponHeavyAttack::HandleComboAndSetMontage()
 	}
 	else
 	{
-		// if (CurrentLightAttackComboCount == AttackMontagesMap.Num() - 1)
-		// {
-		// 	USurvivalAbilitySystemLibrary::AddGameplayTagToActorIfNone(GetPlayerCharacterFromCharacterGameplayAbility(), FGameplayTag::RequestGameplayTag(FName("Player.Status.JumpToFinisher")));
-		// }
+		if (CurrentHeavyAttackComboCount == AttackMontagesMap.Num() - 1)
+		{
+			USurvivalAbilitySystemLibrary::AddGameplayTagToActorIfNone(GetPlayerCharacterFromCharacterGameplayAbility(), FGameplayTag::RequestGameplayTag(FName("Character.Player.Status.JumpToFinisher")));
+		}
 		CurrentHeavyAttackComboCount++;
 	}
 }
@@ -63,6 +68,7 @@ void UMeleeWeaponHeavyAttack::HandleComboAndSetMontage()
 void UMeleeWeaponHeavyAttack::ResetAttackComboCount()
 {
 	CurrentHeavyAttackComboCount = 1;
+	USurvivalAbilitySystemLibrary::RemoveGameplayTagFromActorIfFound(GetPlayerCharacterFromCharacterGameplayAbility(), FGameplayTag::RequestGameplayTag(FName("Character.Player.Status.JumpToFinisher")));
 }
 
 void UMeleeWeaponHeavyAttack::SetComboResetTimer()

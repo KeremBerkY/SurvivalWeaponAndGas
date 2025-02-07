@@ -6,6 +6,7 @@
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/WeaponInventory.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
+#include "Survival/WeaponPickupSystem/Character/Components/LockonComponent.h"
 
 void UProjectileWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -15,7 +16,7 @@ void UProjectileWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecH
 	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(ActorInfo->AvatarActor.Get()))
 	{
 		const UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
-		if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon())
+		if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
 		{
 			PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), PlayerCharacter, EWeaponCategory::Ewc_ProjectileWeapons);
 			PlayerCharacter->GetCharacterWeaponComponent()->UpdateLastSwitchTime();

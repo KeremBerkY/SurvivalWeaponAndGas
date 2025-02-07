@@ -5,6 +5,7 @@
 
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/LockonComponent.h"
+#include "Survival/WeaponPickupSystem/CharacterBase/SurvivalEnemyCharacter.h"
 #include "Survival/WeaponPickupSystem/Enemy/EnemyBase.h"
 
 
@@ -16,7 +17,8 @@ UWeaponTargetingComponent::UWeaponTargetingComponent()
 
 FVector UWeaponTargetingComponent::CalculateTargetLocation(const ASurvivalCharacter* PlayerCharacter) const // TODO: GetCurrentTargetActor() zaten enemy. Castleri kaldır!!
 {
-	if (const AEnemyBase* Enemy = PlayerCharacter->GetLockonComponent()->GetCurrentTargetActor())
+	// if (const AEnemyBase* Enemy = PlayerCharacter->GetLockonComponent()->GetCurrentTargetActor())
+	if (const ASurvivalEnemyCharacter* Enemy = PlayerCharacter->GetLockonComponent()->GetCurrentTargetActor())
 	{
 		const FVector BoneLocation = GetRandomBoneLocation(Enemy);
 		if (!BoneLocation.IsZero())
@@ -36,7 +38,8 @@ FVector UWeaponTargetingComponent::CalculateTargetLocation(const ASurvivalCharac
 	return FVector::ZeroVector;
 }
 
-FVector UWeaponTargetingComponent::GetRandomBoneLocation(const AEnemyBase* Enemy) const
+// FVector UWeaponTargetingComponent::GetRandomBoneLocation(const AEnemyBase* Enemy) const
+FVector UWeaponTargetingComponent::GetRandomBoneLocation(const ASurvivalEnemyCharacter* Enemy) const
 {
 	if (!Enemy || !Enemy->GetMesh())
 	{

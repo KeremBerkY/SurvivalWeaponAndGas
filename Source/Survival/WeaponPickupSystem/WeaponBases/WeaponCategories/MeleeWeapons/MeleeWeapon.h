@@ -6,6 +6,8 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "MeleeWeapon.generated.h"
 
+class UBoxComponent;
+
 UCLASS()
 class SURVIVAL_API AMeleeWeapon : public AWeaponBase
 {
@@ -17,4 +19,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapons")
+	UBoxComponent* WeaponCollisionBox;
 };

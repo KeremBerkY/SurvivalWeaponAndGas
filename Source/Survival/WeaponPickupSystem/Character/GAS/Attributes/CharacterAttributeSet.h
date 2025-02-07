@@ -52,6 +52,14 @@ public:
 	FGameplayAttributeData SprintSpeed;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, SprintSpeed);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_AttackPower, Category = "Attributes | Attack")
+	FGameplayAttributeData AttackPower;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, AttackPower);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_DefensePower, Category = "Attributes | Defense")
+	FGameplayAttributeData DefensePower;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, DefensePower);
+
 protected:
 	UFUNCTION()
 	virtual void OnRep_Health(const FGameplayAttributeData& OldHealth);
@@ -76,6 +84,13 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_SprintSpeed(const FGameplayAttributeData& OldSprintSpeed);
+
+	UFUNCTION()
+	virtual void OnRep_AttackPower(const FGameplayAttributeData& OldAttackPower);
+	
+	UFUNCTION()
+	virtual void OnRep_DefensePower(const FGameplayAttributeData& OldDefensePower);
+	
 
 	// Attribute değişikliği öncesinde çağrılır
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;

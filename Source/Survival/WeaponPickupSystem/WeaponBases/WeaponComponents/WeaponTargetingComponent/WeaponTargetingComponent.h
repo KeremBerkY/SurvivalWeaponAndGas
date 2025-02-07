@@ -7,11 +7,12 @@
 #include "WeaponTargetingComponent.generated.h"
 
 
+class ASurvivalEnemyCharacter;
 class AEnemyBase;
 class ASurvivalCharacter;
 
 USTRUCT(BlueprintType)
-struct FTargetBoneNames
+struct FTargetBoneNames // TODO: Kemiklerin altına AddSocket diyerek silah koyduğun gibi. Atış adresleri koy ve her Enemyde bulunsun. Bu sayede her Enemy'e kitlendiğinde ateş edebileceksin.
 {
 	GENERATED_USTRUCT_BODY()
 
@@ -56,6 +57,7 @@ public:
 	FVector CalculateTargetLocation(const ASurvivalCharacter* PlayerCharacter) const;
 
 private:
-	FVector GetRandomBoneLocation(const AEnemyBase* Enemy) const;
+	// FVector GetRandomBoneLocation(const AEnemyBase* Enemy) const;
+	FVector GetRandomBoneLocation(const ASurvivalEnemyCharacter* Enemy) const;
 	
 };

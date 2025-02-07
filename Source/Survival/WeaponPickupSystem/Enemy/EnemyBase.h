@@ -9,6 +9,10 @@
 class USelectedWidgetComponent;
 class ULockedWidgetComponent;
 
+/*
+ *  TEST AND TRIAL CLASS!!!
+ */
+
 UCLASS()
 class SURVIVAL_API AEnemyBase : public ASurvivalCharacterBase
 {

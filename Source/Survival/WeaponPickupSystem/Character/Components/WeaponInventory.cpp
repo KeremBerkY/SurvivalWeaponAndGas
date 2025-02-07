@@ -197,7 +197,6 @@ void UWeaponInventory::AddWeaponToSlot(AWeaponBase* NewWeapon, ASurvivalCharacte
 	if (ExistingWeaponPtr)
 	{
 		AWeaponBase* ExistingWeapon = *ExistingWeaponPtr;
-
 		if (ExistingWeapon)
 		{
 			// Drop if there is a weapon from the same category
@@ -221,6 +220,25 @@ int32 UWeaponInventory::GetSlotIndex(EWeaponCategory Category) const
 {
 	const int32* SlotIndexPtr = CategoryToSlotMap.Find(Category);
 	return SlotIndexPtr ? *SlotIndexPtr : INDEX_NONE;
+}
+
+bool UWeaponInventory::HasWeaponInCategory(EWeaponCategory DesiredCategory) const
+{
+	// Öncelikle kategori için slot indeksini alıyoruz
+	const int32 DesiredSlotIndex = GetSlotIndex(DesiredCategory);
+
+	// Eğer slot bulunamazsa veya geçersizse, false döndür
+	if (DesiredSlotIndex == INDEX_NONE)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Invalid Desired Weapon Category: %d"), static_cast<int32>(DesiredCategory));
+		return false;
+	}
+
+	// Slot indeksine karşılık gelen WeaponSlots kontrolü
+	AWeaponBase* const* BackWeaponPtr = WeaponSlots.Find(DesiredSlotIndex);
+
+	// Eğer pointer doluysa ve geçerli bir silah işaret ediyorsa, true döndür
+	return BackWeaponPtr && *BackWeaponPtr != nullptr;
 }
 
 void UWeaponInventory::RemoveFromSlot(AWeaponBase* WeaponToRemove)

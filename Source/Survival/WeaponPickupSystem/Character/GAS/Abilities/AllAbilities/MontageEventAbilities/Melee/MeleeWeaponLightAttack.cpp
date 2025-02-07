@@ -53,10 +53,10 @@ void UMeleeWeaponLightAttack::HandleComboAndSetMontage()
 	}
 	else
 	{
-		// if (CurrentLightAttackComboCount == AttackMontagesMap.Num() - 1)
-		// {
-		// 	USurvivalAbilitySystemLibrary::AddGameplayTagToActorIfNone(GetPlayerCharacterFromCharacterGameplayAbility(), FGameplayTag::RequestGameplayTag(FName("Player.Status.JumpToFinisher")));
-		// }
+		if (CurrentLightAttackComboCount == AttackMontagesMap.Num() - 1)
+		{
+			USurvivalAbilitySystemLibrary::AddGameplayTagToActorIfNone(GetPlayerCharacterFromCharacterGameplayAbility(), FGameplayTag::RequestGameplayTag(FName("Character.Player.Status.JumpToFinisher")));
+		}
 		CurrentLightAttackComboCount++;
 	}
 }
@@ -65,7 +65,7 @@ void UMeleeWeaponLightAttack::ResetAttackComboCount()
 {
 	CurrentLightAttackComboCount = 1;
 
-	// USurvivalAbilitySystemLibrary::RemoveGameplayTagFromActorIfFound(GetPlayerCharacterFromCharacterGameplayAbility(), FGameplayTag::RequestGameplayTag(FName("Player.Status.JumpToFinisher")));
+	USurvivalAbilitySystemLibrary::RemoveGameplayTagFromActorIfFound(GetPlayerCharacterFromCharacterGameplayAbility(), FGameplayTag::RequestGameplayTag(FName("Character.Player.Status.JumpToFinisher")));
 }
 
 void UMeleeWeaponLightAttack::SetComboResetTimer()

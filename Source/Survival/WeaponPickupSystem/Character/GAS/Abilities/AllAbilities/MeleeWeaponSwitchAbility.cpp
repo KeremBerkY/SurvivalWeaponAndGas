@@ -5,6 +5,7 @@
 
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
+#include "Survival/WeaponPickupSystem/Character/Components/LockonComponent.h"
 #include "Survival/WeaponPickupSystem/Character/Components/WeaponInventory.h"
 
 void UMeleeWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -14,7 +15,7 @@ void UMeleeWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(ActorInfo->AvatarActor.Get()))
 	{
 		const UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
-		if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon())
+		if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
 		{
 			PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), PlayerCharacter, EWeaponCategory::Ewc_MeleeWeapons);
 			PlayerCharacter->GetCharacterWeaponComponent()->UpdateLastSwitchTime();

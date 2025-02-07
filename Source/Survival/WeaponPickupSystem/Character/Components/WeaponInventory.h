@@ -37,6 +37,8 @@ public:
 	void RemoveFromSlot(AWeaponBase* WeaponToRemove);
 
 	int32 GetSlotIndex(EWeaponCategory Category) const;
+
+	bool HasWeaponInCategory(EWeaponCategory DesiredCategory) const;
 	
 protected:
 	virtual void BeginPlay() override;

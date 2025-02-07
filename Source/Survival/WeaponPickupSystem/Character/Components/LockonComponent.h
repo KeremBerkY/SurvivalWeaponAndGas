@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "LockonComponent.generated.h"
 
+class ASurvivalEnemyCharacter;
 enum class ETargetWidgetState : uint8;
 class AEnemyBase;
 class UFocusCrosshair;
@@ -26,7 +27,8 @@ public:
 
 	FORCEINLINE bool IsLocked() const { return bIsLocked; }
 	FORCEINLINE void SetLocked(bool IsLocked) { bIsLocked = IsLocked; }
-	FORCEINLINE AEnemyBase* GetCurrentTargetActor() const { return CurrentTargetActor; }
+	// FORCEINLINE AEnemyBase* GetCurrentTargetActor() const { return CurrentTargetActor; }
+	FORCEINLINE ASurvivalEnemyCharacter* GetCurrentTargetActor() const { return CurrentTargetActor; }
 	FORCEINLINE UFocusCrosshair* GetFocusCrosshair() const { return FocusCrosshair; }
 
 	void RemoveFocusCrosshair() const;
@@ -64,10 +66,12 @@ private:
 	TWeakObjectPtr<UCharacterMovementComponent> MovementComponent;
 
 	UPROPERTY()
-	AEnemyBase* CurrentTargetActor;
+	// AEnemyBase* CurrentTargetActor;
+	ASurvivalEnemyCharacter* CurrentTargetActor;
 
 	UPROPERTY()
-	AEnemyBase* SelectedActor;
+	// AEnemyBase* SelectedActor;
+	ASurvivalEnemyCharacter* SelectedActor;
 
 	bool bIsLocked;
 

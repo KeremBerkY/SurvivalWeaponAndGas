@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/CharacterBase/SurvivalEnemyCharacter.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/WeaponData.h"
 #include "Survival/WeaponPickupSystem/Enemy/EnemyBase.h"
 #include "Survival/WeaponPickupSystem/Enemy/EnemyComponents/LockedWidgetComponent.h"
@@ -128,7 +129,8 @@ void ULockonComponent::StartLockon() // TODO: Bu rakip çok yakına gelirse çal
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Target Found: %s"), *HitActor->GetName());
 			
-			CurrentTargetActor = Cast<AEnemyBase>(HitActor);
+			// CurrentTargetActor = Cast<AEnemyBase>(HitActor); // For TEST Enemy
+			CurrentTargetActor = Cast<ASurvivalEnemyCharacter>(HitActor);
 			bIsLocked = true;
 			
 			if (CurrentTargetActor)
@@ -191,7 +193,8 @@ void ULockonComponent::PerformSelect()
 		{
 			DrawDebugVisuals(Start, End, HitResult);
 			
-			if(AEnemyBase* HitEnemy = Cast<AEnemyBase>(HitResult.GetActor()))
+			// if(AEnemyBase* HitEnemy = Cast<AEnemyBase>(HitResult.GetActor()))
+			if(ASurvivalEnemyCharacter* HitEnemy = Cast<ASurvivalEnemyCharacter>(HitResult.GetActor()))
 			{
 				if (SelectedActor != HitEnemy)
 				{
