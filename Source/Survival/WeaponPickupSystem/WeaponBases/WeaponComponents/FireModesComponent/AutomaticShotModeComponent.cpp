@@ -3,6 +3,7 @@
 
 #include "AutomaticShotModeComponent.h"
 
+#include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 
@@ -85,6 +86,13 @@ void UAutomaticShotModeComponent::AutomaticFire()
 		OwnerWeapon->SetCanFire(false);
 		OwnerWeapon->PerformFire();
 	}
+
+	// if (OwnerWeapon->GetOwningCharacter()->GetAbilitySystemComponent()->TryActivateAbilityByClass())
+	// {
+	// 	 TODO: Silahın RangedWeapon kısmına Fire Ability koyarsak. Bunu AutomaticFire üzerinden sürekli ateş edebiliriz. Loopa alıp çağırabiliriz.
+	//		Ability her çağrıldığında tekrar Attack çağrılacak. Bunun önüne geçmek için bool koy belkide tag koyabilirsin. üzerinde düşün!
+	//		Tag koyarsak automatic atış modunda olduğumuz bilinir ve modlara göre bir ayar yapabiliriz.
+	// }
 }
 
 void UAutomaticShotModeComponent::ResetFire() const

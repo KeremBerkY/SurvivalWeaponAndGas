@@ -59,6 +59,13 @@ void USingleShotModeComponent::Fire()
 	
 }
 
+void USingleShotModeComponent::ResetFire() const
+{
+	OwnerWeapon->SetCanFire(true);
+	UE_LOG(LogTemp, Log, TEXT("Ready to fire again!"));
+}
+
+
 void USingleShotModeComponent::EndFire()
 {
 	Super::EndFire();
@@ -88,9 +95,4 @@ void USingleShotModeComponent::EndFire()
 //
 // }
 
-void USingleShotModeComponent::ResetFire() const
-{
-	OwnerWeapon->SetCanFire(true);
-	UE_LOG(LogTemp, Log, TEXT("Ready to fire again!"));
-}
 

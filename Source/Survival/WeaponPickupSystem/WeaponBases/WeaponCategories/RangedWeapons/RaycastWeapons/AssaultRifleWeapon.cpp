@@ -4,6 +4,8 @@
 #include "AssaultRifleWeapon.h"
 
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "Abilities/GameplayAbilityTypes.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
 #include "Survival/WeaponPickupSystem/PickupSystem/BasePickup.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/FireModesComponent/AutomaticShotModeComponent.h"
@@ -68,7 +70,7 @@ void AAssaultRifleWeapon::PerformFire()
 	QueryParams.AddIgnoredActor(GetOwner());
 
 	OnFireMade.Broadcast();
-	OnFirePlayMontage.Broadcast();
+	// OnFirePlayMontage.Broadcast();
 	
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
@@ -86,8 +88,21 @@ void AAssaultRifleWeapon::PerformFire()
 
 		if (AActor* HitActor = HitResult.GetActor())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ApplyPointDamage()"));
-			// UGameplayStatics::ApplyPointDamage(HitActor, Damage, (End - Start).GetSafeNormal(), HitResult, GetOwnerController(), this, DamageType);
+			if (HitActor->ActorHasTag(FName("Enemy")))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Enemy hit! Applying damage..."));
+				
+				FGameplayEventData EventData;
+				EventData.EventTag = FGameplayTag::RequestGameplayTag("Character.Shared.Event.MeleeHit");
+				EventData.Instigator = GetOwner();
+				EventData.Target = HitActor;
+
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+					HitActor,
+					FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.RaycastHit")),
+					EventData
+				);
+			}
 		}
 	}
 	else

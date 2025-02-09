@@ -40,7 +40,7 @@ void UWeaponAnimationsComponent::InitializeAnims()
 void UWeaponAnimationsComponent::PlayAttackMontage()
 {
 	ACharacter* Character = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(Character))
+	if (const ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(Character))
 	{
 		UAnimInstance* AnimInstance = PlayerCharacter->GetMesh()->GetAnimInstance();
 		if (AnimInstance && RaycastWeaponData->WeaponAnimMontages.FireMontage)

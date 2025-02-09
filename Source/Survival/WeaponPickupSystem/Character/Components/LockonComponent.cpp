@@ -75,21 +75,21 @@ void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	CheckCurrentWeaponAndCategory();
-
-	if (!bIsNotRaycast)
-	{
-		AddFocusCrosshair();
-	}
-	else
-	{
-		RemoveFocusCrosshair();
-		return;
-	}
-	
-	CheckAndPerformTargetSelection(DeltaTime);
-	
-	RotateTowardsTarget(DeltaTime);
+	// CheckCurrentWeaponAndCategory();
+	//
+	// if (!bIsNotRaycast)
+	// {
+	// 	AddFocusCrosshair();
+	// }
+	// else
+	// {
+	// 	RemoveFocusCrosshair();
+	// 	return;
+	// }
+	//
+	// CheckAndPerformTargetSelection(DeltaTime);
+	//
+	// RotateTowardsTarget(DeltaTime);
 	
 }
 
@@ -118,7 +118,7 @@ void ULockonComponent::StartLockon() // TODO: Bu rakip çok yakına gelirse çal
 		OutResult,
 		StartLocation,
 		EndLocation,
-		ECC_GameTraceChannel1,
+		ECC_GameTraceChannel1, // TODO: Visibility diye ayarla!
 		IgnoreParams
 	);
 
