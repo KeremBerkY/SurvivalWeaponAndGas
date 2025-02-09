@@ -6,6 +6,7 @@
 #include "SurvivalCharacterBase.h"
 #include "SurvivalEnemyCharacter.generated.h"
 
+class UEnemyCombatComponent;
 class USelectedWidgetComponent;
 class ULockedWidgetComponent;
 class UDataAsset_EnemyStartUpData;
@@ -17,6 +18,9 @@ class SURVIVAL_API ASurvivalEnemyCharacter : public ASurvivalCharacterBase
 
 public:
 	ASurvivalEnemyCharacter();
+
+	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
+
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
@@ -31,6 +35,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
 	TSoftObjectPtr<UDataAsset_EnemyStartUpData> EnemyStartUpData;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components | Enemy Combat" )
+	UEnemyCombatComponent* EnemyCombatComponent;
 
 public:
 	FORCEINLINE ULockedWidgetComponent* GetLockedWidgetComponent() const { return LockedWidgetComponent; }

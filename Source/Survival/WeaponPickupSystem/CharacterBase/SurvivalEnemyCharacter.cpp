@@ -9,6 +9,7 @@
 #include "Survival/WeaponPickupSystem/Data/EnemyStartupData/DataAsset_EnemyStartUpData.h"
 #include "Survival/WeaponPickupSystem/Enemy/EnemyComponents/LockedWidgetComponent.h"
 #include "Survival/WeaponPickupSystem/Enemy/EnemyComponents/SelectedWidgetComponent.h"
+#include "Survival/WeaponPickupSystem/SharedComponents/Combat/EnemyCombatComponent.h"
 
 
 ASurvivalEnemyCharacter::ASurvivalEnemyCharacter()
@@ -33,6 +34,13 @@ ASurvivalEnemyCharacter::ASurvivalEnemyCharacter()
 	SelectedWidgetComponent = CreateDefaultSubobject<USelectedWidgetComponent>(TEXT("SelectedWidgetCOmponent"));
 	SelectedWidgetComponent->SetupAttachment(RootComponent);
 
+	EnemyCombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>(TEXT("HeroCombatComponent"));
+
+}
+
+UPawnCombatComponent* ASurvivalEnemyCharacter::GetPawnCombatComponent() const
+{
+	return EnemyCombatComponent;
 }
 
 void ASurvivalEnemyCharacter::PossessedBy(AController* NewController)

@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/SurvivalGameMode.h"
+#include "Survival/WeaponPickupSystem/SharedComponents/Combat/PawnCombatComponent.h"
 
 UCharacterClassInfo* USurvivalAbilitySystemLibrary::GetCharacterClassDefaultInfo(const UObject* WorldContextObject)
 {
@@ -50,4 +51,46 @@ bool USurvivalAbilitySystemLibrary::NativeDoesActorHaveTag(AActor* InActor, FGam
 	UCharacterAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
 
 	return ASC->HasMatchingGameplayTag(TagToCheck);
+}
+
+UPawnCombatComponent* USurvivalAbilitySystemLibrary::NativeGetPawnCombatComponentFromActor(AActor* InActor)
+{
+	check(InActor)
+
+	if (const IPawnCombatInterface* PawnCombatInterface = Cast<IPawnCombatInterface>(InActor))
+	{
+		return PawnCombatInterface->GetPawnCombatComponent();
+	}
+
+	return nullptr;
+}
+
+USurvivalCharacterCombatComponent* USurvivalAbilitySystemLibrary::NativeGetSurvivalCharacterCombatComponentFromActor(AActor* InActor)
+{
+	check(InActor)
+
+	if (const IPawnCombatInterface* PawnCombatInterface = Cast<IPawnCombatInterface>(InActor))
+	{
+		return Cast<USurvivalCharacterCombatComponent>(PawnCombatInterface->GetPawnCombatComponent());
+	}
+
+	return nullptr;
+}
+
+UPawnCombatComponent* USurvivalAbilitySystemLibrary::BP_GetPawnCombatComponentFromActor(AActor* InActor, EWarriorValidType& OutValidType)
+{
+	UPawnCombatComponent* CombatComponent = NativeGetPawnCombatComponentFromActor(InActor);
+
+	OutValidType = CombatComponent ? EWarriorValidType::Valid : EWarriorValidType::Invalid;
+
+	return CombatComponent; 
+}
+
+USurvivalCharacterCombatComponent* USurvivalAbilitySystemLibrary::BP_GetSurvivalCharacterCombatComponentFromActor(AActor* InActor, EWarriorValidType& OutValidType)
+{
+	USurvivalCharacterCombatComponent* SurvivalCharacterCombatComponent = NativeGetSurvivalCharacterCombatComponentFromActor(InActor);
+
+	OutValidType = SurvivalCharacterCombatComponent ? EWarriorValidType::Valid : EWarriorValidType::Invalid;
+
+	return SurvivalCharacterCombatComponent; 
 }

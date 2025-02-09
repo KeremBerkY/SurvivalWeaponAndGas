@@ -3,6 +3,7 @@
 
 #include "WeaponBase.h"
 
+#include "Components/BoxComponent.h"
 #include "WeaponCategories/WeaponCategoriesUIHandlers/WeaponUIHandlerBase.h"
 
 
@@ -12,6 +13,9 @@ AWeaponBase::AWeaponBase()
 
 	WeaponMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponMesh"));
 	RootComponent = WeaponMesh;
+	WeaponHandleCollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("HandleComponent"));
+	WeaponHandleCollisionBox->SetupAttachment(RootComponent);
+	
 
 	// WeaponMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);

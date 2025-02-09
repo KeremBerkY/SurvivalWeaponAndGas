@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
+#include "Survival/WeaponPickupSystem/Interfaces/PawnCombatInterface.h"
 #include "SurvivalCharacterBase.generated.h"
 
 class UCharacterAttributeSet;
 class UCharacterAbilitySystemComponent;
 
 UCLASS()
-class SURVIVAL_API ASurvivalCharacterBase : public ACharacter, public IAbilitySystemInterface
+class SURVIVAL_API ASurvivalCharacterBase : public ACharacter, public IAbilitySystemInterface, public IPawnCombatInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +24,8 @@ public:
 	FORCEINLINE UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent() const { return CharacterAbilitySystemComponent; }
 	// FORCEINLINE UCharacterAttributeSet* GetAttributeSet() const { return CharacterAttributeSet; }
 	FORCEINLINE UCharacterAttributeSet* GetCharacterAttributes() const { return CharacterAttributes; }
+
+	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 	
 protected:
 	virtual void BeginPlay() override;

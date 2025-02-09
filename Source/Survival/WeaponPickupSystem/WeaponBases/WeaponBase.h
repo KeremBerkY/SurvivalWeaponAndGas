@@ -7,6 +7,7 @@
 #include "Survival/WeaponPickupSystem/UserInterface/Crosshair/CrosshairBaseWidget.h"
 #include "WeaponBase.generated.h"
 
+class UBoxComponent;
 class UWeaponUIHandlerBase;
 class UWeaponData;
 class UImage;
@@ -21,15 +22,6 @@ class SURVIVAL_API AWeaponBase : public AActor
 
 public:
 	AWeaponBase();
-	
-	FORCEINLINE UStaticMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
-	FORCEINLINE TObjectPtr<UWeaponData> GetWeaponDataAsset() const { return  WeaponBaseDataAsset; }
-	FORCEINLINE ASurvivalCharacter* GetOwningCharacter() const { return OwningCharacter; }
-	FORCEINLINE void SetOwningCharacter(ASurvivalCharacter* PlayerCharacter) { OwningCharacter = PlayerCharacter; }
-	FORCEINLINE UWeaponUIHandlerBase* GetWeaponUIHandlerBase() const { return WeaponUIHandlerBase; }
-	FORCEINLINE bool GetAttackCooldownActive() const { return bIsAttackCooldownActive; }
-	FORCEINLINE void SetAttackCooldownActive(const bool AttackCooldown) { bIsAttackCooldownActive = AttackCooldown; }
-	
 
 	UFUNCTION()
 	virtual void Attack(); // TODO: Melee Weaponlar da geleceği için ileride bunu Attack() diye çevir RangedWeapon sınıfında bu Attack(){ FireHandle(); } çağıracak.
@@ -53,6 +45,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Weapon", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* WeaponMesh;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapons")
+	UBoxComponent* WeaponCollisionBox;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapons")
+	UBoxComponent* WeaponHandleCollisionBox;
 private:
 
 	UPROPERTY()
@@ -62,5 +59,17 @@ private:
 
 	UPROPERTY()
 	bool bIsAttackCooldownActive;
+
+public:
+
+	FORCEINLINE UStaticMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
+	FORCEINLINE TObjectPtr<UWeaponData> GetWeaponDataAsset() const { return  WeaponBaseDataAsset; }
+	FORCEINLINE ASurvivalCharacter* GetOwningCharacter() const { return OwningCharacter; }
+	FORCEINLINE void SetOwningCharacter(ASurvivalCharacter* PlayerCharacter) { OwningCharacter = PlayerCharacter; }
+	FORCEINLINE UWeaponUIHandlerBase* GetWeaponUIHandlerBase() const { return WeaponUIHandlerBase; }
+	FORCEINLINE bool GetAttackCooldownActive() const { return bIsAttackCooldownActive; }
+	FORCEINLINE void SetAttackCooldownActive(const bool AttackCooldown) { bIsAttackCooldownActive = AttackCooldown; }
+	FORCEINLINE UBoxComponent* GetWeaponCollisionBox() const { return WeaponCollisionBox; }	
+	FORCEINLINE UBoxComponent* GetWeaponHandleCollisionBox() const { return WeaponHandleCollisionBox; }	
 
 };

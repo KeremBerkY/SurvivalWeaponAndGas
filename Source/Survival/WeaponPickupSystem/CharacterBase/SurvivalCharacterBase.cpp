@@ -20,6 +20,11 @@ UAbilitySystemComponent* ASurvivalCharacterBase::GetAbilitySystemComponent() con
 	return GetCharacterAbilitySystemComponent();
 }
 
+UPawnCombatComponent* ASurvivalCharacterBase::GetPawnCombatComponent() const
+{
+	return nullptr;
+}
+
 void ASurvivalCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();

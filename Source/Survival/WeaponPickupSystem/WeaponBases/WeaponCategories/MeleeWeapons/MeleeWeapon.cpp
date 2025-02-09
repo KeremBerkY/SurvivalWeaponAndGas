@@ -4,6 +4,7 @@
 #include "MeleeWeapon.h"
 
 #include "Components/BoxComponent.h"
+#include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
 
 
 AMeleeWeapon::AMeleeWeapon()
@@ -14,8 +15,46 @@ AMeleeWeapon::AMeleeWeapon()
 	WeaponCollisionBox->SetupAttachment(GetRootComponent());
 	WeaponCollisionBox->SetBoxExtent(FVector(20.f));
 	WeaponCollisionBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	// WeaponCollisionBox->OnComponentBeginOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxBeginOverlap);
-	// WeaponCollisionBox->OnComponentEndOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxEndOverlap);
+	WeaponCollisionBox->OnComponentBeginOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxBeginOverlap);
+	WeaponCollisionBox->OnComponentEndOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxEndOverlap);
+}
+
+void AMeleeWeapon::OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	const APawn* WeaponOwningPawn = GetInstigator<APawn>();
+
+	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instigator as the owning pawn for the weapon: %s"), *GetName());
+
+	if (const APawn* HitPawn = Cast<APawn>(OtherActor))
+	{
+		if (WeaponOwningPawn != HitPawn)
+		{
+			Debug::Print(GetName() + TEXT(" begin overlap with ") + HitPawn->GetName(),FColor::Green);
+			// OnWeaponHitTarget.ExecuteIfBound(OtherActor);
+		}
+
+		// TODO: Implement hit check for enemy characters
+	}
+}
+
+void AMeleeWeapon::OnCollisionBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	const APawn* WeaponOwningPawn = GetInstigator<APawn>();
+
+	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instigator as the onwning pawn for the weapon: %s"), *GetName());
+
+	if (const APawn* HitPawn = Cast<APawn>(OtherActor))
+	{
+		if (WeaponOwningPawn != HitPawn)
+		{
+			Debug::Print(GetName() + TEXT(" begin overlap with ") + HitPawn->GetName(),FColor::Red);
+			// OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
+		}
+
+		// TODO: Implement hit check for enemy characters
+	}
 }
 
 void AMeleeWeapon::BeginPlay()

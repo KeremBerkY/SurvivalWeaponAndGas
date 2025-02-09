@@ -20,7 +20,7 @@ void UFireAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 		if (const auto CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
 		{
 			CurrentWeapon->Attack();
-}
+		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Character has no Weapon"));

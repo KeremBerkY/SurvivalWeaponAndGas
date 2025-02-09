@@ -10,6 +10,8 @@
 #include "GameFramework/Controller.h"
 #include "Components/SphereComponent.h"
 #include "AbilitySystemComponent.h"
+#include "Components/BoxComponent.h"
+#include "WeaponPickupSystem/SurvivalDebugHelper.h"
 #include "WeaponPickupSystem/Character/CharacterAnimInstance.h"
 #include "WeaponPickupSystem/Character/CharacterStateComponent.h"
 #include "WeaponPickupSystem/Character/Components/WeaponInventory.h"
@@ -25,6 +27,7 @@
 #include "WeaponPickupSystem/Character/PlayerStates/CharacterPlayerState.h"
 #include "WeaponPickupSystem/Data/CharacterClassInfo.h"
 #include "WeaponPickupSystem/Libraries/SurvivalAbilitySystemLibrary.h"
+#include "WeaponPickupSystem/SharedComponents/Combat/SurvivalCharacterCombatComponent.h"
 #include "WeaponPickupSystem/UserInterface/MainHUDWidget.h"
 #include "WeaponPickupSystem/UserInterface/GameHUD/GameHUDWidget.h"
 #include "WeaponPickupSystem/UserInterface/ResourceWidget/ResourceWidget.h"
@@ -77,7 +80,15 @@ ASurvivalCharacter::ASurvivalCharacter()
 	ResourceComponent = CreateDefaultSubobject<UResourceComponent>(TEXT("HealthComponent"));
 	PickupComponent = CreateDefaultSubobject<UPickupComponent>(TEXT("PickupComponent"));
 	LockonComponent = CreateDefaultSubobject<ULockonComponent>(TEXT("LockonComponent"));
+	SurvivalCharacterCombatComponent = CreateDefaultSubobject<USurvivalCharacterCombatComponent>(TEXT("HeroCombatComponent"));
 	
+	FootCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("FootCollision"));
+	FootCollision->SetupAttachment(GetMesh(), FName("foot_r_Socket"));
+	FootCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	FootCollision->OnComponentBeginOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxBeginOverlap);
+	FootCollision->OnComponentEndOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxEndOverlap);
+
+
 }
 
 void ASurvivalCharacter::PossessedBy(AController* NewController)
@@ -98,7 +109,7 @@ void ASurvivalCharacter::OnRep_PlayerState()
 
 	//InitAbilityActorInfo();
 }
-	
+
 // void ASurvivalCharacter::InitAbilityActorInfo()
 // {
 // 	if (ACharacterPlayerState* CharacterPlayerState = GetPlayerState<ACharacterPlayerState>())
@@ -205,6 +216,11 @@ void ASurvivalCharacter::BeginPlay()
 			CharacterAttributes->GetMovementSpeedAttribute()
 			).AddUObject(this, &ASurvivalCharacter::OnMovementSpeedChanged);
 	}
+
+	if (AActor* OwnerActor = GetOwner())
+	{
+		FootCollision->IgnoreActorWhenMoving(OwnerActor, true);
+	}
 }
 
 void ASurvivalCharacter::BindResourceInitialization()
@@ -221,7 +237,7 @@ void ASurvivalCharacter::Tick(float DeltaSeconds)
 	
 }
 
-void ASurvivalCharacter::OnMovementSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData)
+void ASurvivalCharacter::OnMovementSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData) const
 {
 	if (GetCharacterMovement())
 	{
@@ -229,10 +245,51 @@ void ASurvivalCharacter::OnMovementSpeedChanged(const FOnAttributeChangeData& On
 	}
 }
 
+UPawnCombatComponent* ASurvivalCharacter::GetPawnCombatComponent() const
+{
+	return SurvivalCharacterCombatComponent;
+}
+
+void ASurvivalCharacter::OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	const APawn* AttackingPawn = Cast<APawn>(this);
+	checkf(AttackingPawn, TEXT("Character instance is invalid: %s"), *GetName());
+
+	if (OtherActor == this)
+	{
+		return;
+	}
+	
+	if (const APawn* HitPawn = Cast<APawn>(OtherActor))
+	{
+		if (AttackingPawn != HitPawn)
+		{
+			Debug::Print(GetName() + TEXT(" kicked ") + HitPawn->GetName(), FColor::Green);
+			// OnKickHitTarget.ExecuteIfBound(OtherActor);
+		}
+	}
+}
+
+void ASurvivalCharacter::OnCollisionBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	const APawn* AttackingPawn = Cast<APawn>(this);
+	checkf(AttackingPawn, TEXT("Character instance is invalid: %s"), *GetName());
+
+	if (const APawn* HitPawn = Cast<APawn>(OtherActor))
+	{
+		if (AttackingPawn != HitPawn)
+		{
+			Debug::Print(GetName() + TEXT(" kicked ") + HitPawn->GetName(), FColor::Red);
+			// OnKickHitTarget.ExecuteIfBound(OtherActor);
+		}
+	}
+}
+
 ASurvivalSystemHUD* ASurvivalCharacter::GetSurvivalHUD() const
 {
-	APlayerController* PlayerController = Cast<APlayerController>(GetController());
-	if (PlayerController)
+	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
 	{
 		return Cast<ASurvivalSystemHUD>(PlayerController->GetHUD());
 	}

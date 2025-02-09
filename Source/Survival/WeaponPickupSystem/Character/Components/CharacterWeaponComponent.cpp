@@ -126,6 +126,7 @@ void UCharacterWeaponComponent::DropWeapon(const ASurvivalCharacter* PlayerChara
 					 if (GetCurrentWeapon() == Weapon)
 					 {
 					 	RemoveCurrentWeaponUI();
+					 	Weapon->SetInstigator(nullptr);
 						SetCurrentWeapon(nullptr);
 					 } 
 					PlayerCharacter->GetCharacterAnimInstance()->UpdateWeaponType(GetCurrentWeapon()); // TODO: Delegate bağla, Broadcast(CurrentWeapon)
@@ -151,6 +152,7 @@ void UCharacterWeaponComponent::SpawnAndAddWeapon(const TSubclassOf<AWeaponBase>
 	if (!WeaponInstance) return;
 
 	AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponInstance, PlayerCharacter->GetActorLocation(), PlayerCharacter->GetActorRotation());
+	Weapon->SetInstigator(PlayerCharacter);
 
 	if (GetCurrentWeapon() == nullptr)
 	{
