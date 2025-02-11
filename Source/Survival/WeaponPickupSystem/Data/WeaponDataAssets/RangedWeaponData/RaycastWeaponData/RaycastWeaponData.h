@@ -6,6 +6,8 @@
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RangedWeaponData.h"
 #include "RaycastWeaponData.generated.h"
 
+class UGameplayAbility;
+
 USTRUCT(BlueprintType)
 struct FFiringHeatSettings
 {
@@ -103,4 +105,7 @@ public:
 	
 	UPROPERTY(EditAnywhere)
 	FWeaponAnimMontages WeaponAnimMontages;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UGameplayAbility> FireAbility;
 };

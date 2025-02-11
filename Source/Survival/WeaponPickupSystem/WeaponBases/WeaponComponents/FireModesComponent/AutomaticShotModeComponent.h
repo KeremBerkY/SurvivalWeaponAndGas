@@ -18,12 +18,7 @@ class SURVIVAL_API UAutomaticShotModeComponent : public UFireModeBaseComponent
 public:
 	UAutomaticShotModeComponent();
 
-	FORCEINLINE URaycastWeaponData* GetRaycastWeaponData() const { return RaycastWeaponData; }
-
-
 protected:
-	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void Fire() override;
 	virtual void EndFire() override;
 
@@ -31,16 +26,7 @@ protected:
 
 	void ResetFire() const;
 
-
-	UPROPERTY()
-	ARaycastWeapons* OwnerWeapon;
-
 	FTimerHandle AutomaticFireTimerHandle;
 	FTimerHandle FireRateTimerHandle;
-
-	
-private:
-	UPROPERTY()
-	URaycastWeaponData* RaycastWeaponData;
 	
 };

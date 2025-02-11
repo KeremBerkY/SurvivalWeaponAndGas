@@ -29,6 +29,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Survival|Combat")
 	void ToggleWeaponCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType);
 
+	virtual void OnHitTargetActor(AActor* HitActor);
+	virtual void OnWeaponPulledFromTargetActor(AActor* InteractedActor);
+
 protected:
 	TArray<AActor*> OverlappedActors;
 

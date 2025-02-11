@@ -3,10 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "Survival/WeaponPickupSystem/Interfaces/Fire.h"
 #include "FireModeBaseComponent.generated.h"
 
+
+class ASurvivalCharacter;
+class ARaycastWeapons;
+class URaycastWeaponData;
+class UCharacterAbilitySystemComponent;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SURVIVAL_API UFireModeBaseComponent : public UActorComponent, public IFire
@@ -18,7 +24,13 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent() const;
+
+	FGameplayTag FireTag;
+
+	TWeakObjectPtr<URaycastWeaponData> RaycastWeaponDataPtr;
+	TWeakObjectPtr<ARaycastWeapons> OwnerWeaponPtr;
 
 public:
 	virtual void Fire() override;

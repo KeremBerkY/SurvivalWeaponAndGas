@@ -3,6 +3,7 @@
 
 #include "SingleShotModeComponent.h"
 
+#include "Survival/WeaponPickupSystem/Character/GAS/CharacterAbilitySystemComponent.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 
@@ -10,49 +11,36 @@
 USingleShotModeComponent::USingleShotModeComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	
-}
 
-void USingleShotModeComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	if (ARaycastWeapons* Weapon = Cast<ARaycastWeapons>(GetOwner()))
-	{
-		if (URaycastWeaponData* WeaponData = Cast<URaycastWeaponData>(Weapon->GetWeaponDataAsset()))
-		{
-			RaycastWeaponData = WeaponData;
-			
-		}
-		OwnerWeapon = Weapon;
-	}
-}
-
-void USingleShotModeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	FireTag = FGameplayTag::RequestGameplayTag(FName("Weapon.FireMode.SingleShot"));
 
 }
 
 void USingleShotModeComponent::Fire()
 {
 	Super::Fire();
-	
-	UE_LOG(LogTemp, Warning, TEXT("SingleShotMode Fire called!"));
 
-	if (OwnerWeapon->CanFire())
+	if (OwnerWeaponPtr->CanFire())
 	{
-		OwnerWeapon->SetCanFire(false);
+		OwnerWeaponPtr->SetCanFire(false);
 		
-		OwnerWeapon->PerformFire();
+		OwnerWeaponPtr->PerformFire();
 
 		if (!GetWorld()) return;
+
+		if (GetCharacterAbilitySystemComponent())
+		{
+			if (!GetCharacterAbilitySystemComponent()->HasMatchingGameplayTag(FireTag))
+			{
+				GetCharacterAbilitySystemComponent()->AddLooseGameplayTag(FireTag);
+			}
+		}
 		
 		GetWorld()->GetTimerManager().SetTimer(
 			FireRateTimerHandle,
 			this,
 			&USingleShotModeComponent::ResetFire,
-			RaycastWeaponData->FireRate,
+			RaycastWeaponDataPtr.Get()->FireRate,
 			false
 		);
 	}
@@ -61,7 +49,11 @@ void USingleShotModeComponent::Fire()
 
 void USingleShotModeComponent::ResetFire() const
 {
-	OwnerWeapon->SetCanFire(true);
+	if (GetCharacterAbilitySystemComponent())
+	{
+		GetCharacterAbilitySystemComponent()->RemoveLooseGameplayTag(FireTag);
+	}
+	OwnerWeaponPtr->SetCanFire(true);
 	UE_LOG(LogTemp, Log, TEXT("Ready to fire again!"));
 }
 
@@ -70,29 +62,5 @@ void USingleShotModeComponent::EndFire()
 {
 	Super::EndFire();
 }
-
-// void USingleShotModeComponent::Fire()
-// {
-// 
-// 	UE_LOG(LogTemp, Warning, TEXT("SingleShotMode Fire called!"));
-//
-// 	if (OwnerWeapon->CanFire())
-// 	{
-// 		OwnerWeapon->SetCanFire(false);
-// 		
-// 		OwnerWeapon->PerformFire();
-//
-// 		if (!GetWorld()) return;
-// 		
-// 		GetWorld()->GetTimerManager().SetTimer(
-// 			FireRateTimerHandle,
-// 			this,
-// 			&USingleShotModeComponent::ResetFire,
-// 			RaycastWeaponData->FireRate,
-// 			false
-// 		);
-// 	}
-//
-// }
 
 

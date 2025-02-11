@@ -88,7 +88,8 @@ ASurvivalCharacter::ASurvivalCharacter()
 	FootCollision->OnComponentBeginOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxBeginOverlap);
 	FootCollision->OnComponentEndOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxEndOverlap);
 
-
+	OnKickHitTarget.BindUObject(SurvivalCharacterCombatComponent, &UPawnCombatComponent::OnHitTargetActor);
+	OnKickPulledFromTarget.BindUObject(SurvivalCharacterCombatComponent, &UPawnCombatComponent::OnWeaponPulledFromTargetActor);
 }
 
 void ASurvivalCharacter::PossessedBy(AController* NewController)
@@ -106,37 +107,15 @@ void ASurvivalCharacter::PossessedBy(AController* NewController)
 void ASurvivalCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-
-	//InitAbilityActorInfo();
+	
 }
-
-// void ASurvivalCharacter::InitAbilityActorInfo()
-// {
-// 	if (ACharacterPlayerState* CharacterPlayerState = GetPlayerState<ACharacterPlayerState>())
-// 	{
-// 		CharacterAbilitySystemComponent = CharacterPlayerState->GetCharacterAbilitySystemComponent();
-// 		CharacterAttributes = CharacterPlayerState->GetCharacterAttributes();
-//
-// 		if (IsValid(CharacterAbilitySystemComponent))
-// 		{
-// 			CharacterAbilitySystemComponent->InitAbilityActorInfo(CharacterPlayerState, this);
-//
-// 			// Class Info is coming from the GameMode you only want to this one on the Server
-// 			if (HasAuthority())
-// 			{
-// 				InitClassDefaults();
-// 			}
-// 		}
-// 	}
-// }
 
 void ASurvivalCharacter::InitAbilityActorInfo()
 {
 	if (IsValid(CharacterAbilitySystemComponent))
 	{
 		CharacterAbilitySystemComponent->InitAbilityActorInfo(this, this);
-
-		// Class Info is coming from the GameMode you only want to this one on the Server
+		
 		if (HasAuthority())
 		{
 			InitClassDefaults();
@@ -265,8 +244,8 @@ void ASurvivalCharacter::OnCollisionBoxBeginOverlap(UPrimitiveComponent* Overlap
 	{
 		if (AttackingPawn != HitPawn)
 		{
-			Debug::Print(GetName() + TEXT(" kicked ") + HitPawn->GetName(), FColor::Green);
-			// OnKickHitTarget.ExecuteIfBound(OtherActor);
+			// Debug::Print(GetName() + TEXT(" kicked ") + HitPawn->GetName(), FColor::Green);
+			OnKickHitTarget.ExecuteIfBound(OtherActor);
 		}
 	}
 }
@@ -281,8 +260,8 @@ void ASurvivalCharacter::OnCollisionBoxEndOverlap(UPrimitiveComponent* Overlappe
 	{
 		if (AttackingPawn != HitPawn)
 		{
-			Debug::Print(GetName() + TEXT(" kicked ") + HitPawn->GetName(), FColor::Red);
-			// OnKickHitTarget.ExecuteIfBound(OtherActor);
+			// Debug::Print(GetName() + TEXT(" kicked ") + HitPawn->GetName(), FColor::Red);
+			OnKickPulledFromTarget.ExecuteIfBound(OtherActor);
 		}
 	}
 }

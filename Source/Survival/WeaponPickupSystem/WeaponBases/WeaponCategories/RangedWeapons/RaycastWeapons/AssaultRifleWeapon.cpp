@@ -52,12 +52,6 @@ void AAssaultRifleWeapon::AddFireModes()
 	
 }
 
-
-void AAssaultRifleWeapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void AAssaultRifleWeapon::PerformFire()
 {
 	Super::PerformFire();
@@ -91,17 +85,8 @@ void AAssaultRifleWeapon::PerformFire()
 			if (HitActor->ActorHasTag(FName("Enemy")))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Enemy hit! Applying damage..."));
-				
-				FGameplayEventData EventData;
-				EventData.EventTag = FGameplayTag::RequestGameplayTag("Character.Shared.Event.MeleeHit");
-				EventData.Instigator = GetOwner();
-				EventData.Target = HitActor;
 
-				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
-					HitActor,
-					FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.RaycastHit")),
-					EventData
-				);
+				OnRayHitTarget.ExecuteIfBound(HitActor);
 			}
 		}
 	}

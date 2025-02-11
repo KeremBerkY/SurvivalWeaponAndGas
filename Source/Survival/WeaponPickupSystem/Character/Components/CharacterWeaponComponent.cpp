@@ -12,6 +12,7 @@
 #include "Survival/WeaponPickupSystem/PickupSystem/WeaponPickup.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponAttechmentManager/WeaponAttachmentManager.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/MeleeWeapons/MeleeWeapon.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/HeatComponent/HeatComponent.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/WeaponCategoriesUIHandlers/RaycastWeaponUIHandler/RaycastWeaponUIHandler.h"
@@ -154,10 +155,25 @@ void UCharacterWeaponComponent::SpawnAndAddWeapon(const TSubclassOf<AWeaponBase>
 	AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponInstance, PlayerCharacter->GetActorLocation(), PlayerCharacter->GetActorRotation());
 	Weapon->SetInstigator(PlayerCharacter);
 
+	if (Weapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+	{
+		if (AMeleeWeapon* MeleeWeaponRef = Cast<AMeleeWeapon>(Weapon))
+		{
+			MeleeWeaponRef->OnWeaponHitTarget.BindUObject(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnHitTargetActor);
+			MeleeWeaponRef->OnWeaponPulledFromTarget.BindUObject(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnWeaponPulledFromTargetActor);
+		}
+	}
+	else
+	{
+		if (ARaycastWeapons* RaycastWeaponRef = Cast<ARaycastWeapons>(Weapon))
+		{
+			RaycastWeaponRef->OnRayHitTarget.BindUObject(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnHitTargetActor);
+		}
+	}
+
 	if (GetCurrentWeapon() == nullptr)
 	{
 		AddWeaponToCharacter(Weapon, PlayerCharacter);
-		
 	}
 	else
 	{

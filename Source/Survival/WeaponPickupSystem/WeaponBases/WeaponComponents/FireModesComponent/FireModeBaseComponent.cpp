@@ -3,6 +3,10 @@
 
 #include "FireModeBaseComponent.h"
 
+#include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
+
 
 UFireModeBaseComponent::UFireModeBaseComponent()
 {
@@ -13,13 +17,23 @@ UFireModeBaseComponent::UFireModeBaseComponent()
 void UFireModeBaseComponent::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (ARaycastWeapons* Weapon = Cast<ARaycastWeapons>(GetOwner()))
+	{
+		if (URaycastWeaponData* WeaponData = Cast<URaycastWeaponData>(Weapon->GetWeaponDataAsset()))
+		{
+			RaycastWeaponDataPtr = WeaponData;
+			
+		}
+		OwnerWeaponPtr = Weapon;
+	}
+	
 	
 }
 
-void UFireModeBaseComponent::TickComponent(float DeltaTime, ELevelTick TickType,FActorComponentTickFunction* ThisTickFunction)
+UCharacterAbilitySystemComponent* UFireModeBaseComponent::GetCharacterAbilitySystemComponent() const
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	return OwnerWeaponPtr.Get()->GetOwningCharacter()->GetCharacterAbilitySystemComponent();
 }
 
 void UFireModeBaseComponent::Fire()

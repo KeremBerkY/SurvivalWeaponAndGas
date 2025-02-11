@@ -3,6 +3,7 @@
 
 #include "BurstShotModeComponent.h"
 
+#include "Survival/WeaponPickupSystem/Character/GAS/CharacterAbilitySystemComponent.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/HeatComponent/HeatComponent.h"
@@ -14,30 +15,8 @@ UBurstShotModeComponent::UBurstShotModeComponent()
 
 	BurstShotRemaining = 3;
 	BurstCount = 3;
-}
 
-void UBurstShotModeComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	RaycastWeapon = Cast<ARaycastWeapons>(GetOwner());
-	if (RaycastWeapon)
-	{
-		if (URaycastWeaponData* WeaponData = Cast<URaycastWeaponData>(RaycastWeapon->GetWeaponDataAsset()))
-		{
-			RaycastWeaponData = WeaponData;
-			
-		}
-		OwnerWeapon = RaycastWeapon;
-	}
-
-	RaycastWeaponData->FiringHeatSettings.MaxHeatCapacity;
-	
-}
-
-void UBurstShotModeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	FireTag = FGameplayTag::RequestGameplayTag(FName("Weapon.FireMode.Burst"));
 
 }
 
@@ -45,11 +24,11 @@ void UBurstShotModeComponent::Fire()
 {
 	Super::Fire();
 	
-	if (OwnerWeapon->CanFire())
+	if (OwnerWeaponPtr->CanFire() && !GetCharacterAbilitySystemComponent()->HasMatchingGameplayTag(FireTag))
 	{
-		OwnerWeapon->SetCanFire(false);
+		OwnerWeaponPtr->SetCanFire(false);
 
-		OwnerWeapon->PerformFire();
+		OwnerWeaponPtr->PerformFire();
 		BurstShotRemaining--;
 
 		if (!GetWorld()) return;
@@ -58,7 +37,7 @@ void UBurstShotModeComponent::Fire()
 			BurstFireTimerHandle,
 			this,
 			&UBurstShotModeComponent::BurstFire,
-			RaycastWeaponData->FireRate,
+			RaycastWeaponDataPtr.Get()->FireRate,
 			true
 		);
 	}
@@ -69,17 +48,16 @@ void UBurstShotModeComponent::EndFire()
 {
 	Super::EndFire();
 
-	if (GetWorld() && !OwnerWeapon->GetAttackCooldownActive() && !OwnerWeapon->CanFire() ) //  && !OwnerWeapon->GetAttackCooldownActive() &&  && !OwnerWeapon->CanFire()
+	if (GetWorld() && !OwnerWeaponPtr->GetAttackCooldownActive() && !OwnerWeaponPtr->CanFire())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(BurstFireTimerHandle);
-
 		
-		OwnerWeapon->SetAttackCooldownActive(true);
+		OwnerWeaponPtr->SetAttackCooldownActive(true);
 		GetWorld()->GetTimerManager().SetTimer(
 			FireRateTimerHandle,
 			this,
 			&UBurstShotModeComponent::ResetFire,
-			RaycastWeaponData->FireRate,
+			RaycastWeaponDataPtr.Get()->FireRate,
 			false
 		);
 	}
@@ -87,14 +65,19 @@ void UBurstShotModeComponent::EndFire()
 
 void UBurstShotModeComponent::BurstFire()
 {
-	if (OwnerWeapon && BurstShotRemaining > 0 && !RaycastWeapon->GetHeatComponent()->IsOverHeated())
+	if (OwnerWeaponPtr.IsValid() && BurstShotRemaining > 0 && !OwnerWeaponPtr->GetHeatComponent()->IsOverHeated())
 	{
 		BurstShotRemaining--;
-		OwnerWeapon->PerformFire();
+		OwnerWeaponPtr->PerformFire();
+		if (!GetCharacterAbilitySystemComponent()->HasMatchingGameplayTag(FireTag))
+		{
+			GetCharacterAbilitySystemComponent()->AddLooseGameplayTag(FireTag);
+		}
+		GetCharacterAbilitySystemComponent()->TryActivateAbilityByClass(OwnerWeaponPtr.Get()->GetRaycastWeaponDataAsset()->FireAbility);
 	}
 	else
 	{
-		if (!RaycastWeapon->GetHeatComponent()->IsOverHeated())
+		if (!OwnerWeaponPtr->GetHeatComponent()->IsOverHeated())
 		{
 			BurstShotRemaining = BurstCount;
 			if (GetWorld())
@@ -104,7 +87,7 @@ void UBurstShotModeComponent::BurstFire()
 					BurstCoolDownTimerHandle,
 					this,
 					&UBurstShotModeComponent::BurstFireCooldown,
-					RaycastWeaponData->FireRate / 2.f,
+					RaycastWeaponDataPtr.Get()->FireRate / 2.f,
 					false
 				);
 			}
@@ -112,28 +95,35 @@ void UBurstShotModeComponent::BurstFire()
 		else
 		{
 			GetWorld()->GetTimerManager().ClearTimer(BurstFireTimerHandle);
-			OwnerWeapon->SetCanFire(true);
-			OwnerWeapon->SetAttackCooldownActive(false);
+			OwnerWeaponPtr->SetCanFire(true);
+			OwnerWeaponPtr->SetAttackCooldownActive(false);
 		}
 	}
 }
 
 void UBurstShotModeComponent::ResetFire() const
 {
-	OwnerWeapon->SetCanFire(true);
-	OwnerWeapon->SetAttackCooldownActive(false);
+	if (GetCharacterAbilitySystemComponent())
+	{
+		GetCharacterAbilitySystemComponent()->RemoveLooseGameplayTag(FireTag);
+	}
+	
+	OwnerWeaponPtr->SetCanFire(true);
+	OwnerWeaponPtr->SetAttackCooldownActive(false);
 	UE_LOG(LogTemp, Log, TEXT("Ready to fire again!"));
 }
 
-void UBurstShotModeComponent::BurstFireCooldown()
+void UBurstShotModeComponent::BurstFireCooldown()	
 {
 	if (GetWorld())
 	{
+		GetWorld()->GetTimerManager().ClearTimer(BurstFireTimerHandle);
+
 		GetWorld()->GetTimerManager().SetTimer(
 			BurstFireTimerHandle,
 			this,
 			&UBurstShotModeComponent::BurstFire,
-			RaycastWeaponData->FireRate,
+			RaycastWeaponDataPtr.Get()->FireRate,
 			true
 		);
 	}

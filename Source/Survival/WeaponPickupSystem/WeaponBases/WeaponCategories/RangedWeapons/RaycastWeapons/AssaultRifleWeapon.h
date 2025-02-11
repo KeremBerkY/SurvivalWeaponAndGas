@@ -10,6 +10,7 @@ class UBurstShotModeComponent;
 class UAutomaticShotModeComponent;
 class URaycastWeaponData;
 
+
 UCLASS()
 class SURVIVAL_API AAssaultRifleWeapon : public ARaycastWeapons
 {
@@ -17,8 +18,6 @@ class SURVIVAL_API AAssaultRifleWeapon : public ARaycastWeapons
 
 public:
 	AAssaultRifleWeapon();
-	
-	virtual void Tick(float DeltaTime) override;
 
 protected:
 	virtual void BeginPlay() override;

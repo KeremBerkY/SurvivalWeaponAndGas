@@ -39,6 +39,8 @@ class USphereComponent;
 struct FGameplayAbilitySpecHandle;
 
 
+DECLARE_DELEGATE_OneParam(FOnTargetInteractedDelegate, AActor*)
+
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
@@ -56,6 +58,9 @@ class ASurvivalCharacter : public ASurvivalCharacterBase
 
 public:
 	ASurvivalCharacter();
+
+	FOnTargetInteractedDelegate OnKickHitTarget;
+	FOnTargetInteractedDelegate OnKickPulledFromTarget;
 	
 	/* GAS */
 	virtual void PossessedBy(AController* NewController) override;

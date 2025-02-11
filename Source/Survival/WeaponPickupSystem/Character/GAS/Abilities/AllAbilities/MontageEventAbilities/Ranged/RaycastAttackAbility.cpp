@@ -9,6 +9,7 @@
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/HeatComponent/HeatComponent.h"
 
 URaycastAttackAbility::URaycastAttackAbility()
 {
@@ -21,26 +22,28 @@ void URaycastAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Han
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (PlayerCharacterRef && PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon())
+	const auto WeaponRef = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
+	if (PlayerCharacterRef && WeaponRef)
 	{
-		if (const ARaycastWeapons* RaycastWeaponsRef = Cast<ARaycastWeapons>(PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon()))
+		const ARaycastWeapons* RaycastWeaponsRef = Cast<ARaycastWeapons>(PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon());
+		const auto RaycastWeaponData = RaycastWeaponsRef->GetRaycastWeaponDataAsset();
+		// !RaycastWeaponsRef->CanFire()
+		if (!RaycastWeaponsRef || RaycastWeaponsRef->GetCurrentAmmo() <= 0 ||
+			RaycastWeaponsRef->GetHeatComponent()->GetCurrentHeat() >= RaycastWeaponData->FiringHeatSettings.MaxHeatCapacity ||
+			RaycastWeaponsRef->GetHeatComponent()->IsOverHeated())
 		{
-			// Aşağıdaki AbilityMontage ve MontageRate'yi kaldırman lazım. Çünkü bütün yapıyı değiştirmek zorunda kalıcaz öbür türlü.
-			PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon()->Attack();
+			WeaponRef->EndAttack();
+			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+			return;
+		};
 
-			/*          AŞAĞIDAKİNİ FIREMODE İÇERİSİNE KOYACAKSIN AUTOMATİC BURST GİBİ LOOP'U BU ŞEKİLDE YÖNETECEKSİN        */
-			// if (OwnerWeapon->GetOwningCharacter()->GetAbilitySystemComponent()->TryActivateAbilityByClass())
-			// {
-			// 	 TODO: Silahın RangedWeapon kısmına Fire Ability koyarsak. Bunu AutomaticFire üzerinden sürekli ateş edebiliriz. Loopa alıp çağırabiliriz.
-			//		Ability her çağrıldığında tekrar Attack çağrılacak. Bunun önüne geçmek için bool koy belkide tag koyabilirsin. üzerinde düşün!
-			//		Tag koyarsak automatic atış modunda olduğumuz bilinir ve modlara göre bir ayar yapabiliriz.
-			// }
-			
-			AbilityMontage = RaycastWeaponsRef->GetRaycastWeaponDataAsset()->WeaponAnimMontages.FireMontage;
-			MontageRate = RaycastWeaponsRef->GetRaycastWeaponDataAsset()->FireRate;
-			
-			StartAnimMontage();
-		}
+	
+		AbilityMontage = RaycastWeaponsRef->GetRaycastWeaponDataAsset()->WeaponAnimMontages.FireMontage;
+		MontageRate = 1 + (RaycastWeaponsRef->GetRaycastWeaponDataAsset()->FireRate);
+
+		StartAnimMontage();
+		PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon()->Attack();
+		
 	}
 	else
 	{
@@ -49,15 +52,25 @@ void URaycastAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
-	// UAbilityTask_WaitInputRelease* WaitInputReleaseTask = UAbilityTask_WaitInputRelease::WaitInputRelease(this, false);
-	// WaitInputReleaseTask->OnRelease.AddDynamic(this, &URaycastAttackAbility::OnInputRelease);
-	// WaitInputReleaseTask->Activate();
+	UAbilityTask_WaitInputRelease* WaitInputReleaseTask = UAbilityTask_WaitInputRelease::WaitInputRelease(this, false);
+	WaitInputReleaseTask->OnRelease.AddDynamic(this, &URaycastAttackAbility::OnInputRelease);
+	WaitInputReleaseTask->Activate();
 }
 
 void URaycastAttackAbility::OnInputRelease(float TimeHeld)
 {
 	// TODO: AutomaticShot da ateş etmeye devam ediyor. Bunu Kaldırmamız lazım! (Shot Modelarına Tag ekleyelim. Burada da Tagler check edilsin.
-	// Örneğin AutomaticShot aktifse EndAbility çalışmasın. Burada Tag kontrolü yapıcaz. 
+	// Örneğin AutomaticShot aktifse EndAbility çalışmasın. Burada Tag kontrolü yapıcaz.
+	
+	if (PlayerCharacterRef)
+	{
+		const auto CurrentWeapon = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
+		if (CurrentWeapon && !CurrentWeapon->GetAttackCooldownActive())
+		{
+			CurrentWeapon->EndAttack();
+			Debug::Print("EndAbility Called!", FColor::Orange);
+		}
+	}
 	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
@@ -66,7 +79,7 @@ void URaycastAttackAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEven
 {
 	Super::OnEventReceived(EventTag, Payload);
 
-	if (EventTag == FGameplayTag::RequestGameplayTag("Character.Shared.Event.RaycastHit"))
+	if (EventTag == FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.Hit")))
 	{
 		HandleApplyDamage(Payload);
 	}
@@ -89,16 +102,8 @@ void URaycastAttackAbility::OnCancelled(FGameplayTag EventTag, FGameplayEventDat
 void URaycastAttackAbility::OnCompleted(FGameplayTag EventTag, FGameplayEventData Payload)
 {
 	Super::OnCompleted(EventTag, Payload);
+
 	
-	if (PlayerCharacterRef)
-	{
-		const auto CurrentWeapon = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
-		if (CurrentWeapon && !CurrentWeapon->GetAttackCooldownActive())
-		{
-			CurrentWeapon->EndAttack();
-			Debug::Print("EndAbility Called!", FColor::Orange);
-		}
-	}
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 

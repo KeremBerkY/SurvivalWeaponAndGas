@@ -17,5 +17,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Survival|Combat")
 	void ToggleFootCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType);
+
+	virtual void OnHitTargetActor(AActor* HitActor) override;
+	virtual void OnWeaponPulledFromTargetActor(AActor* InteractedActor) override;
 	
 };

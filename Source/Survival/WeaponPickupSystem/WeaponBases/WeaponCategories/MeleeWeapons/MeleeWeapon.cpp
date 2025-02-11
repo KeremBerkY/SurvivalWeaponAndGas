@@ -30,8 +30,7 @@ void AMeleeWeapon::OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedCom
 	{
 		if (WeaponOwningPawn != HitPawn)
 		{
-			Debug::Print(GetName() + TEXT(" begin overlap with ") + HitPawn->GetName(),FColor::Green);
-			// OnWeaponHitTarget.ExecuteIfBound(OtherActor);
+			OnWeaponHitTarget.ExecuteIfBound(OtherActor);
 		}
 
 		// TODO: Implement hit check for enemy characters
@@ -49,8 +48,7 @@ void AMeleeWeapon::OnCollisionBoxEndOverlap(UPrimitiveComponent* OverlappedCompo
 	{
 		if (WeaponOwningPawn != HitPawn)
 		{
-			Debug::Print(GetName() + TEXT(" begin overlap with ") + HitPawn->GetName(),FColor::Red);
-			// OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
+			OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
 		}
 
 		// TODO: Implement hit check for enemy characters

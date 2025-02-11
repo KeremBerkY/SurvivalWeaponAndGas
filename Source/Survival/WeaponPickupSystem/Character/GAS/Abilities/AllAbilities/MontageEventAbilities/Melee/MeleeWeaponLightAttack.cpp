@@ -4,6 +4,7 @@
 #include "MeleeWeaponLightAttack.h"
 
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
 #include "Survival/WeaponPickupSystem/Libraries/SurvivalAbilitySystemLibrary.h"
 
 UMeleeWeaponLightAttack::UMeleeWeaponLightAttack()
@@ -91,6 +92,11 @@ void UMeleeWeaponLightAttack::ClearComboResetTimer()
 void UMeleeWeaponLightAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEventData Payload)
 {
 	Super::OnEventReceived(EventTag, Payload);
+
+	if (EventTag == FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.Hit")))
+	{
+		Debug::Print("Apply Damage Called!", FColor::Orange);
+	}
 	
 	if (EventTag == FGameplayTag::RequestGameplayTag(FName("Character.Event.OnComplete")))
 	{

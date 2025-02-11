@@ -63,7 +63,7 @@ private:
 public:
 
 	FORCEINLINE UStaticMeshComponent* GetWeaponMesh() const { return WeaponMesh; }
-	FORCEINLINE TObjectPtr<UWeaponData> GetWeaponDataAsset() const { return  WeaponBaseDataAsset; }
+	FORCEINLINE TObjectPtr<UWeaponData> GetWeaponDataAsset() const { return  WeaponBaseDataAsset.Get(); }
 	FORCEINLINE ASurvivalCharacter* GetOwningCharacter() const { return OwningCharacter; }
 	FORCEINLINE void SetOwningCharacter(ASurvivalCharacter* PlayerCharacter) { OwningCharacter = PlayerCharacter; }
 	FORCEINLINE UWeaponUIHandlerBase* GetWeaponUIHandlerBase() const { return WeaponUIHandlerBase; }

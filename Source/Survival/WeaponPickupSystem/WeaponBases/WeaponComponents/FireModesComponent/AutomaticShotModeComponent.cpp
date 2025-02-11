@@ -4,6 +4,7 @@
 #include "AutomaticShotModeComponent.h"
 
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 
@@ -12,49 +13,32 @@ UAutomaticShotModeComponent::UAutomaticShotModeComponent()
 {
 
 	PrimaryComponentTick.bCanEverTick = true;
-	
-}
 
-void UAutomaticShotModeComponent::BeginPlay()
-{
-	Super::BeginPlay();
-
-	
-	if (ARaycastWeapons* Weapon = Cast<ARaycastWeapons>(GetOwner()))
-	{
-		if (URaycastWeaponData* WeaponData = Cast<URaycastWeaponData>(Weapon->GetWeaponDataAsset()))
-		{
-			RaycastWeaponData = WeaponData;
-			
-		}
-		OwnerWeapon = Weapon;
-	}
-}
-
-void UAutomaticShotModeComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	FireTag = FGameplayTag::RequestGameplayTag(FName("Weapon.FireMode.Automatic"));
 }
 
 void UAutomaticShotModeComponent::Fire()
 {
 	Super::Fire();
 
-	if (OwnerWeapon->CanFire())
+	if (GetCharacterAbilitySystemComponent())
 	{
-		OwnerWeapon->SetCanFire(false);
+		if (OwnerWeaponPtr->CanFire() && !GetCharacterAbilitySystemComponent()->HasMatchingGameplayTag(FireTag)) // bIsAutomatic koy ve Automatic de değilse çalışsın. EndFire() da sıfırlarsın.
+		{
+			OwnerWeaponPtr->SetCanFire(false);
 
-		OwnerWeapon->PerformFire();
+			OwnerWeaponPtr->PerformFire();
 
-		if (!GetWorld()) return;
-
-		GetWorld()->GetTimerManager().SetTimer(
-			AutomaticFireTimerHandle,
-			this,
-			&UAutomaticShotModeComponent::AutomaticFire,
-			RaycastWeaponData->FireRate,
-			true
-		);
+			if (!GetWorld()) return;
+			
+			GetWorld()->GetTimerManager().SetTimer(
+				AutomaticFireTimerHandle,
+				this,
+				&UAutomaticShotModeComponent::AutomaticFire,
+				RaycastWeaponDataPtr.Get()->FireRate,
+				true
+			);
+		}
 	}
 	
 }
@@ -63,16 +47,16 @@ void UAutomaticShotModeComponent::EndFire()
 {
 	Super::EndFire();
 	
-	if (GetWorld() && !OwnerWeapon->CanFire() && !OwnerWeapon->GetAttackCooldownActive())
+	if (GetWorld() && !OwnerWeaponPtr->CanFire() && !OwnerWeaponPtr->GetAttackCooldownActive())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(AutomaticFireTimerHandle);
 		
-		OwnerWeapon->SetAttackCooldownActive(true);
+		OwnerWeaponPtr->SetAttackCooldownActive(true);
 		GetWorld()->GetTimerManager().SetTimer(
 			FireRateTimerHandle,
 			this,
 			&UAutomaticShotModeComponent::ResetFire,
-			RaycastWeaponData->FireRate,
+			RaycastWeaponDataPtr.Get()->FireRate,
 			false
 		);
 	}
@@ -81,24 +65,31 @@ void UAutomaticShotModeComponent::EndFire()
 
 void UAutomaticShotModeComponent::AutomaticFire()
 {
-	if (OwnerWeapon)
+	if (OwnerWeaponPtr.IsValid())
 	{
-		OwnerWeapon->SetCanFire(false);
-		OwnerWeapon->PerformFire();
+		if (GetCharacterAbilitySystemComponent())
+		{
+			if (!GetCharacterAbilitySystemComponent()->HasMatchingGameplayTag(FireTag))
+			{
+				GetCharacterAbilitySystemComponent()->AddLooseGameplayTag(FireTag);
+			}
+			GetCharacterAbilitySystemComponent()->TryActivateAbilityByClass(OwnerWeaponPtr.Get()->GetRaycastWeaponDataAsset()->FireAbility);
+		}
+		
+		OwnerWeaponPtr->SetCanFire(false);
+		OwnerWeaponPtr->PerformFire();
 	}
-
-	// if (OwnerWeapon->GetOwningCharacter()->GetAbilitySystemComponent()->TryActivateAbilityByClass())
-	// {
-	// 	 TODO: Silahın RangedWeapon kısmına Fire Ability koyarsak. Bunu AutomaticFire üzerinden sürekli ateş edebiliriz. Loopa alıp çağırabiliriz.
-	//		Ability her çağrıldığında tekrar Attack çağrılacak. Bunun önüne geçmek için bool koy belkide tag koyabilirsin. üzerinde düşün!
-	//		Tag koyarsak automatic atış modunda olduğumuz bilinir ve modlara göre bir ayar yapabiliriz.
-	// }
 }
 
 void UAutomaticShotModeComponent::ResetFire() const
 {
-	OwnerWeapon->SetCanFire(true);
-	OwnerWeapon->SetAttackCooldownActive(false);
+	if (GetCharacterAbilitySystemComponent())
+	{
+		GetCharacterAbilitySystemComponent()->RemoveLooseGameplayTag(FireTag);
+	}
+	
+	OwnerWeaponPtr->SetCanFire(true);
+	OwnerWeaponPtr->SetAttackCooldownActive(false);
 	UE_LOG(LogTemp, Log, TEXT("Ready to fire again!"));
 }
 

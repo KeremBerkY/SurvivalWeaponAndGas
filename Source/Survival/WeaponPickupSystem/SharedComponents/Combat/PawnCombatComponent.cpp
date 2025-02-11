@@ -20,8 +20,7 @@ AWeaponBase* UPawnCombatComponent::GetCharacterCurrentEquippedWeapon() const
 {
 	if (const ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(GetOwner()))
 	{
-		const auto CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon();
-		if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+		if (AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
 		{
 			return CurrentWeapon;
 		}
@@ -45,7 +44,6 @@ void UPawnCombatComponent::ToggleWeaponCollision(bool bShouldEnable, EToggleDama
 			if (WeaponToToggle->GetWeaponHandleCollisionBox())
 			{
 				WeaponToToggle->GetWeaponHandleCollisionBox()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-				Debug::Print(WeaponToToggle->GetWeaponHandleCollisionBox()->GetName() + TEXT(" collision enabled"),FColor::Green);
 			}
 		}
 		else
@@ -54,20 +52,19 @@ void UPawnCombatComponent::ToggleWeaponCollision(bool bShouldEnable, EToggleDama
 			if (WeaponToToggle->GetWeaponHandleCollisionBox())
 			{
 				WeaponToToggle->GetWeaponHandleCollisionBox()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-				Debug::Print(WeaponToToggle->GetWeaponHandleCollisionBox()->GetName() + TEXT(" collision enabled"),FColor::Red);
+				
 			}
-
-			// OverlappedActors.Empty();
+			
+			OverlappedActors.Empty(); 
 		}
 	}
 }
 
-// void UPawnCombatComponent::OnHitTargetActor(AActor* HitActor)
-// {
-// 	
-// }
-//
-// void UPawnCombatComponent::OnWeaponPulledFromTargetActor(AActor* InteractedActor)
-// {
-// 	
-// }
+void UPawnCombatComponent::OnHitTargetActor(AActor* HitActor)
+{
+}
+
+void UPawnCombatComponent::OnWeaponPulledFromTargetActor(AActor* InteractedActor)
+{
+}
+

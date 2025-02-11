@@ -33,7 +33,8 @@ void UCharacterMontageEventAbility::OnEventReceived(FGameplayTag EventTag, FGame
 
 void UCharacterMontageEventAbility::StartAnimMontage()
 {
-	Task = UCharacterAbilityTask_PlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(this,
+	Task = UCharacterAbilityTask_PlayMontageAndWaitForEvent::PlayMontageAndWaitForEvent(
+		this,
 		NAME_None,
 		AbilityMontage,
 		FGameplayTagContainer(),
