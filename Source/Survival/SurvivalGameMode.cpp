@@ -13,7 +13,7 @@ ASurvivalGameMode::ASurvivalGameMode()
 	// {
 	// 	DefaultPawnClass = PlayerPawnBPClass.Class;
 	// }
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter")); // TODO: Karakter blueprintini değiştir!
 	if (PlayerPawnBPClass.Class != nullptr)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;

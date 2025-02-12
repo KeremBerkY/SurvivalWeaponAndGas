@@ -95,20 +95,12 @@ protected:
 
 private:
 
-//GAS-----
-	// UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	// TObjectPtr<UCharacterAbilitySystemComponent> CharacterAbilitySystemComponent;
-	//
-	// UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	// UCharacterAttributeSet* CharacterAttributes;
-
 	UPROPERTY(EditAnywhere, Category = "Custom values | Character Info")
 	FGameplayTag CharacterTag; // Represents Character class (Tags like; Warrior, Mage, Archer...)
 	
 	void InitAbilityActorInfo();
 	void InitClassDefaults();
 	void BindResourceInitialization();
-// -------
 
 	void HandleInitializeDelay();
 
@@ -185,6 +177,8 @@ public:
 	FORCEINLINE ULockonComponent* GetLockonComponent() const { return LockonComponent; }
 	// FootCollision
 	FORCEINLINE UBoxComponent* GetFootCollision() const { return FootCollision; }
+	// SurvivalCharacterCombatComponent
+	FORCEINLINE USurvivalCharacterCombatComponent* GetSurvivalCharacterCombatComponent() const { return SurvivalCharacterCombatComponent; }
 	
 	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 	

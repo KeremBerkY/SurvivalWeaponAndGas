@@ -19,7 +19,7 @@ UCharacterClassInfo* USurvivalAbilitySystemLibrary::GetCharacterClassDefaultInfo
 	return nullptr;
 }
 
-UCharacterAbilitySystemComponent* USurvivalAbilitySystemLibrary::NativeGetWarriorASCFromActor(AActor* InActor)
+UCharacterAbilitySystemComponent* USurvivalAbilitySystemLibrary::NativeGetCharacterASCFromActor(AActor* InActor)
 {
 	check(InActor);
 
@@ -28,7 +28,7 @@ UCharacterAbilitySystemComponent* USurvivalAbilitySystemLibrary::NativeGetWarrio
 
 void USurvivalAbilitySystemLibrary::AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTag TagToAdd)
 {
-	UCharacterAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
+	UCharacterAbilitySystemComponent* ASC = NativeGetCharacterASCFromActor(InActor);
 
 	if (!ASC->HasMatchingGameplayTag(TagToAdd))
 	{
@@ -38,7 +38,7 @@ void USurvivalAbilitySystemLibrary::AddGameplayTagToActorIfNone(AActor* InActor,
 
 void USurvivalAbilitySystemLibrary::RemoveGameplayTagFromActorIfFound(AActor* InActor, FGameplayTag TagToRemove)
 {
-	UCharacterAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
+	UCharacterAbilitySystemComponent* ASC = NativeGetCharacterASCFromActor(InActor);
 
 	if (ASC->HasMatchingGameplayTag(TagToRemove))
 	{
@@ -48,7 +48,7 @@ void USurvivalAbilitySystemLibrary::RemoveGameplayTagFromActorIfFound(AActor* In
 
 bool USurvivalAbilitySystemLibrary::NativeDoesActorHaveTag(AActor* InActor, FGameplayTag TagToCheck)
 {
-	UCharacterAbilitySystemComponent* ASC = NativeGetWarriorASCFromActor(InActor);
+	UCharacterAbilitySystemComponent* ASC = NativeGetCharacterASCFromActor(InActor);
 
 	return ASC->HasMatchingGameplayTag(TagToCheck);
 }

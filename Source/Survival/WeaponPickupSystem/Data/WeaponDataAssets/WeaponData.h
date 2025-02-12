@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ScalableFloat.h"
 #include "Engine/DataAsset.h"
 #include "WeaponData.generated.h"
 
@@ -87,4 +88,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* BloodEffect;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FScalableFloat WeaponBaseDamage;
 };

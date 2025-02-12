@@ -16,6 +16,11 @@ UCharacterGameplayAbility::UCharacterGameplayAbility()
 }
 
 
+UCharacterAbilitySystemComponent* UCharacterGameplayAbility::GetCharacterAbilitySystemComponentFromActorInfo()
+{
+	return Cast<UCharacterAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent);
+}
+
 const FGameplayTagContainer* UCharacterGameplayAbility::GetCooldownTags() const
 {
 	if (!bHasCooldown)

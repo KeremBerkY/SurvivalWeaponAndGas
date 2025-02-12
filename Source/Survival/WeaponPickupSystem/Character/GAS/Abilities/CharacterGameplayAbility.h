@@ -12,6 +12,7 @@
  * 
  */
 
+class UCharacterAbilitySystemComponent;
 class ASurvivalCharacter;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAbilityEndedDelegate, UCharacterGameplayAbility*, InAbility, bool,
                                              bIsCancelled);
@@ -58,6 +59,8 @@ protected:
 
 	TWeakObjectPtr<ASurvivalCharacter> CachedSurvivalCharacter;
 
+	UFUNCTION(BlueprintPure, Category = "Survival|Ability")
+	UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponentFromActorInfo();
 	
 	virtual const FGameplayTagContainer* GetCooldownTags() const override;
 	virtual void ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;

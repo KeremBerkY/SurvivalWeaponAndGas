@@ -95,12 +95,30 @@ void UMeleeWeaponLightAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEv
 
 	if (EventTag == FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.Hit")))
 	{
-		Debug::Print("Apply Damage Called!", FColor::Orange);
+		HandleApplyDamage(Payload);
 	}
 	
 	if (EventTag == FGameplayTag::RequestGameplayTag(FName("Character.Event.OnComplete")))
 	{
 		OnCompleted(EventTag, Payload);
+	}
+}
+
+void UMeleeWeaponLightAttack::HandleApplyDamage(const FGameplayEventData& GameplayEventData)
+{
+	if (AActor* LocalTargetActor = Cast<AActor>(GameplayEventData.Target))
+	{
+		if (USurvivalCharacterCombatComponent* SurvivalCharacterCombatComponent = GetPlayerCharacterFromCharacterGameplayAbility()->GetSurvivalCharacterCombatComponent())
+		{
+			const float WeaponBaseDamage = SurvivalCharacterCombatComponent->GetCharacterCurrentEquipWeaponDamageAtLevel(GetAbilityLevel());
+			const auto SpecHandle = MakeCharacterDamageEffectSpecHandle(
+				DamageEffect,
+				WeaponBaseDamage,
+				FGameplayTag::RequestGameplayTag(FName("Character.SetByCaller.AttackType.Light")),
+				UsedComboCount
+			);
+			NativeApplyEffectSpecHandleToTarget(LocalTargetActor, SpecHandle);
+		}
 	}
 }
 

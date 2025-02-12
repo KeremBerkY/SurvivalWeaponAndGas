@@ -52,13 +52,17 @@ public:
 	FGameplayAttributeData SprintSpeed;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, SprintSpeed);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_AttackPower, Category = "Attributes | Attack")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_AttackPower, Category = "Attributes | Damage")
 	FGameplayAttributeData AttackPower;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, AttackPower);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_DefensePower, Category = "Attributes | Defense")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_DefensePower, Category = "Attributes | Damage")
 	FGameplayAttributeData DefensePower;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, DefensePower);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_DefensePower, Category = "Attributes | Damage")
+	FGameplayAttributeData DamageTaken;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, DamageTaken);
 
 protected:
 	UFUNCTION()

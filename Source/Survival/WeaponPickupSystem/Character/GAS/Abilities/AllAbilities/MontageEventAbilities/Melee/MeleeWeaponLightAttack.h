@@ -20,6 +20,7 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void OnCancelled(FGameplayTag EventTag, FGameplayEventData Payload) override;
 	virtual void OnCompleted(FGameplayTag EventTag, FGameplayEventData Payload) override;
+	void HandleApplyDamage(const FGameplayEventData& GameplayEventData);
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData Payload) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 

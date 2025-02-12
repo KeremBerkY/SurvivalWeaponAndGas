@@ -37,6 +37,12 @@ void USurvivalCharacterCombatComponent::ToggleFootCollision(bool bShouldEnable, 
 	}
 }
 
+float USurvivalCharacterCombatComponent::GetCharacterCurrentEquipWeaponDamageAtLevel(float InLevel) const
+{
+	return GetCharacterCurrentEquippedWeapon()->GetWeaponDataAsset()->WeaponBaseDamage.GetValueAtLevel(InLevel);
+}
+
+
 void USurvivalCharacterCombatComponent::OnHitTargetActor(AActor* HitActor)
 {
 	Super::OnHitTargetActor(HitActor);

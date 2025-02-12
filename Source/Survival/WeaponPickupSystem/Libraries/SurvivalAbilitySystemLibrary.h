@@ -26,7 +26,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	static UCharacterClassInfo* GetCharacterClassDefaultInfo(const UObject* WorldContextObject);
 	
-	static UCharacterAbilitySystemComponent* NativeGetWarriorASCFromActor(AActor* InActor);
+	static UCharacterAbilitySystemComponent* NativeGetCharacterASCFromActor(AActor* InActor);
 	
 	UFUNCTION(BlueprintCallable, Category = "Survival|FunctionLibrary")
 	static void AddGameplayTagToActorIfNone(AActor* InActor, FGameplayTag TagToAdd);

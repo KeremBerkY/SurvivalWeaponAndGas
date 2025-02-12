@@ -47,6 +47,12 @@ protected:
 	UFUNCTION()
 	virtual void StopAnimMontage();
 
+	UFUNCTION()
+	FGameplayEffectSpecHandle MakeCharacterDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, float InWeaponBaseDamage, FGameplayTag InCurrentAttackTypeTag, int32 InUsedComboCount = 1);
+
+	UFUNCTION()
+	FActiveGameplayEffectHandle NativeApplyEffectSpecHandleToTarget(AActor* TargetActor, const FGameplayEffectSpecHandle& InSpecHandle);
+
 	UPROPERTY(BlueprintReadOnly)
 	ASurvivalCharacter* PlayerCharacterRef;
 
