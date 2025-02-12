@@ -94,6 +94,24 @@ void UMeleeWeaponHeavyAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEv
 {
 	Super::OnEventReceived(EventTag, Payload);
 
+	if (EventTag == FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.Hit")))
+	{
+		if (AActor* LocalTargetActor = Cast<AActor>(Payload.Target))
+		{
+			if (const USurvivalCharacterCombatComponent* HeroCombatComponent = GetPlayerCharacterFromCharacterGameplayAbility()->GetSurvivalCharacterCombatComponent())
+			{
+				const float WeaponBaseDamage = HeroCombatComponent->GetCharacterCurrentEquipWeaponDamageAtLevel(GetAbilityLevel());
+				const auto SpecHandle = MakeCharacterDamageEffectSpecHandle(
+					DamageEffect,
+					WeaponBaseDamage,
+					FGameplayTag::RequestGameplayTag(FName("Character.SetByCaller.AttackType.Heavy")),
+					UsedComboCount
+				);
+				NativeApplyEffectSpecHandleToTarget(LocalTargetActor, SpecHandle);
+			}
+		}
+	}
+	
 	if (EventTag == FGameplayTag::RequestGameplayTag(FName("Character.Event.OnComplete")))
 	{
 		OnCompleted(EventTag, Payload);

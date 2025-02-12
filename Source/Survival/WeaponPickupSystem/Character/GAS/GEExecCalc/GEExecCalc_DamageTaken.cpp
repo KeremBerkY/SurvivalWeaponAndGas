@@ -65,16 +65,15 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 			Debug::Print(TEXT("UsedLightAttackComboCount"), UsedLightAttackComboCount);
 		}
 
-		// if (TagMagnitude.Key.MatchesTagExact(FGameplayTag::RequestGameplayTag(FName("Character.SetByCaller.AttackType.Heavy"))))
-		// {
-		// 	UsedHeavyAttackComboCount = TagMagnitude.Value;
-		// 	// Debug::Print(TEXT("UsedHeavyAttackComboCount"), UsedHeavyAttackComboCount);
-		// }
+		if (TagMagnitude.Key.MatchesTagExact(FGameplayTag::RequestGameplayTag(FName("Character.SetByCaller.AttackType.Heavy"))))
+		{
+			UsedHeavyAttackComboCount = TagMagnitude.Value;
+			Debug::Print(TEXT("UsedHeavyAttackComboCount"), UsedHeavyAttackComboCount);
+		}
 
 		// if (TagMagnitude.Key.MatchesTagExact(FGameplayTag::RequestGameplayTag(FName("Character.SetByCaller.AttackType.Ray"))))
 		// {
-		// 	UsedRayAttack = TagMagnitude.Value;
-		// 	// Debug::Print(TEXT("UsedHeavyAttackComboCount"), UsedHeavyAttackComboCount);
+		// 	BaseDamage *= 0.3f;
 		// }
 	}
 	
@@ -88,7 +87,15 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 		const float DamageIncreasePercentLight = (UsedLightAttackComboCount - 1) * 0.5f + 1.f;
 
 		BaseDamage *= DamageIncreasePercentLight;
-		Debug::Print(TEXT("ScaledBaseDamageLight"), BaseDamage);
+		// Debug::Print(TEXT("ScaledBaseDamageLight"), BaseDamage);
+	}
+
+	if (UsedHeavyAttackComboCount != 0)
+	{
+		const float DamageIncreasePercentHeavy = UsedHeavyAttackComboCount * 0.15f + 1.f;
+
+		BaseDamage *= DamageIncreasePercentHeavy;
+		// Debug::Print(TEXT("ScaledBaseDamageHeavy"), BaseDamage);
 	}
 
 	if (UsedHeavyAttackComboCount != 0)

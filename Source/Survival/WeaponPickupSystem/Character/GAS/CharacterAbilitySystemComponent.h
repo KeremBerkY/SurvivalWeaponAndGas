@@ -19,7 +19,7 @@ public:
 
 	void AddCharacterAbilities(const TArray<TSubclassOf<UCharacterGameplayAbility>>& AbilitiesToGrant);
 	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UCharacterGameplayAbility>>& PassivesToGrant);
-	void InitializeDefaultAttributes(const TSubclassOf<UGameplayEffect>& AttributeEffect);
+	void InitializeDefaultAttributes(const TArray<TSubclassOf<UGameplayEffect>>& AttributeEffect);
 	void InitializeSpecialAttributes(const TArray<TSubclassOf<UGameplayEffect>>& SpecialEffects);
 
 	// void AbilityActorInfoSet();

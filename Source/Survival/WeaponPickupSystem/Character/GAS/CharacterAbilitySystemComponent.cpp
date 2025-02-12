@@ -37,13 +37,20 @@ void UCharacterAbilitySystemComponent::AddCharacterPassiveAbilities(const TArray
 	}
 }
 
-void UCharacterAbilitySystemComponent::InitializeDefaultAttributes(const TSubclassOf<UGameplayEffect>& AttributeEffect)
+void UCharacterAbilitySystemComponent::InitializeDefaultAttributes(const TArray<TSubclassOf<UGameplayEffect>>& AttributeEffect) // TODO: If you want you can add int32 ApplyLevel for character!
 {
-	checkf(AttributeEffect, TEXT("No valid default attributes for this character %s"), *GetAvatarActor()->GetName());
+	// checkf(AttributeEffect, TEXT("No valid default attributes for this character %s"), *GetAvatarActor()->GetName());
 	
-	const FGameplayEffectContextHandle ContextHandle = MakeEffectContext();
-	const FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(AttributeEffect, 1.f, ContextHandle);
-	ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	// const FGameplayEffectContextHandle ContextHandle = MakeEffectContext();
+	// const FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(AttributeEffect, 1.f, ContextHandle);
+	// ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+
+	for (const TSubclassOf<UGameplayEffect>& Effect : AttributeEffect)
+	{
+		const FGameplayEffectContextHandle ContextHandle = MakeEffectContext();
+		const FGameplayEffectSpecHandle SpecHandle = MakeOutgoingSpec(Effect, 1.f, ContextHandle);
+		ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+	}
 }
 
 void UCharacterAbilitySystemComponent::InitializeSpecialAttributes(const TArray<TSubclassOf<UGameplayEffect>>& SpecialEffects)

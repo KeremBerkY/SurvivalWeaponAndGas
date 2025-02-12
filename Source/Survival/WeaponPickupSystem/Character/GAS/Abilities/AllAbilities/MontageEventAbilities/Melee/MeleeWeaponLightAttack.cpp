@@ -3,6 +3,7 @@
 
 #include "MeleeWeaponLightAttack.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
 #include "Survival/WeaponPickupSystem/Libraries/SurvivalAbilitySystemLibrary.h"
@@ -118,6 +119,12 @@ void UMeleeWeaponLightAttack::HandleApplyDamage(const FGameplayEventData& Gamepl
 				UsedComboCount
 			);
 			NativeApplyEffectSpecHandleToTarget(LocalTargetActor, SpecHandle);
+
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+				LocalTargetActor,
+				FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.HitReact")),
+				GameplayEventData
+			);
 		}
 	}
 }

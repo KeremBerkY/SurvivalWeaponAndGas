@@ -17,10 +17,10 @@ struct FCharacterClassDefaultInfo
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGameplayEffect> DefaultAttributes;
+	TArray< TSubclassOf < UGameplayEffect > > DefaultAttributes;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<UGameplayEffect>> SpecialAttributes;
+	TArray< TSubclassOf <UGameplayEffect > > SpecialAttributes;
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<UCharacterGameplayAbility>> StartingAbilities;

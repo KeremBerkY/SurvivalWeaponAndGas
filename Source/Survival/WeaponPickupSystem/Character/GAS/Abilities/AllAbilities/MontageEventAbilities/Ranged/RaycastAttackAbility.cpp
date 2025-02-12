@@ -87,9 +87,21 @@ void URaycastAttackAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEven
 	// EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
-void URaycastAttackAbility::HandleApplyDamage(const FGameplayEventData& Payload)
+void URaycastAttackAbility::HandleApplyDamage(const FGameplayEventData& GameplayEventData)
 {
-	Debug::Print("Handle Apply Damage Called!", FColor::Purple);
+	if (AActor* LocalTargetActor = Cast<AActor>(GameplayEventData.Target))
+	{
+		if (USurvivalCharacterCombatComponent* SurvivalCharacterCombatComponent = GetPlayerCharacterFromCharacterGameplayAbility()->GetSurvivalCharacterCombatComponent())
+		{
+			const float WeaponBaseDamage = SurvivalCharacterCombatComponent->GetCharacterCurrentEquipWeaponDamageAtLevel(GetAbilityLevel());
+			const auto SpecHandle = MakeCharacterDamageEffectSpecHandle(
+				DamageEffect,
+				WeaponBaseDamage,
+				FGameplayTag::RequestGameplayTag(FName("Character.SetByCaller.AttackType.Ray"))
+			);
+			NativeApplyEffectSpecHandleToTarget(LocalTargetActor, SpecHandle);
+		}
+	}
 }
 
 void URaycastAttackAbility::OnCancelled(FGameplayTag EventTag, FGameplayEventData Payload)

@@ -10,6 +10,7 @@
 #include "GameplayEffectAggregatorLibrary.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
 #include "Survival/WeaponPickupSystem/Character/GAS/CharacterAbilitySystemComponent.h"
 #include "Survival/WeaponPickupSystem/Libraries/SurvivalAbilitySystemLibrary.h"
 
@@ -33,14 +34,24 @@ void UCharacterAttributeSet::OnRep_MaxMana(const FGameplayAttributeData& OldMaxM
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSet, MaxMana, OldMaxMana);
 }
 
-void UCharacterAttributeSet::OnRep_Sprint(const FGameplayAttributeData& OldStamina)
+void UCharacterAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldStamina)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSet, Stamina, OldStamina);
 }
 
-void UCharacterAttributeSet::OnRep_MaxSprint(const FGameplayAttributeData& OldMaxStamina)
+void UCharacterAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSet, MaxStamina, OldMaxStamina);
+}
+
+void UCharacterAttributeSet::OnRep_CurrentRage(const FGameplayAttributeData& OldRage)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSet, MaxStamina, OldRage);
+}
+
+void UCharacterAttributeSet::OnRep_MaxRage(const FGameplayAttributeData& OldMaxRage)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSet, MaxStamina, OldMaxRage);
 }
 
 void UCharacterAttributeSet::OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed)
@@ -161,6 +172,39 @@ void UCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModC
 		if (GetMovementSpeed() > 500.f)
 		{
 			// TODO: Burada animasyon veya efekt tetiklersin...
+		}
+	}
+
+	if (ModifiedAttribute == GetCurrentRageAttribute())
+	{
+		const float NewCurrentRage = FMath::Clamp(GetCurrentRage(), 0.f, GetMaxRage());
+
+		SetCurrentRage(NewCurrentRage);
+	}
+
+	if (Data.EvaluatedData.Attribute == GetDamageTakenAttribute())
+	{
+		const float OldHealth = GetHealth();
+		const float DamageDone = GetDamageTaken();
+
+		const float NewCurrentHealth = FMath::Clamp(OldHealth - DamageDone, 0.f, GetMaxHealth());
+
+		SetHealth(NewCurrentHealth);
+		
+		const FString DebugString = FString::Printf(
+			TEXT("Old Health: %f, Damage Done: %f, NewCurrentHealth: %f"),
+			OldHealth,
+			DamageDone,
+			NewCurrentHealth
+		);
+		Debug::Print(DebugString,FColor::Green);
+
+		// TODO: Notify the UI
+
+		// TODO: Handle character death
+		if (NewCurrentHealth == 0.f)
+		{
+			
 		}
 	}
 }

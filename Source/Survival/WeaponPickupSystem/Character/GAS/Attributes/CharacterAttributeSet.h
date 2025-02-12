@@ -28,21 +28,29 @@ public:
 	FGameplayAttributeData MaxHealth;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, MaxHealth);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_MaxHealth, Category = "Attributes | Health") // ReplicatedUsing=OnRep_Health
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_Mana, Category = "Attributes | Mana") // ReplicatedUsing=OnRep_Health
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, Mana);
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_MaxHealth, Category = "Attributes | Health") // ReplicatedUsing=OnRep_Health
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_MaxMana, Category = "Attributes | Mana") // ReplicatedUsing=OnRep_Health
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, MaxMana);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_MaxHealth, Category = "Attributes | Health") // ReplicatedUsing=OnRep_Health
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_Stamina, Category = "Attributes | Stamina") // ReplicatedUsing=OnRep_Health
 	FGameplayAttributeData Stamina;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, Stamina);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_MaxHealth, Category = "Attributes | Health") // ReplicatedUsing=OnRep_Health
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_MaxStamina, Category = "Attributes | Stamina") // ReplicatedUsing=OnRep_Health
 	FGameplayAttributeData MaxStamina;
 	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, MaxStamina);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_CurrentRage, Category = "Attributes | Rage")
+	FGameplayAttributeData CurrentRage;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, CurrentRage)
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_MaxRage, Category = "Attributes | Rage")
+	FGameplayAttributeData MaxRage;
+	ATTRIBUTE_ACCESSORS(UCharacterAttributeSet, MaxRage)
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, ReplicatedUsing = OnRep_MovementSpeed, Category = "Attributes | Movement")
 	FGameplayAttributeData MovementSpeed;
@@ -72,16 +80,22 @@ protected:
 	virtual void OnRep_MaxHealth(const FGameplayAttributeData& OldMaxHealth);
 	
 	UFUNCTION()
-	virtual void OnRep_Mana(const FGameplayAttributeData& OldHealth);
+	virtual void OnRep_Mana(const FGameplayAttributeData& OldMana);
 	
 	UFUNCTION()
-	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxHealth);
+	virtual void OnRep_MaxMana(const FGameplayAttributeData& OldMaxMana);
 
 	UFUNCTION()
-	virtual void OnRep_Sprint(const FGameplayAttributeData& OldHealth);
+	virtual void OnRep_Stamina(const FGameplayAttributeData& OldStamina);
 	
 	UFUNCTION()
-	virtual void OnRep_MaxSprint(const FGameplayAttributeData& OldMaxHealth);
+	virtual void OnRep_MaxStamina(const FGameplayAttributeData& OldMaxStamina);
+	
+	UFUNCTION()
+	virtual void OnRep_CurrentRage(const FGameplayAttributeData& OldRage);
+	
+	UFUNCTION()
+	virtual void OnRep_MaxRage(const FGameplayAttributeData& OldMaxRage);
 	
 	UFUNCTION()
 	virtual void OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed);
