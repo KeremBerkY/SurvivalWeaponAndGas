@@ -35,6 +35,7 @@ ASurvivalEnemyCharacter::ASurvivalEnemyCharacter()
 	SelectedWidgetComponent->SetupAttachment(RootComponent);
 
 	EnemyCombatComponent = CreateDefaultSubobject<UEnemyCombatComponent>(TEXT("HeroCombatComponent"));
+	
 
 }
 

@@ -42,6 +42,11 @@ void UHeatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	{
 		StartCooling();
 	}
+
+	if (CurrentHeat == 0)
+	{
+		Weapon->GetWeaponMesh()->SetScalarParameterValueOnMaterials(FName("HitFxSwitch"), 0);
+	}
 }
 
 void UHeatComponent::InitializeHeat()
@@ -65,18 +70,13 @@ void UHeatComponent::UpdateHeat()
 	{
 		const float HeatToAdd = WeaponDataAsset->FiringHeatSettings.HeatGeneratedPerShot;
 		CurrentHeat = FMath::Clamp(CurrentHeat + HeatToAdd, 0.0f, WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity);
-
-		// if (CurrentHeat >=  WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity * 0.6f)
-		// {
-		// 	UCustomDepthHelper::SetCustomDepth(Weapon->GetWeaponMesh(), true, 2);
-		// }
 		
 		Weapon->GetRaycastWeaponUIHandler()->UpdateHeatBar(CurrentHeat, WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity);
 		ResetHeatState();
 
 		if (IsOverheated())
 		{
-			// UCustomDepthHelper::SetCustomDepth(Weapon->GetWeaponMesh(), true, 3);
+			Weapon->GetWeaponMesh()->SetScalarParameterValueOnMaterials(FName("HitFxSwitch"), 1);
 			bIsOverHeated = true;
 			StartCooling();
 		}

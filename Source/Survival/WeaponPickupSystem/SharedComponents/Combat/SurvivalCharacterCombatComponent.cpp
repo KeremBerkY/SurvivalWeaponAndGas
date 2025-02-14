@@ -31,8 +31,10 @@ void USurvivalCharacterCombatComponent::ToggleFootCollision(bool bShouldEnable, 
 			else
 			{
 				PlayerCharacter->GetFootCollision()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-				Debug::Print(PlayerCharacter->GetFootCollision()->GetName() + TEXT(" collision enabled"),FColor::Red);
+				Debug::Print(PlayerCharacter->GetFootCollision()->GetName() + TEXT(" collision disabled"),FColor::Red);
 			}
+
+			OverlappedActors.Empty(); 
 		}
 	}
 }
@@ -73,7 +75,12 @@ void USurvivalCharacterCombatComponent::OnWeaponPulledFromTargetActor(AActor* In
 {
 	Super::OnWeaponPulledFromTargetActor(InteractedActor);
 
-	
+	if (!OverlappedActors.IsEmpty())
+	{
+		OverlappedActors.Remove(InteractedActor);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("WeaponPulledFromTargetActor!!!"));
+	// OverlappedActors.Empty();
 	
 }
 

@@ -18,9 +18,6 @@ class SURVIVAL_API UHitReact : public USurvivalEnemyGameplayAbility
 protected:
 	UHitReact();
 	
-	void K2_ActivateAbilityFromEvent(const FGameplayEventData& EventData);
-
-	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData Payload) override;
 	virtual void OnCancelled(FGameplayTag EventTag, FGameplayEventData Payload) override;

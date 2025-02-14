@@ -113,12 +113,13 @@ void ULockonComponent::StartLockon() // TODO: Bu rakip çok yakına gelirse çal
 		false,
 		PlayerCharacterPtr.Get()
 	};
-	
+
+	// ECC_GameTraceChannel1
 	bool bHasFoundTarget = GetWorld()->LineTraceSingleByChannel(
 		OutResult,
 		StartLocation,
 		EndLocation,
-		ECC_GameTraceChannel1, // TODO: Visibility diye ayarla!
+		ECC_Visibility, // TODO: Visibility diye ayarla!
 		IgnoreParams
 	);
 
@@ -189,7 +190,7 @@ void ULockonComponent::PerformSelect()
 		FCollisionQueryParams Params;
 		Params.AddIgnoredActor(PlayerCharacterPtr.Get());
 
-		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_GameTraceChannel1, Params))
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
 		{
 			DrawDebugVisuals(Start, End, HitResult);
 			

@@ -85,8 +85,9 @@ ASurvivalCharacter::ASurvivalCharacter()
 	FootCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("FootCollision"));
 	FootCollision->SetupAttachment(GetMesh(), FName("foot_r_Socket"));
 	FootCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	FootCollision->OnComponentBeginOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxBeginOverlap);
-	FootCollision->OnComponentEndOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxEndOverlap);
+	
+	FootCollision->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnCollisionBoxBeginOverlap);
+	FootCollision->OnComponentEndOverlap.AddUniqueDynamic(this, &ThisClass::OnCollisionBoxEndOverlap);
 
 	OnKickHitTarget.BindUObject(SurvivalCharacterCombatComponent, &UPawnCombatComponent::OnHitTargetActor);
 	OnKickPulledFromTarget.BindUObject(SurvivalCharacterCombatComponent, &UPawnCombatComponent::OnWeaponPulledFromTargetActor);
@@ -245,6 +246,7 @@ void ASurvivalCharacter::OnCollisionBoxBeginOverlap(UPrimitiveComponent* Overlap
 		if (AttackingPawn != HitPawn)
 		{
 			// Debug::Print(GetName() + TEXT(" kicked ") + HitPawn->GetName(), FColor::Green);
+			UE_LOG(LogTemp, Warning, TEXT("Foot Overlap CALLLEEEDD!!!!!!"));
 			OnKickHitTarget.ExecuteIfBound(OtherActor);
 		}
 	}
@@ -261,6 +263,7 @@ void ASurvivalCharacter::OnCollisionBoxEndOverlap(UPrimitiveComponent* Overlappe
 		if (AttackingPawn != HitPawn)
 		{
 			// Debug::Print(GetName() + TEXT(" kicked ") + HitPawn->GetName(), FColor::Red);
+			UE_LOG(LogTemp, Warning, TEXT("Foot End Overlap Called!!!"));
 			OnKickPulledFromTarget.ExecuteIfBound(OtherActor);
 		}
 	}
