@@ -12,7 +12,7 @@ USingleShotModeComponent::USingleShotModeComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	FireTag = FGameplayTag::RequestGameplayTag(FName("Weapon.FireMode.SingleShot"));
+	FireTag = FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.SingleShot"));
 
 }
 

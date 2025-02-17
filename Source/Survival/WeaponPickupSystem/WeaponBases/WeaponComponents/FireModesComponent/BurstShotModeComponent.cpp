@@ -16,7 +16,7 @@ UBurstShotModeComponent::UBurstShotModeComponent()
 	BurstShotRemaining = 3;
 	BurstCount = 3;
 
-	FireTag = FGameplayTag::RequestGameplayTag(FName("Weapon.FireMode.Burst"));
+	FireTag = FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.Burst"));
 
 }
 

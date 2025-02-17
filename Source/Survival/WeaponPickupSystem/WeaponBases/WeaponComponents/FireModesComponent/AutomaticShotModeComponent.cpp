@@ -14,7 +14,7 @@ UAutomaticShotModeComponent::UAutomaticShotModeComponent()
 
 	PrimaryComponentTick.bCanEverTick = true;
 
-	FireTag = FGameplayTag::RequestGameplayTag(FName("Weapon.FireMode.Automatic"));
+	FireTag = FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.Automatic"));
 }
 
 void UAutomaticShotModeComponent::Fire()

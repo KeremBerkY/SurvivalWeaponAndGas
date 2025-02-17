@@ -39,25 +39,65 @@ FVector UWeaponTargetingComponent::CalculateTargetLocation(const ASurvivalCharac
 }
 
 // FVector UWeaponTargetingComponent::GetRandomBoneLocation(const AEnemyBase* Enemy) const
+// FVector UWeaponTargetingComponent::GetRandomBoneLocation(const ASurvivalEnemyCharacter* Enemy) const
+// {
+// 	if (!Enemy || !Enemy->GetMesh())
+// 	{
+// 		return FVector::ZeroVector;
+// 	}
+//
+// 	const USkeletalMeshComponent* EnemyMesh = Enemy->GetMesh();
+//
+// 	for (int32 i = 0; i < TargetBoneNames.BoneNames.Num(); ++i)
+// 	{
+// 		const int32 RandomIndex = FMath::RandRange(0, TargetBoneNames.BoneNames.Num() - 1);
+// 		const FName BoneToCheck = TargetBoneNames.BoneNames[RandomIndex];
+//
+// 		if (EnemyMesh->GetBoneIndex(BoneToCheck) != INDEX_NONE)
+// 		{
+// 			return EnemyMesh->GetBoneLocation(BoneToCheck);
+// 		}
+// 	}
+//
+// 	return FVector::ZeroVector;
+// }
+
 FVector UWeaponTargetingComponent::GetRandomBoneLocation(const ASurvivalEnemyCharacter* Enemy) const
 {
-	if (!Enemy || !Enemy->GetMesh())
+	if (!Enemy || !Enemy->GetMesh() || !Enemy->GetMesh()->GetSkeletalMeshAsset())
 	{
 		return FVector::ZeroVector;
 	}
 
 	const USkeletalMeshComponent* EnemyMesh = Enemy->GetMesh();
+	const FReferenceSkeleton& RefSkeleton = EnemyMesh->GetSkeletalMeshAsset()->GetRefSkeleton();
 
-	for (int32 i = 0; i < TargetBoneNames.BoneNames.Num(); ++i)
+	// // We check whether the bone names defined in the filter list are present in the enemy skeleton.
+	// TArray<FName> ValidBoneNames;
+	// for (const FName& FilterBone : TargetBoneNames.BoneNames)
+	// {
+	// 	if (RefSkeleton.FindBoneIndex(FilterBone) != INDEX_NONE)
+	// 	{
+	// 		ValidBoneNames.Add(FilterBone);
+	// 	}
+	// }
+	//
+	// // Eğer filtre listesinde geçerli kemikler varsa, onlardan rastgele seçim yap.
+	// if (ValidBoneNames.Num() > 0)
+	// {
+	// 	int32 RandomIndex = FMath::RandRange(0, ValidBoneNames.Num() - 1);
+	// 	FName SelectedBone = ValidBoneNames[RandomIndex];
+	// 	return EnemyMesh->GetBoneLocation(SelectedBone);
+	// }
+
+	// If no valid bones are found in the filter list, randomly select from all skeleton bones.
+	const int32 NumBones = RefSkeleton.GetNum();
+	if (NumBones > 0)
 	{
-		const int32 RandomIndex = FMath::RandRange(0, TargetBoneNames.BoneNames.Num() - 1);
-		const FName BoneToCheck = TargetBoneNames.BoneNames[RandomIndex];
-
-		if (EnemyMesh->GetBoneIndex(BoneToCheck) != INDEX_NONE)
-		{
-			return EnemyMesh->GetBoneLocation(BoneToCheck);
-		}
+		int32 RandomIndex = FMath::RandRange(0, NumBones - 1);
+		FName RandomBoneName = RefSkeleton.GetBoneName(RandomIndex);
+		return EnemyMesh->GetBoneLocation(RandomBoneName);
 	}
-
+    
 	return FVector::ZeroVector;
 }
