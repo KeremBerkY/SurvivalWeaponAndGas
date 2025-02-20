@@ -18,6 +18,7 @@ URaycastAttackAbility::URaycastAttackAbility()
     ActivationOwnedTags.AddTag(AbilityTag);
 }
 
+//TODO: sol tuşa basılı tuttun loop döndü sonra parmağını çekip tekrar basarsan end çalışmıyor. bu sınıf için
 void URaycastAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -25,43 +26,62 @@ void URaycastAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	const auto WeaponRef = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
 	if (PlayerCharacterRef && WeaponRef)
 	{
-		const ARaycastWeapons* RaycastWeaponsRef = Cast<ARaycastWeapons>(PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon());
-		const auto RaycastWeaponData = RaycastWeaponsRef->GetRaycastWeaponDataAsset();
-		// !RaycastWeaponsRef->CanFire()
-		if (!RaycastWeaponsRef || RaycastWeaponsRef->GetCurrentAmmo() <= 0 ||
-			RaycastWeaponsRef->GetHeatComponent()->GetCurrentHeat() >= RaycastWeaponData->FiringHeatSettings.MaxHeatCapacity ||
-			RaycastWeaponsRef->GetHeatComponent()->IsOverHeated())
+		RaycastWeaponPtr = MakeWeakObjectPtr(Cast<ARaycastWeapons>(PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon()));
+		const auto RaycastWeaponData = RaycastWeaponPtr->GetRaycastWeaponDataAsset();
+
+		if (!RaycastWeaponData)
 		{
+			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+			return;
+		}
+		
+		if (RaycastWeaponPtr->GetAttackCooldownActive())
+		{
+			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+			return;;
+		}
+		
+		if (!RaycastWeaponPtr.IsValid() || RaycastWeaponPtr->GetCurrentAmmo() <= 0 ||
+			RaycastWeaponPtr->GetHeatComponent()->GetCurrentHeat() >= RaycastWeaponData->FiringHeatSettings.MaxHeatCapacity ||
+			RaycastWeaponPtr->GetHeatComponent()->IsOverHeated())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("EndAbility Called Before Montage!!!"));
 			WeaponRef->EndAttack();
 			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 			return;
 		};
-
-	
-		AbilityMontage = RaycastWeaponsRef->GetRaycastWeaponDataAsset()->WeaponAnimMontages.FireMontage;
-		MontageRate = 1 + (RaycastWeaponsRef->GetRaycastWeaponDataAsset()->FireRate);
+		
+		AbilityMontage = RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.FireMontage;
+		MontageRate = 1 + (RaycastWeaponPtr->GetRaycastWeaponDataAsset()->FireRate);
 
 		StartAnimMontage();
 		PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon()->Attack();
-		
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Character has no Weapon"));
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-		return;
 	}
 
-	UAbilityTask_WaitInputRelease* WaitInputReleaseTask = UAbilityTask_WaitInputRelease::WaitInputRelease(this, false);
-	WaitInputReleaseTask->OnRelease.AddDynamic(this, &URaycastAttackAbility::OnInputRelease);
-	WaitInputReleaseTask->Activate();
+	
+	// !RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage
+	if (!GetCharacterAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.Automatic"))) &&
+		!GetCharacterAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.Burst"))))
+	{
+		UAbilityTask_WaitInputRelease* WaitInputReleaseTask = UAbilityTask_WaitInputRelease::WaitInputRelease(this, false);
+		WaitInputReleaseTask->OnRelease.AddDynamic(this, &URaycastAttackAbility::OnInputRelease);
+		WaitInputReleaseTask->Activate();
+		Debug::Print(TEXT("WaitInputReleaseTask bind"));
+	}
+	else
+	{
+		// EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	}
 }
-
+ 
 void URaycastAttackAbility::OnInputRelease(float TimeHeld)
 {
 	// TODO: AutomaticShot da ateş etmeye devam ediyor. Bunu Kaldırmamız lazım! (Shot Modelarına Tag ekleyelim. Burada da Tagler check edilsin.
-	// Örneğin AutomaticShot aktifse EndAbility çalışmasın. Burada Tag kontrolü yapıcaz.
-	
 	if (PlayerCharacterRef)
 	{
 		const auto CurrentWeapon = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
@@ -73,6 +93,7 @@ void URaycastAttackAbility::OnInputRelease(float TimeHeld)
 	}
 	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	
 }
 
 void URaycastAttackAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData Payload)
@@ -100,6 +121,7 @@ void URaycastAttackAbility::HandleApplyDamage(const FGameplayEventData& Gameplay
 				FGameplayTag::RequestGameplayTag(FName("Character.SetByCaller.AttackType.Ray"))
 			);
 			NativeApplyEffectSpecHandleToTarget(LocalTargetActor, SpecHandle);
+			UE_LOG(LogTemp, Warning, TEXT("HANDLE APPLY DAMAGE CALLED"));
 		}
 	}
 }
@@ -108,15 +130,17 @@ void URaycastAttackAbility::OnCancelled(FGameplayTag EventTag, FGameplayEventDat
 {
 	Super::OnCancelled(EventTag, Payload);
 	
-	// EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 void URaycastAttackAbility::OnCompleted(FGameplayTag EventTag, FGameplayEventData Payload)
 {
 	Super::OnCompleted(EventTag, Payload);
-
 	
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	// if (!RaycastWeaponPtr->CanFire() && RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage)
+	// {
+	// }
+		// EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 
@@ -124,14 +148,16 @@ void URaycastAttackAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, 
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	// if (PlayerCharacterRef)
+	// if (RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage)
 	// {
-	// 	const auto CurrentWeapon = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
-	// 	if (CurrentWeapon && !CurrentWeapon->GetAttackCooldownActive())
+	// 	if (PlayerCharacterRef)
 	// 	{
-	// 		CurrentWeapon->EndAttack();
-	// 		Debug::Print("EndAbility Called!", FColor::Orange);
+	// 		const auto CurrentWeapon = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
+	// 		if (CurrentWeapon && !CurrentWeapon->GetAttackCooldownActive())
+	// 		{
+	// 			CurrentWeapon->EndAttack();
+	// 			Debug::Print("EndAbility Called!", FColor::Orange);
+	// 		}
 	// 	}
 	// }
 }
-

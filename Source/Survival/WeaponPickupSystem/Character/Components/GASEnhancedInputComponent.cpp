@@ -148,7 +148,9 @@ void UGASEnhancedInputComponent::HandleFireActionPressed()
 				if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory != EWeaponCategory::Ewc_MeleeWeapons &&
 					PlayerCharacter->GetWeaponInventory()->HasWeaponInCategory(EWeaponCategory::Ewc_MeleeWeapons))
 				{
-					PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CurrentWeapon, PlayerCharacter, EWeaponCategory::Ewc_MeleeWeapons);
+					// PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CurrentWeapon, PlayerCharacter, EWeaponCategory::Ewc_MeleeWeapons);
+					HandleMeleeActionPressed();
+					SendInputActionToASC(true, EGASAbilityInputID::Attack);
 				}
 				else
 				{

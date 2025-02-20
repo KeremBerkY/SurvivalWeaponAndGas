@@ -28,6 +28,7 @@ ARaycastWeapons::ARaycastWeapons()
 	
 	SingleShotModeComponent = CreateDefaultSubobject<USingleShotModeComponent>(TEXT("SingleShotModeComponent"));
 	WeaponTargetingComponent = CreateDefaultSubobject<UWeaponTargetingComponent>(TEXT("WeaponTargetingComponent"));
+	
 }
 
 void ARaycastWeapons::BeginPlay()
@@ -88,6 +89,8 @@ void ARaycastWeapons::PerformFire()
 	Super::PerformFire();
 
 	if (GetCurrentAmmo() <= 0 || HeatComponent->GetCurrentHeat() >= RaycastWeaponData->FiringHeatSettings.MaxHeatCapacity || HeatComponent->IsOverHeated()) return;
+	
+	// GetOwningCharacter()->GetCharacterAbilitySystemComponent()->TryActivateAbilityByClass(this->GetRaycastWeaponDataAsset()->FireAbility);
 
 	CalculateTargetPoint();
 	

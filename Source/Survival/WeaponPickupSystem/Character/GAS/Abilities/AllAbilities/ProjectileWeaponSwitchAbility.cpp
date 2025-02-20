@@ -12,17 +12,53 @@ void UProjectileWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecH
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-		
 	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(ActorInfo->AvatarActor.Get()))
 	{
-		const UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
-		if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
+		UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
+
+		if (const auto WeaponInventory = PlayerCharacter->GetWeaponInventory())
 		{
-			PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), PlayerCharacter, EWeaponCategory::Ewc_ProjectileWeapons);
-			PlayerCharacter->GetCharacterWeaponComponent()->UpdateLastSwitchTime();
+			
+			if (WeaponInventory->HasWeaponInCategory(EWeaponCategory::Ewc_ProjectileWeapons))
+			{
+				if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
+				{
+					WeaponInventory->SwapToBackWeapon(
+						CharacterWeaponComponent->GetCurrentWeapon(),
+						PlayerCharacter,
+						EWeaponCategory::Ewc_ProjectileWeapons
+					);
+					CharacterWeaponComponent->UpdateLastSwitchTime();
+				}
+			}
+			else
+			{
+				if (CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_ProjectileWeapons)
+				{
+					if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
+					{
+						WeaponInventory->SwapToBackWeapon(
+							CharacterWeaponComponent->GetCurrentWeapon(),
+							PlayerCharacter,
+							EWeaponCategory::Ewc_ProjectileWeapons
+						);
+						CharacterWeaponComponent->UpdateLastSwitchTime();
+					}
+				}
+				else
+				{
+					WeaponInventory->SwapToBackWeapon(
+						CharacterWeaponComponent->GetCurrentWeapon(),
+						PlayerCharacter,
+						CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory
+					);
+				}
+			}
+
+	
 		}
 	}
-
+	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 
 }
@@ -32,3 +68,14 @@ void UProjectileWeaponSwitchAbility::EndAbility(const FGameplayAbilitySpecHandle
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
 }
+		
+// if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(ActorInfo->AvatarActor.Get()))
+// {
+// 	const UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
+// 	
+// 	if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
+// 	{
+// 		PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), PlayerCharacter, EWeaponCategory::Ewc_ProjectileWeapons);
+// 		PlayerCharacter->GetCharacterWeaponComponent()->UpdateLastSwitchTime();
+// 	}
+// }

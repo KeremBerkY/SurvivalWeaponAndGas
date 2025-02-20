@@ -109,7 +109,8 @@ void UMeleeWeaponLightAttack::HandleApplyDamage(const FGameplayEventData& Gamepl
 {
 	if (AActor* LocalTargetActor = Cast<AActor>(GameplayEventData.Target))
 	{
-		if (USurvivalCharacterCombatComponent* SurvivalCharacterCombatComponent = GetPlayerCharacterFromCharacterGameplayAbility()->GetSurvivalCharacterCombatComponent())
+		K2_ExecuteGameplayCue(GameplayCueTag, FGameplayEffectContextHandle());
+		if (const USurvivalCharacterCombatComponent* SurvivalCharacterCombatComponent = GetPlayerCharacterFromCharacterGameplayAbility()->GetSurvivalCharacterCombatComponent())
 		{
 			const float WeaponBaseDamage = SurvivalCharacterCombatComponent->GetCharacterCurrentEquipWeaponDamageAtLevel(GetAbilityLevel());
 			const auto SpecHandle = MakeCharacterDamageEffectSpecHandle(
@@ -125,6 +126,7 @@ void UMeleeWeaponLightAttack::HandleApplyDamage(const FGameplayEventData& Gamepl
 				FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.HitReact")),
 				GameplayEventData
 			);
+			
 		}
 	}
 }

@@ -6,6 +6,7 @@
 #include "Survival/WeaponPickupSystem/Character/GAS/Abilities/CharacterMontageEventAbility.h"
 #include "RaycastAttackAbility.generated.h"
 
+class ARaycastWeapons;
 /**
  * 
  */
@@ -25,6 +26,10 @@ protected:
 	virtual void OnCompleted(FGameplayTag EventTag, FGameplayEventData Payload) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
-	void HandleApplyDamage(const FGameplayEventData& GameplayEventData);
+	virtual void HandleApplyDamage(const FGameplayEventData& GameplayEventData);
+
+	TWeakObjectPtr<ARaycastWeapons> RaycastWeaponPtr;
+
+	
 	
 };

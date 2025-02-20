@@ -18,7 +18,7 @@ class SURVIVAL_API UCharacterAbilitySystemComponent : public UAbilitySystemCompo
 public:
 
 	void AddCharacterAbilities(const TArray<TSubclassOf<UCharacterGameplayAbility>>& AbilitiesToGrant);
-	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UCharacterGameplayAbility>>& PassivesToGrant);
+	void AddCharacterReactiveAbilities(const TArray<TSubclassOf<UCharacterGameplayAbility>>& PassivesToGrant);
 	void InitializeDefaultAttributes(const TArray<TSubclassOf<UGameplayEffect>>& AttributeEffect);
 	void InitializeSpecialAttributes(const TArray<TSubclassOf<UGameplayEffect>>& SpecialEffects);
 

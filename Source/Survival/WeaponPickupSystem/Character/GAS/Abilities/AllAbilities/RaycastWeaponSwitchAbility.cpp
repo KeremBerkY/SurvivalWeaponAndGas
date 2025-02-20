@@ -12,17 +12,53 @@ void URaycastWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHand
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	UE_LOG(LogTemp, Warning, TEXT("Raycast Switch Activated"));
-	
 	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(ActorInfo->AvatarActor.Get()))
 	{
-		const UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
-		if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
+		UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
+
+		if (const auto WeaponInventory = PlayerCharacter->GetWeaponInventory())
 		{
-			PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), PlayerCharacter, EWeaponCategory::Ewc_RaycastWeapons);
-			PlayerCharacter->GetCharacterWeaponComponent()->UpdateLastSwitchTime(); // SORU: CharacterWeaponComponent ile UpdateLastSwitchTime() çağıramadım neden?
+			
+			if (WeaponInventory->HasWeaponInCategory(EWeaponCategory::Ewc_RaycastWeapons))
+			{
+				if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
+				{
+					WeaponInventory->SwapToBackWeapon(
+						CharacterWeaponComponent->GetCurrentWeapon(),
+						PlayerCharacter,
+						EWeaponCategory::Ewc_RaycastWeapons
+					);
+					CharacterWeaponComponent->UpdateLastSwitchTime();
+				}
+			}
+			else
+			{
+				if (CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_RaycastWeapons)
+				{
+					if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
+					{
+						WeaponInventory->SwapToBackWeapon(
+							CharacterWeaponComponent->GetCurrentWeapon(),
+							PlayerCharacter,
+							EWeaponCategory::Ewc_RaycastWeapons
+						);
+						CharacterWeaponComponent->UpdateLastSwitchTime();
+					}
+				}
+				else
+				{
+					WeaponInventory->SwapToBackWeapon(
+						CharacterWeaponComponent->GetCurrentWeapon(),
+						PlayerCharacter,
+						CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory
+					);
+				}
+			}
+
+	
 		}
 	}
+	
 
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }

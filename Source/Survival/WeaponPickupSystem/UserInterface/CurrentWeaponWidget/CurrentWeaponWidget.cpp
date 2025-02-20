@@ -27,6 +27,7 @@ void UCurrentWeaponWidget::UpdateCurrentWeaponWidget(const ASurvivalCharacter* P
 {
 	if (!WidgetSwitcher) return;
 
+	HideCurrentWeaponWidget();
 	
 	if (const auto CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
 	{
@@ -59,6 +60,10 @@ void UCurrentWeaponWidget::UpdateCurrentWeaponWidget(const ASurvivalCharacter* P
 
 void UCurrentWeaponWidget::HideCurrentWeaponWidget()
 {
+	if (WidgetSwitcher)
+	{
+		WidgetSwitcher->SetActiveWidgetIndex(-1);
+	}
 	SetVisibility(ESlateVisibility::Hidden);
 }
 

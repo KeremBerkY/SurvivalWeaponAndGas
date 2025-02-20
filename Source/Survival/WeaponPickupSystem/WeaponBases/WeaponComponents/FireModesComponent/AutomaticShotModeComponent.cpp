@@ -3,6 +3,7 @@
 
 #include "AutomaticShotModeComponent.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
@@ -35,7 +36,7 @@ void UAutomaticShotModeComponent::Fire()
 				AutomaticFireTimerHandle,
 				this,
 				&UAutomaticShotModeComponent::AutomaticFire,
-				RaycastWeaponDataPtr.Get()->FireRate,
+				RaycastWeaponDataPtr->FireRate,
 				true
 			);
 		}
@@ -46,7 +47,7 @@ void UAutomaticShotModeComponent::Fire()
 void UAutomaticShotModeComponent::EndFire()
 {
 	Super::EndFire();
-	
+
 	if (GetWorld() && !OwnerWeaponPtr->CanFire() && !OwnerWeaponPtr->GetAttackCooldownActive())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(AutomaticFireTimerHandle);
@@ -56,7 +57,7 @@ void UAutomaticShotModeComponent::EndFire()
 			FireRateTimerHandle,
 			this,
 			&UAutomaticShotModeComponent::ResetFire,
-			RaycastWeaponDataPtr.Get()->FireRate,
+			RaycastWeaponDataPtr->FireRate,
 			false
 		);
 	}
@@ -65,7 +66,7 @@ void UAutomaticShotModeComponent::EndFire()
 
 void UAutomaticShotModeComponent::AutomaticFire()
 {
-	if (OwnerWeaponPtr.IsValid())
+	if (OwnerWeaponPtr)
 	{
 		if (GetCharacterAbilitySystemComponent())
 		{
@@ -73,9 +74,16 @@ void UAutomaticShotModeComponent::AutomaticFire()
 			{
 				GetCharacterAbilitySystemComponent()->AddLooseGameplayTag(FireTag);
 			}
-			GetCharacterAbilitySystemComponent()->TryActivateAbilityByClass(OwnerWeaponPtr.Get()->GetRaycastWeaponDataAsset()->FireAbility);
 		}
-		
+		if (OwnerWeaponPtr->GetRaycastWeaponDataAsset())
+		{
+			GetCharacterAbilitySystemComponent()->TryActivateAbilityByClass(OwnerWeaponPtr->GetRaycastWeaponDataAsset()->FireAbility);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Cannot Reach RaycastData!"));
+		}
+
 		OwnerWeaponPtr->SetCanFire(false);
 		OwnerWeaponPtr->PerformFire();
 	}
@@ -87,7 +95,7 @@ void UAutomaticShotModeComponent::ResetFire() const
 	{
 		GetCharacterAbilitySystemComponent()->RemoveLooseGameplayTag(FireTag);
 	}
-	
+
 	OwnerWeaponPtr->SetCanFire(true);
 	OwnerWeaponPtr->SetAttackCooldownActive(false);
 	UE_LOG(LogTemp, Log, TEXT("Ready to fire again!"));

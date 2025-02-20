@@ -99,6 +99,7 @@ void UMeleeWeaponHeavyAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEv
 	{
 		if (AActor* LocalTargetActor = Cast<AActor>(Payload.Target))
 		{
+			K2_ExecuteGameplayCue(GameplayCueTag, FGameplayEffectContextHandle());
 			if (const USurvivalCharacterCombatComponent* HeroCombatComponent = GetPlayerCharacterFromCharacterGameplayAbility()->GetSurvivalCharacterCombatComponent())
 			{
 				const float WeaponBaseDamage = HeroCombatComponent->GetCharacterCurrentEquipWeaponDamageAtLevel(GetAbilityLevel());
@@ -115,6 +116,15 @@ void UMeleeWeaponHeavyAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEv
 					FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.HitReact")),
 					Payload
 				);
+
+				if (CurrentHeavyAttackComboCount == AttackMontagesMap.Num() - 1)
+				{
+					UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+						LocalTargetActor,
+						FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.ThrowBack")),
+						Payload
+					);
+				}
 			}
 		}
 	}

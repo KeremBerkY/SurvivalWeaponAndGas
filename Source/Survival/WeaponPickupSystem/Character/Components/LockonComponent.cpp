@@ -35,10 +35,10 @@ void ULockonComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerCharacterPtr = Cast<ASurvivalCharacter>(GetOwner());
+	PlayerCharacterPtr = MakeWeakObjectPtr(Cast<ASurvivalCharacter>(GetOwner()));
 
-	ControllerPtr = GetWorld()->GetFirstPlayerController();
-	MovementComponent = PlayerCharacterPtr->GetCharacterMovement();
+	ControllerPtr = MakeWeakObjectPtr(GetWorld()->GetFirstPlayerController());
+	MovementComponentPtr = MakeWeakObjectPtr(PlayerCharacterPtr->GetCharacterMovement());
 
 	FocusCrosshairInitialize();
 }
@@ -75,21 +75,21 @@ void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	CheckCurrentWeaponAndCategory();
-	
-	if (!bIsNotRaycast)
-	{
-		AddFocusCrosshair();
-	}
-	else
-	{
-		RemoveFocusCrosshair();
-		return;
-	}
-	
-	CheckAndPerformTargetSelection(DeltaTime);
-	
-	RotateTowardsTarget(DeltaTime);
+	// CheckCurrentWeaponAndCategory();
+	//
+	// if (!bIsNotRaycast)
+	// {
+	// 	AddFocusCrosshair();
+	// }
+	// else
+	// {
+	// 	RemoveFocusCrosshair();
+	// 	return;
+	// }
+	//
+	// CheckAndPerformTargetSelection(DeltaTime);
+	//
+	// RotateTowardsTarget(DeltaTime);
 	
 }
 
@@ -144,8 +144,8 @@ void ULockonComponent::StartLockon() // TODO: Bu rakip çok yakına gelirse çal
 			}
 			
 			ControllerPtr.Get()->SetIgnoreLookInput(true);
-			MovementComponent.Get()->bOrientRotationToMovement = false;
-			MovementComponent.Get()->bUseControllerDesiredRotation = true;
+			MovementComponentPtr.Get()->bOrientRotationToMovement = false;
+			MovementComponentPtr.Get()->bUseControllerDesiredRotation = true;
 
 			PlayerCharacterPtr->GetCameraBoom()->TargetOffset = FVector(0.f, 0.f, 100.f); // TODO: Smooth hale getir!
 		}
@@ -170,8 +170,8 @@ void ULockonComponent::EndLockon()
 	CurrentTargetActor = nullptr;
 	SetLocked(false);
 	
-	MovementComponent.Get()->bOrientRotationToMovement = true;
-	MovementComponent.Get()->bUseControllerDesiredRotation = false;
+	MovementComponentPtr.Get()->bOrientRotationToMovement = true;
+	MovementComponentPtr.Get()->bUseControllerDesiredRotation = false;
 	PlayerCharacterPtr->GetCameraBoom()->TargetOffset = FVector::ZeroVector;
 
 	ControllerPtr.Get()->ResetIgnoreLookInput();

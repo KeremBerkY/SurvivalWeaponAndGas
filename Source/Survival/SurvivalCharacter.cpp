@@ -2,6 +2,7 @@
 
 #include "SurvivalCharacter.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -138,7 +139,7 @@ void ASurvivalCharacter::InitClassDefaults()
 			if (IsValid(CharacterAbilitySystemComponent))
 			{
 				CharacterAbilitySystemComponent->AddCharacterAbilities(SelectedClassInfo->StartingAbilities);
-				CharacterAbilitySystemComponent->AddCharacterPassiveAbilities(SelectedClassInfo->StartingPassives);
+				CharacterAbilitySystemComponent->AddCharacterReactiveAbilities(SelectedClassInfo->ReactiveAbilities);
 				CharacterAbilitySystemComponent->InitializeDefaultAttributes(SelectedClassInfo->DefaultAttributes);
 				CharacterAbilitySystemComponent->InitializeSpecialAttributes(SelectedClassInfo->SpecialAttributes);
 				
@@ -179,6 +180,11 @@ void ASurvivalCharacter::InitializeResourceComponent()
 	}
 }
 
+void ASurvivalCharacter::OnTargetHit(const AActor* HitActor)
+{
+	BP_OnCombatTargetHit();
+}
+
 void ASurvivalCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -201,6 +207,19 @@ void ASurvivalCharacter::BeginPlay()
 	{
 		FootCollision->IgnoreActorWhenMoving(OwnerActor, true);
 	}
+
+	/* GameplayAbility Test Section */
+	
+	// if (IsValid(SurvivalCharacterCombatComponent))
+	// {
+	// 	SurvivalCharacterCombatComponent->OnCombatHitTargetDelegate.AddDynamic(this, &ThisClass::OnTargetHit);
+	// }
+
+	// FTimerHandle HitPauseTimerHandle;
+	// FTimerDelegate TimerDel;
+	// TimerDel.BindUObject(this, &ASurvivalCharacter::Bum);
+	// 	
+	// GetWorld()->GetTimerManager().SetTimer(HitPauseTimerHandle, TimerDel, 10.f, false);
 }
 
 void ASurvivalCharacter::BindResourceInitialization()

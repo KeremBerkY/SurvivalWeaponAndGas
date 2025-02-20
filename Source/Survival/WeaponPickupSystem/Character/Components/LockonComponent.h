@@ -63,7 +63,7 @@ private:
 
 	TWeakObjectPtr<APlayerController> ControllerPtr;
 
-	TWeakObjectPtr<UCharacterMovementComponent> MovementComponent;
+	TWeakObjectPtr<UCharacterMovementComponent> MovementComponentPtr;
 
 	UPROPERTY()
 	// AEnemyBase* CurrentTargetActor;

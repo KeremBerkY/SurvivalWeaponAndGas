@@ -31,7 +31,7 @@ void AMeleeWeapon::OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedCom
 	{
 		if (WeaponOwningPawn != HitPawn)
 		{
-			OnWeaponHitTarget.ExecuteIfBound(OtherActor);
+			OnWeaponHitTarget.Broadcast(OtherActor);
 		}
 
 		// TODO: Implement hit check for enemy characters
@@ -44,12 +44,11 @@ void AMeleeWeapon::OnCollisionBoxEndOverlap(UPrimitiveComponent* OverlappedCompo
 	const APawn* WeaponOwningPawn = GetInstigator<APawn>();
 
 	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instigator as the onwning pawn for the weapon: %s"), *GetName());
-
 	if (const APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
 		if (WeaponOwningPawn != HitPawn)
 		{
-			OnWeaponPulledFromTarget.ExecuteIfBound(OtherActor);
+			OnWeaponPulledFromTarget.Broadcast(OtherActor);
 		}
 
 		// TODO: Implement hit check for enemy characters

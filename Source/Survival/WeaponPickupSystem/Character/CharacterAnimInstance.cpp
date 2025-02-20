@@ -13,7 +13,7 @@ void UCharacterAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	PlayerCharacterPtr = Cast<ASurvivalCharacter>(TryGetPawnOwner());
+	PlayerCharacterPtr = MakeWeakObjectPtr(Cast<ASurvivalCharacter>(TryGetPawnOwner()));
 }
 
 void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)

@@ -22,7 +22,7 @@ void UCharacterCameraComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerCharacterPtr = Cast<ASurvivalCharacter>(GetOwner());
+	PlayerCharacterPtr = MakeWeakObjectPtr(Cast<ASurvivalCharacter>(GetOwner()));
 	if (PlayerCharacterPtr.IsValid())
 	{
 		CameraBoomPtr = MakeWeakObjectPtr(PlayerCharacterPtr->GetCameraBoom());

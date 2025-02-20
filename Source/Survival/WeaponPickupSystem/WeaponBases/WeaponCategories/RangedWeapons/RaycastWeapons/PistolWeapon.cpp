@@ -69,8 +69,6 @@ void APistolWeapon::PerformFire()
 
 	if (bHit)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Raycast hit! Impact point: %s, Actor: %s"), *HitResult.ImpactPoint.ToString(), *HitResult.GetActor()->GetName());
-		
 		OnImpact.Broadcast(HitResult);
 
 		if (AActor* HitActor = HitResult.GetActor())

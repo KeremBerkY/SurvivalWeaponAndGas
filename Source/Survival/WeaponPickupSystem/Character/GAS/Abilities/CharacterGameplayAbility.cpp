@@ -8,7 +8,7 @@
 
 UCharacterGameplayAbility::UCharacterGameplayAbility()
 {
-	ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Dead")));
+	// ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Dead")));
 	// ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Debuff.Stun")));
 	// ActivationBlockedTags.AddTag(FGameplayTag::RequestGameplayTag(FName("State.Debuff.Fear")));
 
@@ -19,6 +19,13 @@ UCharacterGameplayAbility::UCharacterGameplayAbility()
 UCharacterAbilitySystemComponent* UCharacterGameplayAbility::GetCharacterAbilitySystemComponentFromActorInfo()
 {
 	return Cast<UCharacterAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent);
+}
+
+APlayerController* UCharacterGameplayAbility::GetCharacterControllerFromActorInfo()
+{
+	CachedSurvivalCharacterController = MakeWeakObjectPtr(Cast<APlayerController>(CurrentActorInfo->PlayerController));
+
+	return CachedSurvivalCharacterController.IsValid() ? CachedSurvivalCharacterController.Get() : nullptr;
 }
 
 const FGameplayTagContainer* UCharacterGameplayAbility::GetCooldownTags() const

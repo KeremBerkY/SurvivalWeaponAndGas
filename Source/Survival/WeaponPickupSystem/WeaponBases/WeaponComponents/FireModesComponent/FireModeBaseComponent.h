@@ -29,8 +29,10 @@ protected:
 
 	FGameplayTag FireTag;
 
-	TWeakObjectPtr<URaycastWeaponData> RaycastWeaponDataPtr;
-	TWeakObjectPtr<ARaycastWeapons> OwnerWeaponPtr;
+	// TWeakObjectPtr<URaycastWeaponData> RaycastWeaponDataPtr;
+	// TWeakObjectPtr<ARaycastWeapons> OwnerWeaponPtr;
+	URaycastWeaponData* RaycastWeaponDataPtr;
+	ARaycastWeapons* OwnerWeaponPtr;
 
 public:
 	virtual void Fire() override;

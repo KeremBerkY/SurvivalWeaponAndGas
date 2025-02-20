@@ -8,7 +8,7 @@
 
 class UBoxComponent;
 
-DECLARE_DELEGATE_OneParam(FOnTargetInteractedDelegate, AActor*)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetInteractedMulticastDelegate, AActor*, Actor);
 
 UCLASS()
 class SURVIVAL_API AMeleeWeapon : public AWeaponBase
@@ -18,8 +18,8 @@ class SURVIVAL_API AMeleeWeapon : public AWeaponBase
 public:
 	AMeleeWeapon();
 	
-	FOnTargetInteractedDelegate OnWeaponHitTarget;
-	FOnTargetInteractedDelegate OnWeaponPulledFromTarget;
+	FOnTargetInteractedMulticastDelegate OnWeaponHitTarget;
+	FOnTargetInteractedMulticastDelegate OnWeaponPulledFromTarget;
 
 	UFUNCTION()
 	void OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

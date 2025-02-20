@@ -63,7 +63,7 @@ void AShotgunWeapon::PerformFire() // TODO: aim ile tam ortaya ateş edilmiyor, 
 	QueryParams.AddIgnoredActor(this);
 	QueryParams.AddIgnoredActor(GetOwner());
 
-	OnFirePlayMontage.Broadcast();
+	// OnFirePlayMontage.Broadcast();
 	
 	for (int32 i = 0; i < PelletCount; i++)
 	{
@@ -81,7 +81,7 @@ void AShotgunWeapon::PerformFire() // TODO: aim ile tam ortaya ateş edilmiyor, 
 		FVector TraceEnd = LocalMuzzleLocation + (RandomSpread * 5000.0f);
 
 		OnFireMade.Broadcast();
-		OnFirePlayMontage.Broadcast();
+		// OnFirePlayMontage.Broadcast();
 		
 		FHitResult HitResult;
 		bool bHit = GetWorld()->LineTraceSingleByChannel(

@@ -79,9 +79,15 @@ public:
 	UPROPERTY()
 	ABasePickup* CurrentPickup; // TODO: TScriptInterface<IInteractionInterface>* CurrentPickup; Change with this!!! ??
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon",  meta = (DisplayName = "OnCombatTargetHit"))
+	void BP_OnCombatTargetHit();
+	
 protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
+	// void Bum(); // TEST!
+	UFUNCTION()
+	void OnTargetHit(const AActor* HitActor);
 
 // Movement Speed
 	void OnMovementSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData) const;

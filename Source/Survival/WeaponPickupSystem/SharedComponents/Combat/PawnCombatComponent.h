@@ -24,15 +24,19 @@ class SURVIVAL_API UPawnCombatComponent : public UPawnExtensionComponentBase
 public:
 	UPawnCombatComponent();
 
+	UFUNCTION()
 	AWeaponBase* GetCharacterCurrentEquippedWeapon() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Survival|Combat")
 	void ToggleWeaponCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType);
 
+	UFUNCTION()
 	virtual void OnHitTargetActor(AActor* HitActor);
+	UFUNCTION()
 	virtual void OnWeaponPulledFromTargetActor(AActor* InteractedActor);
 
 protected:
+	UPROPERTY()
 	TArray<AActor*> OverlappedActors;
 
 };

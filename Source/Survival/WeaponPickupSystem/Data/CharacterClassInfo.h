@@ -26,7 +26,7 @@ struct FCharacterClassDefaultInfo
 	TArray<TSubclassOf<UCharacterGameplayAbility>> StartingAbilities;
 	
 	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<UCharacterGameplayAbility>> StartingPassives;
+	TArray<TSubclassOf<UCharacterGameplayAbility>> ReactiveAbilities;
 };
 
 

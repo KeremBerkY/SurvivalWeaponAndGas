@@ -31,7 +31,7 @@ public:
 	FORCEINLINE void SetCurrentAmmo(const int32 Amount) {  CurrentAmmo = Amount;}
 	FORCEINLINE int32 GetTotalAmmo() const { return TotalAmmo; }
 	FORCEINLINE void SetTotalAmmo(const int32 Ammo) { TotalAmmo = Ammo; }
-	
+	FORCEINLINE URangedWeaponData* GetRangedWeaponDataAsset() const { return RangedWeaponData; }
 	FORCEINLINE void DecreaseCurrentAmmo() { CurrentAmmo--; }
 	// FORCEINLINE TScriptInterface<IWeaponFireMode> GetActiveFireMode() const { return ActiveFireMode; }
 	FORCEINLINE bool CanFire() const { return bCanFire; } // TODO: Belki WeaponBaseye taşıyabilirsin? 

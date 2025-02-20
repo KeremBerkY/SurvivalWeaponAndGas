@@ -8,20 +8,60 @@
 #include "Survival/WeaponPickupSystem/Character/Components/LockonComponent.h"
 #include "Survival/WeaponPickupSystem/Character/Components/WeaponInventory.h"
 
+UMeleeWeaponSwitchAbility::UMeleeWeaponSwitchAbility()
+{
+	bHasExecuted = false;
+}
+
 void UMeleeWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(ActorInfo->AvatarActor.Get()))
 	{
-		const UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
-		if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
+		 UCharacterWeaponComponent* CharacterWeaponComponent = PlayerCharacter->GetCharacterWeaponComponent();
+
+		if (const auto WeaponInventory = PlayerCharacter->GetWeaponInventory())
 		{
-			PlayerCharacter->GetWeaponInventory()->SwapToBackWeapon(CharacterWeaponComponent->GetCurrentWeapon(), PlayerCharacter, EWeaponCategory::Ewc_MeleeWeapons);
-			PlayerCharacter->GetCharacterWeaponComponent()->UpdateLastSwitchTime();
+			
+			if (WeaponInventory->HasWeaponInCategory(EWeaponCategory::Ewc_MeleeWeapons))
+			{
+				if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
+				{
+					WeaponInventory->SwapToBackWeapon(
+						CharacterWeaponComponent->GetCurrentWeapon(),
+						PlayerCharacter,
+						EWeaponCategory::Ewc_MeleeWeapons
+					);
+					CharacterWeaponComponent->UpdateLastSwitchTime();
+				}
+			}
+			else
+			{
+				if (CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+				{
+					if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
+					{
+						WeaponInventory->SwapToBackWeapon(
+							CharacterWeaponComponent->GetCurrentWeapon(),
+							PlayerCharacter,
+							EWeaponCategory::Ewc_MeleeWeapons
+						);
+						CharacterWeaponComponent->UpdateLastSwitchTime();
+					}
+				}
+				else
+				{
+					WeaponInventory->SwapToBackWeapon(
+						CharacterWeaponComponent->GetCurrentWeapon(),
+						PlayerCharacter,
+						CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory
+					);
+				}
+			}
 		}
 	}
-
+	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 

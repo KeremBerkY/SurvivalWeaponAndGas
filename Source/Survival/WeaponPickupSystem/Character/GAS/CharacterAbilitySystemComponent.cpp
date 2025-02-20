@@ -28,13 +28,29 @@ void UCharacterAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubcl
 	}
 }
 
-void UCharacterAbilitySystemComponent::AddCharacterPassiveAbilities(const TArray<TSubclassOf<UCharacterGameplayAbility>>& PassivesToGrant)
+void UCharacterAbilitySystemComponent::AddCharacterReactiveAbilities(const TArray<TSubclassOf<UCharacterGameplayAbility>>& PassivesToGrant)
 {
 	for (const TSubclassOf<UCharacterGameplayAbility>& Ability : PassivesToGrant)
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability, 1.f);
 		GiveAbility(AbilitySpec);
 	}
+
+	// if (PassivesToGrant.IsEmpty())
+	// {
+	// 	return;
+	// }
+	//
+	// for (const TSubclassOf<UCharacterGameplayAbility>& Ability : PassivesToGrant)
+	// {
+	// 	if (!Ability) continue;
+	//
+	// 	FGameplayAbilitySpec AbilitySpec(Ability);
+	// 	AbilitySpec.SourceObject = GetAvatarActor();
+	// 	AbilitySpec.Level = 1;
+	// 	
+	// 	GiveAbility(AbilitySpec);
+	// }
 }
 
 void UCharacterAbilitySystemComponent::InitializeDefaultAttributes(const TArray<TSubclassOf<UGameplayEffect>>& AttributeEffect) // TODO: If you want you can add int32 ApplyLevel for character!

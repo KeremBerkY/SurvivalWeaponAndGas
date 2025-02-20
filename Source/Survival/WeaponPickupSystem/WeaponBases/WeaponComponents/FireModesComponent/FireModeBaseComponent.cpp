@@ -33,7 +33,7 @@ void UFireModeBaseComponent::BeginPlay()
 
 UCharacterAbilitySystemComponent* UFireModeBaseComponent::GetCharacterAbilitySystemComponent() const
 {
-	return OwnerWeaponPtr.Get()->GetOwningCharacter()->GetCharacterAbilitySystemComponent();
+	return OwnerWeaponPtr->GetOwningCharacter()->GetCharacterAbilitySystemComponent();
 }
 
 void UFireModeBaseComponent::Fire()

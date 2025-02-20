@@ -45,9 +45,7 @@ public:
 	FOnUpdateHeat UpdateHeat;
 
 	FOnTargetInteractedDelegate OnRayHitTarget;
-
 	
-
 	/* Getters / Setters */
 	FORCEINLINE URaycastWeaponData* GetRaycastWeaponDataAsset() const { return RaycastWeaponData; }
 	FORCEINLINE UHeatComponent* GetHeatComponent() const { return HeatComponent; }
@@ -112,7 +110,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "FireMode")
 	UWeaponTargetingComponent* WeaponTargetingComponent;
-
 
 	// DENEME
 	TWeakObjectPtr<AEnemyBase> EnemyPtr;

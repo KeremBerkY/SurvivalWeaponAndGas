@@ -22,7 +22,16 @@ ARangedWeapon::ARangedWeapon()
 void ARangedWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (!bIsInitialized) // Deneme
+	{
+		if (URangedWeaponData* WeaponData = Cast<URangedWeaponData>(GetWeaponDataAsset()))
+		{
+			RangedWeaponData = WeaponData;
+			InitializeAmmo();
+			bIsInitialized = true;
+		}
+	}
 }
 
 
@@ -33,15 +42,15 @@ void ARangedWeapon::Tick(float DeltaTime)
 
 void ARangedWeapon::PerformFire()
 {
-	if (!bIsInitialized) // Deneme
-	{
-		if (URangedWeaponData* WeaponData = Cast<URangedWeaponData>(GetWeaponDataAsset()))
-		{
-			RangedWeaponData = WeaponData;
-			InitializeAmmo();
-			bIsInitialized = true;
-		}
-	}
+	// if (!bIsInitialized) // Deneme
+	// {
+	// 	if (URangedWeaponData* WeaponData = Cast<URangedWeaponData>(GetWeaponDataAsset()))
+	// 	{
+	// 		RangedWeaponData = WeaponData;
+	// 		InitializeAmmo();
+	// 		bIsInitialized = true;
+	// 	}
+	// }
 }
 
 void ARangedWeapon::InitializeAmmo() // Deneme
@@ -71,7 +80,6 @@ void ARangedWeapon::Reload()
 		UE_LOG(LogTemp, Warning, TEXT("Reloading is already in progress."));
 		return;
 	}
-	
 	
 	if (CurrentAmmo >= RangedWeaponData->WeaponAmmoAttributes.AmmoInMagazine)
 	{

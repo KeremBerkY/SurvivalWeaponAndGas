@@ -80,10 +80,16 @@ struct FWeaponAnimMontages
 {
 	GENERATED_USTRUCT_BODY()
 
-	FWeaponAnimMontages() : FireMontage(nullptr) {};
+	FWeaponAnimMontages() :
+		FireMontage(nullptr),
+		bPlayFromMontage(false)
+	{};
 
 	UPROPERTY(EditDefaultsOnly)
 	UAnimMontage* FireMontage;
+
+	UPROPERTY(EditDefaultsOnly)
+	bool bPlayFromMontage;
 	
 };
 

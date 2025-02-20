@@ -32,7 +32,9 @@ private:
 	void ResetAttackComboCount();
 	void SetComboResetTimer();
 	void ClearComboResetTimer();
-	// void HandleApplyDamage(const FGameplayEventData& GameplayEventData);
+	
+	UPROPERTY(EditAnywhere, Category="GameplayCue|Tag", meta=(AllowPrivateAccess="true"))
+	FGameplayTag GameplayCueTag;
 	
 	FTimerHandle ComboCountResetTimerHandle;
 

@@ -53,6 +53,8 @@ void UWeaponInventory::SwapToBackWeapon(AWeaponBase* CurrentWeapon, ASurvivalCha
 	AWeaponBase** BackWeaponPtr = WeaponSlots.Find(DesiredSlotIndex);
 	AWeaponBase* BackWeapon = BackWeaponPtr ? *BackWeaponPtr : nullptr;
 
+	// TODO: Eğer elimdeki silahın tipinde arkamda silah yoksa bu silahı arkaya ekle doğru slota.
+
 	// There is no gun in hand, but there is a gun on your back. So take the one on your back.
 	if (!CurrentWeapon && BackWeapon)
 	{
@@ -224,10 +226,8 @@ int32 UWeaponInventory::GetSlotIndex(EWeaponCategory Category) const
 
 bool UWeaponInventory::HasWeaponInCategory(EWeaponCategory DesiredCategory) const
 {
-	// Öncelikle kategori için slot indeksini alıyoruz
 	const int32 DesiredSlotIndex = GetSlotIndex(DesiredCategory);
-
-	// Eğer slot bulunamazsa veya geçersizse, false döndür
+	
 	if (DesiredSlotIndex == INDEX_NONE)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Invalid Desired Weapon Category: %d"), static_cast<int32>(DesiredCategory));

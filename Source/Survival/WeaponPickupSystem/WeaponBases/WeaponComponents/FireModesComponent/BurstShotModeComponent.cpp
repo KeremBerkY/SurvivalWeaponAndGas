@@ -37,7 +37,7 @@ void UBurstShotModeComponent::Fire()
 			BurstFireTimerHandle,
 			this,
 			&UBurstShotModeComponent::BurstFire,
-			RaycastWeaponDataPtr.Get()->FireRate,
+			RaycastWeaponDataPtr->FireRate,
 			true
 		);
 	}
@@ -57,7 +57,7 @@ void UBurstShotModeComponent::EndFire()
 			FireRateTimerHandle,
 			this,
 			&UBurstShotModeComponent::ResetFire,
-			RaycastWeaponDataPtr.Get()->FireRate,
+			RaycastWeaponDataPtr->FireRate,
 			false
 		);
 	}
@@ -65,15 +65,15 @@ void UBurstShotModeComponent::EndFire()
 
 void UBurstShotModeComponent::BurstFire()
 {
-	if (OwnerWeaponPtr.IsValid() && BurstShotRemaining > 0 && !OwnerWeaponPtr->GetHeatComponent()->IsOverHeated())
+	if (OwnerWeaponPtr && BurstShotRemaining > 0 && !OwnerWeaponPtr->GetHeatComponent()->IsOverHeated())
 	{
 		BurstShotRemaining--;
-		OwnerWeaponPtr->PerformFire();
 		if (!GetCharacterAbilitySystemComponent()->HasMatchingGameplayTag(FireTag))
 		{
 			GetCharacterAbilitySystemComponent()->AddLooseGameplayTag(FireTag);
 		}
-		GetCharacterAbilitySystemComponent()->TryActivateAbilityByClass(OwnerWeaponPtr.Get()->GetRaycastWeaponDataAsset()->FireAbility);
+		GetCharacterAbilitySystemComponent()->TryActivateAbilityByClass(OwnerWeaponPtr->GetRaycastWeaponDataAsset()->FireAbility);
+		OwnerWeaponPtr->PerformFire();
 	}
 	else
 	{
@@ -87,7 +87,7 @@ void UBurstShotModeComponent::BurstFire()
 					BurstCoolDownTimerHandle,
 					this,
 					&UBurstShotModeComponent::BurstFireCooldown,
-					RaycastWeaponDataPtr.Get()->FireRate / 2.f,
+					RaycastWeaponDataPtr->FireRate / 2.f,
 					false
 				);
 			}
@@ -123,7 +123,7 @@ void UBurstShotModeComponent::BurstFireCooldown()
 			BurstFireTimerHandle,
 			this,
 			&UBurstShotModeComponent::BurstFire,
-			RaycastWeaponDataPtr.Get()->FireRate,
+			RaycastWeaponDataPtr->FireRate,
 			true
 		);
 	}

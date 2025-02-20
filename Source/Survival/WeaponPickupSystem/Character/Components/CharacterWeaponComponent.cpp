@@ -31,7 +31,7 @@ UCharacterWeaponComponent::UCharacterWeaponComponent()
 }
 
 
-void UCharacterWeaponComponent::UpdateCurrentWeaponUI() const
+void UCharacterWeaponComponent::UpdateCurrentWeaponUI() const  // You cannot change the UI of other weapons! They were not added
 {
 	if (GetCurrentWeapon())
 	{
@@ -154,13 +154,14 @@ void UCharacterWeaponComponent::SpawnAndAddWeapon(const TSubclassOf<AWeaponBase>
 
 	AWeaponBase* Weapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponInstance, PlayerCharacter->GetActorLocation(), PlayerCharacter->GetActorRotation());
 	Weapon->SetInstigator(PlayerCharacter);
-
+	// SetCurrentWeapon(Weapon);
+	
 	if (Weapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
 	{
 		if (AMeleeWeapon* MeleeWeaponRef = Cast<AMeleeWeapon>(Weapon))
 		{
-			MeleeWeaponRef->OnWeaponHitTarget.BindUObject(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnHitTargetActor);
-			MeleeWeaponRef->OnWeaponPulledFromTarget.BindUObject(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnWeaponPulledFromTargetActor);
+			MeleeWeaponRef->OnWeaponHitTarget.AddDynamic(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnHitTargetActor);
+			MeleeWeaponRef->OnWeaponPulledFromTarget.AddDynamic(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnWeaponPulledFromTargetActor);
 		}
 	}
 	else
@@ -170,7 +171,6 @@ void UCharacterWeaponComponent::SpawnAndAddWeapon(const TSubclassOf<AWeaponBase>
 			RaycastWeaponRef->OnRayHitTarget.BindUObject(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnHitTargetActor);
 		}
 	}
-
 	if (GetCurrentWeapon() == nullptr)
 	{
 		AddWeaponToCharacter(Weapon, PlayerCharacter);

@@ -143,7 +143,6 @@ void URaycastEffectManagerComponent::ImpactEffect(const FHitResult& HitResult) c
 
 void URaycastEffectManagerComponent::ApplyDecal(const FHitResult& HitResult) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("ApplyDecal() called. Impact point: %s, Impact normal: %s"), *HitResult.ImpactPoint.ToString(), *HitResult.ImpactNormal.ToString());
 
 	if (RaycastWeaponData->DecalSettings.DecalMaterial)
 	{
@@ -156,7 +155,6 @@ void URaycastEffectManagerComponent::ApplyDecal(const FHitResult& HitResult) con
 			RaycastWeaponData->DecalSettings.DecalLifeSpan
 		))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Decal successfully spawned."));
 			Decal->SetFadeOut(RaycastWeaponData->DecalSettings.DecalLifeSpan, 2.0);
 		}
 		else

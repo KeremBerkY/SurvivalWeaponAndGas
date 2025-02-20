@@ -40,7 +40,7 @@ void USingleShotModeComponent::Fire()
 			FireRateTimerHandle,
 			this,
 			&USingleShotModeComponent::ResetFire,
-			RaycastWeaponDataPtr.Get()->FireRate,
+			RaycastWeaponDataPtr->FireRate,
 			false
 		);
 	}

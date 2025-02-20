@@ -5,9 +5,12 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
+#include "Survival/WeaponPickupSystem/Character/GAS/Abilities/CharacterGameplayAbility.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/WeaponData.h"
+#include "Survival/WeaponPickupSystem/Libraries/SurvivalAbilitySystemLibrary.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 
 
@@ -59,28 +62,36 @@ void USurvivalCharacterCombatComponent::OnHitTargetActor(AActor* HitActor)
 	{
 		OverlappedActors.AddUnique(HitActor);
 	}
-
+	
 	FGameplayEventData EventData;
 	EventData.Instigator = GetOwningPawn();
 	EventData.Target = HitActor;
-
+	
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 		GetOwningPawn(),
 		FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.Hit")),
 		EventData
 	);
+
+	if (GetCharacterCurrentEquippedWeapon()->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+	{
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			GetOwningPawn(),
+			FGameplayTag::RequestGameplayTag(FName("Character.Player.Event.HitPause")),
+			FGameplayEventData()
+		);
+	}
 }
+
 
 void USurvivalCharacterCombatComponent::OnWeaponPulledFromTargetActor(AActor* InteractedActor)
 {
 	Super::OnWeaponPulledFromTargetActor(InteractedActor);
 
-	if (!OverlappedActors.IsEmpty())
-	{
-		OverlappedActors.Remove(InteractedActor);
-	}
-	UE_LOG(LogTemp, Warning, TEXT("WeaponPulledFromTargetActor!!!"));
+	// if (!OverlappedActors.IsEmpty())
+	// {
+	// 	OverlappedActors.Remove(InteractedActor);
+	// }
 	// OverlappedActors.Empty();
 	
 }
-
