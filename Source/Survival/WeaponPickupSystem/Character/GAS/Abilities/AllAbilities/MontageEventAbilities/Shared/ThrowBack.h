@@ -23,4 +23,5 @@ private:
 
 	// void SetEnemyRotationToOriginal();
 	void SetEnemyRotationToOriginal(TObjectPtr<const AActor> Instigator, UPrimitiveComponent* EnemyRoot);
+	void AdjustCharacterToGround(ASurvivalEnemyCharacter* EnemyCharacter);
 };

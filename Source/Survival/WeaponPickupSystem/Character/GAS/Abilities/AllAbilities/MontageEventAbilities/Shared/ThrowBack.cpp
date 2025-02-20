@@ -3,6 +3,7 @@
 
 #include "ThrowBack.h"
 
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Survival/WeaponPickupSystem/CharacterBase/SurvivalEnemyCharacter.h"
@@ -68,34 +69,52 @@ void UThrowBack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 
 void UThrowBack::SetEnemyRotationToOriginal(TObjectPtr<const AActor> Instigator, UPrimitiveComponent* EnemyRoot)
 {
-	// FRotator CurrentRotation = EnemyActor->GetActorRotation();
-	// UPrimitiveComponent* EnemyRoot = Cast<UPrimitiveComponent>(EnemyCharacterPtr->GetRootComponent());
 	if (EnemyRoot)
 	{
-		// 🛑 Fiziği Kapat
 		EnemyRoot->SetSimulatePhysics(false);
 	}
 	
 	FVector TargetLocation = Instigator->GetActorLocation();
 	FVector EnemyLocation = GetEnemyCharacterFromActorInfo()->GetActorLocation();
-
-	// ✅ Enemy’nin yönünü saldıran karaktere döndür
+	
 	FVector DirectionToTarget = (TargetLocation - EnemyLocation).GetSafeNormal();
-    
-	// **Eski yöntem: FindLookAtRotation yerine doğrudan Direction kullan**
+	
 	FRotator TargetRotation = DirectionToTarget.Rotation();
 
-	// 🔄 Yumuşak dönüş (eğer ani dönüş istenmiyorsa)
 	FRotator CurrentRotation = EnemyCharacterPtr->GetActorRotation();
 	FRotator SmoothedRotation = FMath::RInterpTo(CurrentRotation, TargetRotation, GetWorld()->GetDeltaSeconds(), 5.0f);
 
-	// **Enemy'yi saldırana doğru döndür**
 	EnemyCharacterPtr->SetActorRotation(SmoothedRotation);
-	//
-	// FRotator FixedRotation = FRotator(0.f, 0.f, 0.f);
-	// EnemyCharacterPtr->SetActorRotation(FixedRotation);
+	AdjustCharacterToGround(EnemyCharacterPtr.Get());
 
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+	
+}
+
+void UThrowBack::AdjustCharacterToGround(ASurvivalEnemyCharacter* EnemyCharacter)
+{
+	if (!EnemyCharacter || !EnemyCharacter->GetCharacterMovement())
+	{
+		UE_LOG(LogTemp, Error, TEXT("AdjustCharacterToGround failed: EnemyCharacter or CharacterMovement is NULL!"));
+		return;
+	}
+	
+	FHitResult FloorHit;
+	FVector StartLocation = EnemyCharacter->GetActorLocation();
+	FVector EndLocation = StartLocation - FVector(0.f, 0.f, 200.f);
+
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(EnemyCharacter);
+
+	DrawDebugLine(GetWorld(), StartLocation, EndLocation, FColor::Red, false, 2.0f, 0, 2.0f);
+
+	if (GetWorld()->LineTraceSingleByChannel(FloorHit, StartLocation, EndLocation, ECC_Visibility, TraceParams))
+	{
+		DrawDebugSphere(GetWorld(), FloorHit.ImpactPoint, 10.f, 12, FColor::Green, false, 2.0f);
+		
+		FVector NewLocation = FloorHit.ImpactPoint + FVector(0.f, 0.f, EnemyCharacter->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
+		EnemyCharacter->SetActorLocation(NewLocation);
+	}
 	
 }
 
