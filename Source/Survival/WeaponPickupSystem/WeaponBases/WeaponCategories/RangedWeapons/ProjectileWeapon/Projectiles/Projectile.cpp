@@ -21,6 +21,7 @@ AProjectile::AProjectile()
 	CollisionComponent->SetCollisionProfileName(TEXT("Projectile"));
 	CollisionComponent->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
 	RootComponent = CollisionComponent;
+
 	//DENEME
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics); // Hem fizik hem de sorgu etkin
 	CollisionComponent->SetCollisionObjectType(ECC_GameTraceChannel1); // Özel bir kanal veya WorldDynamic
@@ -48,6 +49,16 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (AActor* MyOwner = GetOwner())
+	{
+		CollisionComponent->IgnoreActorWhenMoving(MyOwner, true);
+
+		if (AActor* WeaponOwner = MyOwner->GetOwner())
+		{
+			CollisionComponent->IgnoreActorWhenMoving(WeaponOwner, true);
+		}
+	}
 	
 }
 
@@ -72,23 +83,27 @@ void AProjectile::FireInDirection(const FVector& ShootDirection)
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (OtherActor)
+	{
+		ProjectileHit.Broadcast(OtherActor);
+	}
 	if (ProjectileData->ExplosiveSettings.bIsExplosive)
 	{
 		OnExplosion.Broadcast();
 	}
-	else
-	{
-		if (OtherActor && OtherActor != this && OtherActor != GetOwner())
-		{
-			UGameplayStatics::ApplyDamage(
-				OtherActor,
-				ProjectileData->ProjectileSettings.DamageAmount,
-				GetInstigatorController(),
-				this,
-				nullptr);
-			Destroy();
-		}
-	}
+	// else
+	// {
+	// 	if (OtherActor && OtherActor != this && OtherActor != GetOwner())
+	// 	{
+	// 		UGameplayStatics::ApplyDamage(
+	// 			OtherActor,
+	// 			ProjectileData->ProjectileSettings.DamageAmount,
+	// 			GetInstigatorController(),
+	// 			this,
+	// 			nullptr);
+	// 		Destroy();
+	// 	}
+	// }
 }
 
 

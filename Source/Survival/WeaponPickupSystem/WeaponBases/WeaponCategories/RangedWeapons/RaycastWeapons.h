@@ -25,7 +25,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFirePlayMontage);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUpdateHeat);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnImpact, const FHitResult&, HitResult);
 
-DECLARE_DELEGATE_OneParam(FOnTargetInteractedDelegate, AActor*)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRaycastHit, AActor*, Target);
 
 UCLASS()
 class SURVIVAL_API ARaycastWeapons : public ARangedWeapon
@@ -44,7 +44,7 @@ public:
 	FOnImpact OnImpact;
 	FOnUpdateHeat UpdateHeat;
 
-	FOnTargetInteractedDelegate OnRayHitTarget;
+	FOnRaycastHit OnRayHitTarget;
 	
 	/* Getters / Setters */
 	FORCEINLINE URaycastWeaponData* GetRaycastWeaponDataAsset() const { return RaycastWeaponData; }

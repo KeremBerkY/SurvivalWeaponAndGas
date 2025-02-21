@@ -18,6 +18,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Attack() override;
+	virtual void EndAttack() override;
 
 protected:
 	virtual void BeginPlay() override;

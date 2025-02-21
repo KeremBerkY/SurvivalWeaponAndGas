@@ -23,10 +23,10 @@ void URaycastEffectManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	Weapon = Cast<ARaycastWeapons>(GetOwner());
-	if (Weapon)
+	WeaponPtr = MakeWeakObjectPtr(Cast<ARaycastWeapons>(GetOwner()));
+	if (WeaponPtr.IsValid())
 	{
-		Weapon->OnInitializedComponents.AddDynamic(this, &URaycastEffectManagerComponent::InitializeEffects);
+		WeaponPtr->OnInitializedComponents.AddDynamic(this, &URaycastEffectManagerComponent::InitializeEffects);
 	}
 	else
 	{
@@ -37,11 +37,11 @@ void URaycastEffectManagerComponent::BeginPlay()
 
 void URaycastEffectManagerComponent::InitializeEffects()
 {
-	RaycastWeaponData = Weapon->GetRaycastWeaponDataAsset();
+	RaycastWeaponDataPtr = MakeWeakObjectPtr(WeaponPtr->GetRaycastWeaponDataAsset());
 	
-	if (!RaycastWeaponData) return;
-	Weapon->OnFireMade.AddDynamic(this, &URaycastEffectManagerComponent::PlayWeaponEffects);
-	Weapon->OnImpact.AddDynamic(this, &URaycastEffectManagerComponent::PlayImpactEffects);
+	if (!RaycastWeaponDataPtr.IsValid()) return;
+	WeaponPtr->OnFireMade.AddDynamic(this, &URaycastEffectManagerComponent::PlayWeaponEffects);
+	WeaponPtr->OnImpact.AddDynamic(this, &URaycastEffectManagerComponent::PlayImpactEffects);
 }
 
 void URaycastEffectManagerComponent::PlayWeaponEffects()
@@ -49,7 +49,10 @@ void URaycastEffectManagerComponent::PlayWeaponEffects()
 	// if (Weapon->GetHeatComponent()->GetCurrentHeat() >= RaycastWeaponData->FiringHeatSettings.MaxHeatCapacity || Weapon->GetHeatComponent()->IsOverHeated() ) { return; }
 	
 	WeaponEffect();
-	// ApplyRecoilEffect();
+	if (WeaponPtr->GetWeaponDataAsset()->WeaponAttributes.WeaponTypes != EWeaponTypes::Ewt_Shotgun)
+	{
+		ApplyRecoilEffect();
+	}
 }
 
 void URaycastEffectManagerComponent::PlayImpactEffects(const FHitResult& HitResult)
@@ -63,7 +66,7 @@ void URaycastEffectManagerComponent::PlayImpactEffects(const FHitResult& HitResu
 void URaycastEffectManagerComponent::WeaponEffect() const
 {
 	
-	USceneComponent* MuzzleComponent = Weapon->GetMuzzleLocation();
+	USceneComponent* MuzzleComponent = WeaponPtr->GetMuzzleLocation();
 	
 	if (!MuzzleComponent)
 	{
@@ -71,10 +74,10 @@ void URaycastEffectManagerComponent::WeaponEffect() const
 		return;
 	}
 	
-	if (RaycastWeaponData->WeaponEffects.MuzzleFlashEffect)
+	if (RaycastWeaponDataPtr.Get()->WeaponEffects.MuzzleFlashEffect)
 	{
 		FVector EffectLocation = MuzzleComponent->GetComponentLocation();
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RaycastWeaponData->WeaponEffects.MuzzleFlashEffect, EffectLocation, MuzzleComponent->GetComponentRotation());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RaycastWeaponDataPtr->WeaponEffects.MuzzleFlashEffect, EffectLocation, MuzzleComponent->GetComponentRotation());
 	}
 	else
 	{
@@ -85,21 +88,21 @@ void URaycastEffectManagerComponent::WeaponEffect() const
 
 void URaycastEffectManagerComponent::ApplyRecoilEffect() const
 {
-	if (!Weapon->GetWeaponMesh()) return;
+	if (!WeaponPtr.Get()->GetWeaponMesh()) return;
 	
-	float RecoilAmount = RaycastWeaponData->RecoilSettings.BaseRecoilAmount + FMath::FRandRange(
-		-RaycastWeaponData->RecoilSettings.RandomRecoilRange,
-		RaycastWeaponData->RecoilSettings.RandomRecoilRange
+	float RecoilAmount = RaycastWeaponDataPtr->RecoilSettings.BaseRecoilAmount + FMath::FRandRange(
+		-RaycastWeaponDataPtr->RecoilSettings.RandomRecoilRange,
+		RaycastWeaponDataPtr->RecoilSettings.RandomRecoilRange
 		);
 	
 	FVector RecoilOffset = FVector(
-		-RecoilAmount * RaycastWeaponData->RecoilSettings.PitchMultiplier,
-		RecoilAmount * RaycastWeaponData->RecoilSettings.YawMultiplier,
+		-RecoilAmount * RaycastWeaponDataPtr->RecoilSettings.PitchMultiplier,
+		RecoilAmount * RaycastWeaponDataPtr->RecoilSettings.YawMultiplier,
 		0.0f
 		);
 
-	FVector OriginalLocation = Weapon->GetWeaponMesh()->GetRelativeLocation();
-	Weapon->GetWeaponMesh()->SetRelativeLocation(OriginalLocation + RecoilOffset);
+	FVector OriginalLocation = WeaponPtr->GetWeaponMesh()->GetRelativeLocation();
+	WeaponPtr->GetWeaponMesh()->SetRelativeLocation(OriginalLocation + RecoilOffset);
 	
 	ResetWeaponPosition(OriginalLocation);
 }
@@ -110,9 +113,9 @@ void URaycastEffectManagerComponent::ResetWeaponPosition(FVector OriginalLocatio
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, OriginalLocation]()
 	{
-		if (Weapon->GetWeaponMesh())
+		if (WeaponPtr->GetWeaponMesh())
 		{
-			Weapon->GetWeaponMesh()->SetRelativeLocation(OriginalLocation);
+			WeaponPtr->GetWeaponMesh()->SetRelativeLocation(OriginalLocation);
 		}
 	}, 0.1f, false); 
 }
@@ -121,22 +124,22 @@ void URaycastEffectManagerComponent::ImpactEffect(const FHitResult& HitResult) c
 {
 	if (HitResult.GetActor()->IsA(AEnemyBase::StaticClass()))
 	{
-		if (RaycastWeaponData->BloodEffect)
+		if (RaycastWeaponDataPtr.Get()->BloodEffect)
 		{
 			const FVector ImpactLocation = HitResult.ImpactPoint;
 			const FRotator ImpactRotation = HitResult.ImpactNormal.Rotation();
 		
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RaycastWeaponData->BloodEffect, ImpactLocation, ImpactRotation);
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RaycastWeaponDataPtr->BloodEffect, ImpactLocation, ImpactRotation);
 		}
 	}
 	else
 	{
-		if (RaycastWeaponData->WeaponEffects.ImpactEffect)
+		if (RaycastWeaponDataPtr.Get()->WeaponEffects.ImpactEffect)
 		{
 			const FVector ImpactLocation = HitResult.ImpactPoint;
 			const FRotator ImpactRotation = HitResult.ImpactNormal.Rotation();
 		
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RaycastWeaponData->WeaponEffects.ImpactEffect, ImpactLocation, ImpactRotation);
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), RaycastWeaponDataPtr->WeaponEffects.ImpactEffect, ImpactLocation, ImpactRotation);
 		}
 	}
 }
@@ -144,18 +147,18 @@ void URaycastEffectManagerComponent::ImpactEffect(const FHitResult& HitResult) c
 void URaycastEffectManagerComponent::ApplyDecal(const FHitResult& HitResult) const
 {
 
-	if (RaycastWeaponData->DecalSettings.DecalMaterial)
+	if (RaycastWeaponDataPtr.Get()->DecalSettings.DecalMaterial)
 	{
 		if (UDecalComponent* Decal = UGameplayStatics::SpawnDecalAtLocation(
 			GetWorld(),
-			RaycastWeaponData->DecalSettings.DecalMaterial,
-			RaycastWeaponData->DecalSettings.DecalSize,
+			RaycastWeaponDataPtr->DecalSettings.DecalMaterial,
+			RaycastWeaponDataPtr->DecalSettings.DecalSize,
 			HitResult.ImpactPoint,
 			HitResult.ImpactNormal.Rotation(),
-			RaycastWeaponData->DecalSettings.DecalLifeSpan
+			RaycastWeaponDataPtr->DecalSettings.DecalLifeSpan
 		))
 		{
-			Decal->SetFadeOut(RaycastWeaponData->DecalSettings.DecalLifeSpan, 2.0);
+			Decal->SetFadeOut(RaycastWeaponDataPtr->DecalSettings.DecalLifeSpan, 2.0);
 		}
 		else
 		{

@@ -27,6 +27,11 @@ void ARocketLauncher::Attack()
 	
 }
 
+void ARocketLauncher::EndAttack()
+{
+	Super::EndAttack();
+}
+
 
 // void ARocketLauncher::HandleExplosion(AProjectile* SpawnedProjectile)
 // {

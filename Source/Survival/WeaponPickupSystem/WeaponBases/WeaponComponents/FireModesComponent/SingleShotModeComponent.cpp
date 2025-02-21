@@ -54,6 +54,8 @@ void USingleShotModeComponent::ResetFire() const
 		GetCharacterAbilitySystemComponent()->RemoveLooseGameplayTag(FireTag);
 	}
 	OwnerWeaponPtr->SetCanFire(true);
+	OwnerWeaponPtr->SetAttackCooldownActive(false);
+
 	UE_LOG(LogTemp, Log, TEXT("Ready to fire again!"));
 }
 
@@ -61,6 +63,8 @@ void USingleShotModeComponent::ResetFire() const
 void USingleShotModeComponent::EndFire()
 {
 	Super::EndFire();
+	OwnerWeaponPtr->SetAttackCooldownActive(true);
+
 }
 
 

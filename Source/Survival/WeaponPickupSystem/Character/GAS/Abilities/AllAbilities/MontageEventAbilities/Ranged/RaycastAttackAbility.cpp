@@ -16,6 +16,7 @@ URaycastAttackAbility::URaycastAttackAbility()
 	const auto AbilityTag = FGameplayTag::RequestGameplayTag(FName("Character.Player.Ability.Attack.Raycast"));
     AbilityTags.AddTag(AbilityTag);
     ActivationOwnedTags.AddTag(AbilityTag);
+	
 }
 
 //TODO: sol tuşa basılı tuttun loop döndü sonra parmağını çekip tekrar basarsan end çalışmıyor. bu sınıf için
@@ -38,7 +39,13 @@ void URaycastAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		if (RaycastWeaponPtr->GetAttackCooldownActive())
 		{
 			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-			return;;
+			return;
+		}
+
+		if (RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage && !RaycastWeaponPtr->CanFire())
+		{
+			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+			return;
 		}
 		
 		if (!RaycastWeaponPtr.IsValid() || RaycastWeaponPtr->GetCurrentAmmo() <= 0 ||
@@ -53,7 +60,7 @@ void URaycastAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		
 		AbilityMontage = RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.FireMontage;
 		MontageRate = 1 + (RaycastWeaponPtr->GetRaycastWeaponDataAsset()->FireRate);
-
+	
 		StartAnimMontage();
 		PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon()->Attack();
 	}
@@ -62,20 +69,17 @@ void URaycastAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		UE_LOG(LogTemp, Warning, TEXT("Character has no Weapon"));
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 	}
-
 	
-	// !RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage
-	if (!GetCharacterAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.Automatic"))) &&
-		!GetCharacterAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.Burst"))))
+	if (!RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage)
 	{
-		UAbilityTask_WaitInputRelease* WaitInputReleaseTask = UAbilityTask_WaitInputRelease::WaitInputRelease(this, false);
-		WaitInputReleaseTask->OnRelease.AddDynamic(this, &URaycastAttackAbility::OnInputRelease);
-		WaitInputReleaseTask->Activate();
-		Debug::Print(TEXT("WaitInputReleaseTask bind"));
-	}
-	else
-	{
-		// EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		if (!GetCharacterAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.Automatic"))) &&
+			!GetCharacterAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.Burst"))))
+		{
+			UAbilityTask_WaitInputRelease* WaitInputReleaseTask = UAbilityTask_WaitInputRelease::WaitInputRelease(this, false);
+			WaitInputReleaseTask->OnRelease.AddDynamic(this, &URaycastAttackAbility::OnInputRelease);
+			WaitInputReleaseTask->Activate();
+			Debug::Print(TEXT("WaitInputReleaseTask bind"));
+		}
 	}
 }
  
@@ -137,27 +141,15 @@ void URaycastAttackAbility::OnCompleted(FGameplayTag EventTag, FGameplayEventDat
 {
 	Super::OnCompleted(EventTag, Payload);
 	
-	// if (!RaycastWeaponPtr->CanFire() && RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage)
-	// {
-	// }
-		// EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	if (RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage)
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	}
 }
 
 
 void URaycastAttackAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-
-	// if (RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage)
-	// {
-	// 	if (PlayerCharacterRef)
-	// 	{
-	// 		const auto CurrentWeapon = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
-	// 		if (CurrentWeapon && !CurrentWeapon->GetAttackCooldownActive())
-	// 		{
-	// 			CurrentWeapon->EndAttack();
-	// 			Debug::Print("EndAbility Called!", FColor::Orange);
-	// 		}
-	// 	}
-	// }
+	
 }

@@ -36,7 +36,7 @@ void UProjectileEffectManagerComponent::BeginPlay()
 
 void UProjectileEffectManagerComponent::InitializeEffects()
 {
-	ProjectileWeaponData = Weapon->GetProjectileWeaponData();
+	ProjectileWeaponData = Weapon->GetProjectileWeaponDataAsset();
 
 	if (!ProjectileWeaponData) return;
 	Weapon->OnProjectileFireMade.AddDynamic(this, &UProjectileEffectManagerComponent::PlayWeaponEffect);
@@ -137,20 +137,20 @@ void UProjectileEffectManagerComponent::HandleExplosion()
 	
 	if (ProjectileData->ExplosiveSettings.ExplosionRadius > 0.f)
 	{
-		UGameplayStatics::ApplyRadialDamage(
-			GetWorld(),
-			ProjectileData->ExplosiveSettings.ExplosiveDamage,
-			Projectile->GetActorLocation(),
-			ProjectileData->ExplosiveSettings.ExplosionRadius,
-			nullptr,
-			TArray<AActor*>(),
-			Projectile,
-			Projectile->GetInstigatorController(),
-			true
-			);
+		// UGameplayStatics::ApplyRadialDamage(
+		// 	GetWorld(),
+		// 	ProjectileData->ExplosiveSettings.ExplosiveDamage,
+		// 	Projectile->GetActorLocation(),
+		// 	ProjectileData->ExplosiveSettings.ExplosionRadius,
+		// 	nullptr,
+		// 	TArray<AActor*>(),
+		// 	Projectile,
+		// 	Projectile->GetInstigatorController(),
+		// 	true
+		// 	);
 
 		UE_LOG(LogTemp, Warning, TEXT("Explosion called!"));
-		DrawDebugSphere(GetWorld(), Projectile->GetActorLocation(), 50.f, 12, FColor::Red, false, 2.0f);
+		DrawDebugSphere(GetWorld(), Projectile->GetActorLocation(), 150.f, 12, FColor::Red, false, 2.0f);
 
 		Projectile->Destroy();
 	}

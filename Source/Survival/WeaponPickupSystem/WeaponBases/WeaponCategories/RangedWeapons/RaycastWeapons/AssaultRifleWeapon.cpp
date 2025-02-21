@@ -84,7 +84,8 @@ void AAssaultRifleWeapon::PerformFire()
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Enemy hit! Applying damage..."));
 
-				OnRayHitTarget.ExecuteIfBound(HitActor);
+				// OnRayHitTarget.ExecuteIfBound(HitActor);
+				OnRayHitTarget.Broadcast(HitActor);
 			}
 		}
 	}

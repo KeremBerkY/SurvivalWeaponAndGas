@@ -57,7 +57,7 @@ void APistolWeapon::PerformFire()
 	QueryParams.AddIgnoredActor(GetOwner());
 
 	OnFireMade.Broadcast();
-	EffectManagerComponent->ApplyRecoilEffect();
+	// EffectManagerComponent->ApplyRecoilEffect();
 	
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,
@@ -73,8 +73,7 @@ void APistolWeapon::PerformFire()
 
 		if (AActor* HitActor = HitResult.GetActor())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ApplyPointDamage()"));
-			// UGameplayStatics::ApplyPointDamage(HitActor, Damage, (End - Start).GetSafeNormal(), HitResult, GetOwnerController(), this, DamageType);
+			OnRayHitTarget.Broadcast(HitActor);
 		}
 	}
 	else

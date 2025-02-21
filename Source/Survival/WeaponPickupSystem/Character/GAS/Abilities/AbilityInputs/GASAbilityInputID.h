@@ -23,5 +23,6 @@ enum class EGASAbilityInputID : uint8
 	Aiming,
 	Lockon,
 	Attack,
-	HeavyAttack
+	HeavyAttack,
+	HeavyFire
 };

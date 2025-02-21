@@ -4,34 +4,33 @@
 
 #include "CoreMinimal.h"
 #include "Survival/WeaponPickupSystem/Character/GAS/Abilities/CharacterMontageEventAbility.h"
-#include "RaycastAttackAbility.generated.h"
+#include "ProjectileAttackAbility.generated.h"
 
-class ARaycastWeapons;
+class AProjectileWeapons;
 /**
  * 
  */
 UCLASS()
-class SURVIVAL_API URaycastAttackAbility : public UCharacterMontageEventAbility
+class SURVIVAL_API UProjectileAttackAbility : public UCharacterMontageEventAbility
 {
 	GENERATED_BODY()
 
 protected:
-	URaycastAttackAbility();
+	UProjectileAttackAbility();
 	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	UFUNCTION()
-	void OnInputRelease(float TimeHeld);
 	virtual void OnEventReceived(FGameplayTag EventTag, FGameplayEventData Payload) override;
 	virtual void OnCancelled(FGameplayTag EventTag, FGameplayEventData Payload) override;
 	virtual void OnCompleted(FGameplayTag EventTag, FGameplayEventData Payload) override;
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
-	virtual void HandleApplyDamage(const FGameplayEventData& GameplayEventData);
-
-	TWeakObjectPtr<ARaycastWeapons> RaycastWeaponPtr;
-private:
-
-	bool bOnComplete;
+	// UFUNCTION()
+	// virtual void StopFire(FGameplayEventData GameplayEventData);
+	// virtual void HandleApplyDamage(const FGameplayEventData& GameplayEventData);
 	
+
+	TWeakObjectPtr<AProjectileWeapons> ProjectileWeaponPtr;
 	
+	UPROPERTY()
+	bool bIsStopFire;
 };

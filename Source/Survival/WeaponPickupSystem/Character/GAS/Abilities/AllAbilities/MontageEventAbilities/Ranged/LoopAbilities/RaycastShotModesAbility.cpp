@@ -19,40 +19,13 @@ void URaycastShotModesAbility::ActivateAbility(const FGameplayAbilitySpecHandle 
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
-	// const auto WeaponRef = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
-	// if (PlayerCharacterRef && WeaponRef)
-	// {
-	// 	RaycastWeaponPtr = MakeWeakObjectPtr(Cast<ARaycastWeapons>(PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon()));
-	// 	const auto RaycastWeaponData = RaycastWeaponPtr->GetRaycastWeaponDataAsset();
-	// 	
-	// 	if (!RaycastWeaponPtr.IsValid() || RaycastWeaponPtr->GetCurrentAmmo() <= 0 ||
-	// 		RaycastWeaponPtr->GetHeatComponent()->GetCurrentHeat() >= RaycastWeaponData->FiringHeatSettings.MaxHeatCapacity ||
-	// 		RaycastWeaponPtr->GetHeatComponent()->IsOverHeated())
-	// 	{
-	// 		UE_LOG(LogTemp, Warning, TEXT("EndAbility Called Before Montage!!!"));
-	// 		WeaponRef->EndAttack();
-	// 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-	// 		return;
-	// 	};
-	// 	
-	// 	AbilityMontage = RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.FireMontage;
-	// 	MontageRate = 1 + (RaycastWeaponPtr->GetRaycastWeaponDataAsset()->FireRate);
-	//
-	// 	StartAnimMontage();
-	// 	PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon()->Attack();
-	// }
 }
 
 void URaycastShotModesAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData Payload)
 {
 	Super::OnEventReceived(EventTag, Payload);
 	
-	// if (EventTag == FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.Hit")))
-	// {
-	// 	Super::HandleApplyDamage(Payload);
-	// }
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-	
 }
 
 void URaycastShotModesAbility::OnCancelled(FGameplayTag EventTag, FGameplayEventData Payload)

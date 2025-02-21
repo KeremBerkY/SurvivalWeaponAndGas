@@ -96,6 +96,16 @@ void AShotgunWeapon::PerformFire() // TODO: aim ile tam ortaya ateş edilmiyor, 
 		{
 			OnImpact.Broadcast(HitResult);
 			
+			if (AActor* HitActor = HitResult.GetActor())
+			{
+				if (HitActor->ActorHasTag(FName("Enemy")))
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Enemy hit! Applying damage..."));
+
+					// OnRayHitTarget.ExecuteIfBound(HitActor);
+					OnRayHitTarget.Broadcast(HitActor);
+				}
+			}
 		}
 
 		DrawDebugLine(GetWorld(), LocalMuzzleLocation, TraceEnd, FColor::Red, false, 1.0f, 0, 1.0f);

@@ -37,8 +37,8 @@ protected:
 	void ApplyDecal(const FHitResult& HitResult) const;
 
 private:
-	ARaycastWeapons* Weapon;
-	URaycastWeaponData* RaycastWeaponData;
+	TWeakObjectPtr<ARaycastWeapons> WeaponPtr;
+	TWeakObjectPtr<URaycastWeaponData> RaycastWeaponDataPtr;
 
 	bool bCanApplyRecoil;
 	FTimerHandle RecoilCooldownTimerHandle;

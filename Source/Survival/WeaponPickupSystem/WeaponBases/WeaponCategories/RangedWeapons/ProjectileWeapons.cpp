@@ -31,11 +31,11 @@ void AProjectileWeapons::BeginPlay()
 
 	if (UProjectileWeaponData* WeaponData = Cast<UProjectileWeaponData>(GetWeaponDataAsset()))
 	{
-		ProjectileWeaponData = WeaponData;
+		ProjectileWeaponDataAsset = WeaponData;
 		OnProjectileEffectsInit.Broadcast();
 	}
 
-	SetCurrentAmmo(ProjectileWeaponData->WeaponAmmoAttributes.CurrentAmmo);
+	SetCurrentAmmo(ProjectileWeaponDataAsset->WeaponAmmoAttributes.CurrentAmmo);
 	
 }
 
@@ -57,7 +57,7 @@ void AProjectileWeapons::Attack()
 
 	if(!CanFire()) return;
 	
-	if (ProjectileWeaponData->ProjectileClass)
+	if (ProjectileWeaponDataAsset->ProjectileClass)
 	{
 		UWorld* World = GetWorld();
 		if (World)
@@ -71,19 +71,19 @@ void AProjectileWeapons::Attack()
 
 			OnProjectileFireMade.Broadcast();
 			
-			SpawnedProjectile = World->SpawnActor<AProjectile>(ProjectileWeaponData->ProjectileClass, MuzzlePosition, MuzzleRotation, SpawnParams);
+			SpawnedProjectile = World->SpawnActor<AProjectile>(ProjectileWeaponDataAsset->ProjectileClass, MuzzlePosition, MuzzleRotation, SpawnParams);
 			if (SpawnedProjectile)
 			{
 				SetProjectile(SpawnedProjectile);
 				SpawnedProjectile->ProjectileInit(this);
 				
 				SpawnedProjectile->SetOwner(this);
-				if (ProjectileWeaponData->ProjectileFireSpeed > 0.f)
-				{
-					
-					UProjectileMovementComponent* ProjectileMovementComponent = SpawnedProjectile->GetProjectileMovement();
-					ProjectileMovementComponent->InitialSpeed = ProjectileWeaponData->ProjectileFireSpeed;
-				}
+				// if (ProjectileWeaponDataAsset->ProjectileFireSpeed > 0.f)
+				// {
+				// 	
+				// 	UProjectileMovementComponent* ProjectileMovementComponent = SpawnedProjectile->GetProjectileMovement();
+				// 	ProjectileMovementComponent->InitialSpeed = ProjectileWeaponDataAsset->ProjectileFireSpeed;
+				// }
 				
 				FVector LaunchDirection = MuzzleRotation.Vector();
 				SpawnedProjectile->FireInDirection(LaunchDirection);
@@ -91,8 +91,13 @@ void AProjectileWeapons::Attack()
 		}
 	}
 
-	GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &AProjectileWeapons::ResetFire, ProjectileWeaponData->FireRate, false);
+	GetWorld()->GetTimerManager().SetTimer(FireRateTimerHandle, this, &AProjectileWeapons::ResetFire, ProjectileWeaponDataAsset->FireRate, false);
 
+}
+
+void AProjectileWeapons::EndAttack()
+{
+	Super::EndAttack();
 }
 
 void AProjectileWeapons::ResetFire()

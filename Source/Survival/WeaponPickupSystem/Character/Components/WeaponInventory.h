@@ -62,7 +62,6 @@ private:
 	void HandleDifferentCategorySwap(AWeaponBase* CurrentWeapon, AWeaponBase* BackWeaponForDesiredCategory,ASurvivalCharacter* PlayerCharacter, int32 DesiredSlotIndex, EWeaponCategory DesiredCategory);
 
 	void NotifyWeaponInventoryReady();
-	void WeaponAndDesiredIndexCheck(AWeaponBase* WeaponToAdd, int32 DesiredIndex);
 	
 	FName WeaponSocket = "WeaponSocket";
 	

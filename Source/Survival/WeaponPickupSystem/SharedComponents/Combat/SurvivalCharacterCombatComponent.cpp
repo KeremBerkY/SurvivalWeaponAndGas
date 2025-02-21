@@ -58,7 +58,7 @@ void USurvivalCharacterCombatComponent::OnHitTargetActor(AActor* HitActor)
 	}
 
 	// TODO: Raycast silah ateşi için overlapped olmasın? Belki de olabilir bak buraya!
-	if (GetCharacterCurrentEquippedWeapon()->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+	if (GetCharacterCurrentEquippedWeapon()->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons) // Projectiler ekle
 	{
 		OverlappedActors.AddUnique(HitActor);
 	}
@@ -73,7 +73,7 @@ void USurvivalCharacterCombatComponent::OnHitTargetActor(AActor* HitActor)
 		EventData
 	);
 
-	if (GetCharacterCurrentEquippedWeapon()->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
+	if (GetCharacterCurrentEquippedWeapon()->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons) // Projectile ekle
 	{
 		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
 			GetOwningPawn(),

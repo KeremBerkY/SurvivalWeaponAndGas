@@ -29,7 +29,7 @@ public:
 	FOnProjectileEffectsInit OnProjectileEffectsInit;
 	FOnProjectileFireMade OnProjectileFireMade;
 	
-	FORCEINLINE UProjectileWeaponData* GetProjectileWeaponData() const { return ProjectileWeaponData; }
+	FORCEINLINE UProjectileWeaponData* GetProjectileWeaponDataAsset() const { return ProjectileWeaponDataAsset; }
 	FORCEINLINE AProjectile* GetProjectile() const { return SpawnedProjectile; }
 	FORCEINLINE void SetProjectile(AProjectile* NewProjectile) { SpawnedProjectile = NewProjectile; }
 	FORCEINLINE void SetProjectileNullptr() { SpawnedProjectile = nullptr; }
@@ -52,13 +52,14 @@ public:
 	// UParticleSystem* RearMuzzleEffect;
 	
 
+	virtual void Attack() override;
+	virtual void EndAttack() override;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void PerformFire() override;
-	virtual void Attack() override;
 
 	// virtual void PlayWeaponEffect() override;
 	// FRecoilAttributes RecoilSettings;
@@ -70,7 +71,7 @@ private:
 	float TrailEffectDistance;
 
 	UPROPERTY()
-	UProjectileWeaponData* ProjectileWeaponData;
+	UProjectileWeaponData* ProjectileWeaponDataAsset;
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	USceneComponent* RearMuzzleLocation;

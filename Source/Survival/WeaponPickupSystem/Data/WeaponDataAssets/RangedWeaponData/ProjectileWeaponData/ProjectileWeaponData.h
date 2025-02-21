@@ -16,13 +16,13 @@ struct FProjectileWeaponEffects
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon | Effects")
+	UPROPERTY(EditDefaultsOnly, Category = "WeaponEffects")
 	UParticleSystem* FrontMuzzleFlashEffect;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon | Effects")
+	UPROPERTY(EditDefaultsOnly)
 	UParticleSystem* TracerEffect;
 	
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon | Effects")
+	UPROPERTY(EditDefaultsOnly)
 	UParticleSystem* RearMuzzleEffect;
 	
 };
@@ -33,11 +33,14 @@ class SURVIVAL_API UProjectileWeaponData : public URangedWeaponData
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile | Effects")
 	FProjectileWeaponEffects ProjectileWeaponEffects;
 	
 	// UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	// TObjectPtr<UProjectileData> ProjectileData;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "ProjectileWeapon")
+	UAnimMontage* WeaponAnimMontages;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	TSubclassOf<AProjectile> ProjectileClass;

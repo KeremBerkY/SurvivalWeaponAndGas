@@ -60,7 +60,9 @@ class UStaticMeshComponent;
 // };
 
 // DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProjectileInitialize, AProjectile*, Projectile); 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExplosion); 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExplosion);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProjectileHit, AActor*, Target);
+
 
 UCLASS()
 class SURVIVAL_API AProjectile : public AActor
@@ -71,6 +73,7 @@ public:
 	AProjectile();
 	
 	FOnExplosion OnExplosion;
+	FOnProjectileHit ProjectileHit;
 	// FOnProjectileInitialize OnProjectileInitialize;
 
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
@@ -100,6 +103,7 @@ protected:
 	UStaticMeshComponent* ProjectileMesh;
 
 private:
+	UPROPERTY()
 	AProjectileWeapons* OwnerWeapon;
 
 };

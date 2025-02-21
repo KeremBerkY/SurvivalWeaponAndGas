@@ -168,7 +168,8 @@ void UCharacterWeaponComponent::SpawnAndAddWeapon(const TSubclassOf<AWeaponBase>
 	{
 		if (ARaycastWeapons* RaycastWeaponRef = Cast<ARaycastWeapons>(Weapon))
 		{
-			RaycastWeaponRef->OnRayHitTarget.BindUObject(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnHitTargetActor);
+			// RaycastWeaponRef->OnRayHitTarget.BindUObject(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnHitTargetActor);
+			RaycastWeaponRef->OnRayHitTarget.AddDynamic(PlayerCharacter->GetPawnCombatComponent(), &UPawnCombatComponent::OnHitTargetActor);
 		}
 	}
 	if (GetCurrentWeapon() == nullptr)

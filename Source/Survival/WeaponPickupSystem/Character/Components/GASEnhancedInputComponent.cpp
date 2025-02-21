@@ -134,14 +134,24 @@ void UGASEnhancedInputComponent::HandleInteractActionPressed()
 
 void UGASEnhancedInputComponent::HandleFireActionPressed()
 {
-	if (ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(GetOwner()))
+	if (const ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(GetOwner()))
 	{
-		if (AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
+		if (const AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
 		{
+			
+			if (!PlayerCharacter->GetCharacterCameraComponent()->IsAiming() && CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory != EWeaponCategory::Ewc_MeleeWeapons &&
+				!PlayerCharacter->GetCharacterWeaponComponent()->CanSwitchWeapon()) { return; } // TODO: Yazı versin buraya!
+		
+			
 			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_RaycastWeapons &&
 				PlayerCharacter->GetCharacterCameraComponent()->IsAiming() || PlayerCharacter->GetLockonComponent()->IsLocked())
 			{
 				SendInputActionToASC(true, EGASAbilityInputID::Fire);
+			}
+			else if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_ProjectileWeapons &&
+				PlayerCharacter->GetCharacterCameraComponent()->IsAiming())
+			{
+				SendInputActionToASC(true, EGASAbilityInputID::HeavyFire);
 			}
 			else
 			{
