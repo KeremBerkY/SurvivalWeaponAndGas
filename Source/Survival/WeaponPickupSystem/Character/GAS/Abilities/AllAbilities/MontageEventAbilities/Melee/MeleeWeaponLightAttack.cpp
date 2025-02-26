@@ -126,7 +126,6 @@ void UMeleeWeaponLightAttack::HandleApplyDamage(const FGameplayEventData& Gamepl
 				FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.HitReact")),
 				GameplayEventData
 			);
-			
 		}
 	}
 }

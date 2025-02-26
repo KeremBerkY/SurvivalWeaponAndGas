@@ -22,6 +22,13 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnManaChanged, float, NewMana, float, MaxMana);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, NewStamina, float, MaxStamina);
 
+/*
+ *
+ * TODO: BU SINIFA PARENT YAP HEM ENEMY HEM DE KARAKTER KULLANABİLSİN! HEALTH İKİSİNDE DE OLSUN GERİSİNİ SINIFLARA GÖRE ŞEKİLLENDİRİRSİN.
+ * 
+ */
+
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SURVIVAL_API UResourceComponent : public UActorComponent
 {
@@ -86,7 +93,7 @@ private:
 
 	
 	UPROPERTY()
-	TWeakObjectPtr<UCharacterAbilitySystemComponent> CharacterAbilitySystemComponent;
+	TWeakObjectPtr<UCharacterAbilitySystemComponent> CharacterAbilitySystemComponentPtr;
 	UPROPERTY()
 	TWeakObjectPtr<UCharacterAttributeSet> CharacterAttributes;
 	

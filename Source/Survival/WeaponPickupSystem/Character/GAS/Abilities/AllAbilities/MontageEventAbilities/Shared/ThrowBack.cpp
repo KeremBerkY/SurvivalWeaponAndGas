@@ -34,7 +34,7 @@ void UThrowBack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	{
 		FVector InstigatorForwardVector = EventInstigator->GetActorForwardVector();
 
-		FVector KnockBackForce = (-InstigatorForwardVector * 1000.f) + FVector(0, 0, 500.f);
+		FVector KnockBackForce = (InstigatorForwardVector * 1000.f) + FVector(0, 0, 500.f);
 		
 		if (EnemyRoot)
 		{
@@ -42,15 +42,15 @@ void UThrowBack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 			
 			EnemyRoot->AddImpulse(KnockBackForce, NAME_None, true);
 		}
-		else if (EnemyCharacterPtr.IsValid())
-		{
-			// Karakter ise, Character Movement kullanarak itme uygula
-			UCharacterMovementComponent* MovementComp = EnemyCharacterPtr->GetCharacterMovement();
-			if (MovementComp)
-			{
-				MovementComp->Launch(FVector(KnockBackForce));
-			}
-		}
+		// else if (EnemyCharacterPtr.IsValid())
+		// {
+		// 	
+		// 	UCharacterMovementComponent* MovementComp = EnemyCharacterPtr->GetCharacterMovement();
+		// 	if (MovementComp)
+		// 	{
+		// 		MovementComp->Launch(FVector(KnockBackForce));
+		// 	}
+		// }
 	}
 
 	FTimerHandle TimerHandle;

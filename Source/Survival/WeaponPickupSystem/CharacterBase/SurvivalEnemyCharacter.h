@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "SurvivalCharacterBase.h"
+#include "Survival/WeaponPickupSystem/Interfaces/EnemyDeathInterface.h"
 #include "SurvivalEnemyCharacter.generated.h"
 
+class UEnemyResourceComponent;
+class UWidgetComponent;
 class UEnemyCombatComponent;
 class USelectedWidgetComponent;
 class ULockedWidgetComponent;
@@ -21,23 +24,38 @@ public:
 
 	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 
+	UFUNCTION(BlueprintCallable, Category = "Dead", meta = (DisplayName = "AfterEnemyDied"))
+	virtual void OnAfterEnemyDied();
+
 
 protected:
 	virtual void PossessedBy(AController* NewController) override;
+
+	virtual void BeginPlay() override;
+	void InitializeResourceComponent();
 
 	UPROPERTY(VisibleAnywhere, Category = "Components | Lockon")
 	ULockedWidgetComponent* LockedWidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components | Lockon")
 	USelectedWidgetComponent* SelectedWidgetComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components | Enemy Combat" )
+	UEnemyCombatComponent* EnemyCombatComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	UWidgetComponent* EnemyHealthWidgetComponent;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	UEnemyResourceComponent* EnemyResourceComponent;
+	
+	// UFUNCTION(BlueprintImplementableEvent, Category = "Dead", meta=(DisplayName = "OnEnemyDied"))
+	// void BP_OnEnemyDied();
 private:
 	void InitEnemyStartupData();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "CharacterData", meta = (AllowPrivateAccess = "true"))
 	TSoftObjectPtr<UDataAsset_EnemyStartUpData> EnemyStartUpData;
-
-	UPROPERTY(VisibleAnywhere, Category = "Components | Enemy Combat" )
-	UEnemyCombatComponent* EnemyCombatComponent;
 
 public:
 	FORCEINLINE ULockedWidgetComponent* GetLockedWidgetComponent() const { return LockedWidgetComponent; }

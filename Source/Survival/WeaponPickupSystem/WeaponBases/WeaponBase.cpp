@@ -58,3 +58,4 @@ void AWeaponBase::PlayWeaponEffect()
 		// TODO: Burada hepsinde bulunacak olan bir efekti spawn edebilirsin...
 	}
 }
+

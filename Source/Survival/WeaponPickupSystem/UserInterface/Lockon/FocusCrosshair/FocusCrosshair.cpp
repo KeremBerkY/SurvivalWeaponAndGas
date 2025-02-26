@@ -6,7 +6,7 @@
 #include "Components/Image.h"
 
 void UFocusCrosshair::ShowFocusCrosshair()
-{
+		{
 	if (FocusCrosshair)
 	{
 		FocusCrosshair->SetVisibility(ESlateVisibility::Visible);

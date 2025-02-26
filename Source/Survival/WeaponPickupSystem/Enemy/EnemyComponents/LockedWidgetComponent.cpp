@@ -15,7 +15,6 @@ ULockedWidgetComponent::ULockedWidgetComponent()
 
 void ULockedWidgetComponent::ShowLockWidget()
 {
-
 	SetVisibility(true);
 }
 

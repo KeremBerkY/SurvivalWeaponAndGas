@@ -78,6 +78,9 @@ void AProjectileWeapons::Attack()
 				SpawnedProjectile->ProjectileInit(this);
 				
 				SpawnedProjectile->SetOwner(this);
+
+				// SpawnedProjectile->ProjectileHit.AddUnique(SpawnedProjectile, &)
+				
 				// if (ProjectileWeaponDataAsset->ProjectileFireSpeed > 0.f)
 				// {
 				// 	

@@ -33,6 +33,12 @@ void UProjectileWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecH
 			}
 			else
 			{
+				if (!CharacterWeaponComponent->GetCurrentWeapon() || !CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset())
+				{
+					EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+					return;
+				}
+				
 				if (CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_ProjectileWeapons)
 				{
 					if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())

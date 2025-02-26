@@ -3,6 +3,7 @@
 
 #include "ProjectileAttackAbility.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/ProjectileWeaponData/ProjectileWeaponData.h"
@@ -27,16 +28,12 @@ void UProjectileAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle 
 		
 		check(ProjectileWeaponDataAsset);
 	
-		AbilityMontage = ProjectileWeaponPtr->GetProjectileWeaponDataAsset()->WeaponAnimMontages;
-		MontageRate = 1 + (ProjectileWeaponPtr->GetProjectileWeaponDataAsset()->FireRate);
+		AbilityMontage = ProjectileWeaponDataAsset->WeaponAnimMontages;
+		MontageRate = 1 + (ProjectileWeaponDataAsset->FireRate);
 		// bIsStopFire = false;
 		StartAnimMontage();
 		ProjectileWeaponPtr->Attack();
 		
-		// UAbilityTask_WaitGameplayEvent* WaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(
-		// 	this, FGameplayTag::RequestGameplayTag(FName("Weapon.State.StopFire")));
-		// WaitTask->EventReceived.AddDynamic(this, &UProjectileAttackAbility::StopFire);
-		// WaitTask->ReadyForActivation();
 	}
 	else
 	{
@@ -48,6 +45,40 @@ void UProjectileAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle 
 void UProjectileAttackAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData Payload)
 {
 	Super::OnEventReceived(EventTag, Payload);
+	
+	if (EventTag == FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.Hit")))
+	{
+		HandleApplyDamage(Payload);
+	}
+}
+
+void UProjectileAttackAbility::HandleApplyDamage(const FGameplayEventData& GameplayEventData)
+{
+	if (AActor* LocalTargetActor = Cast<AActor>(GameplayEventData.Target))
+	{
+		if (USurvivalCharacterCombatComponent* SurvivalCharacterCombatComponent = GetPlayerCharacterFromCharacterGameplayAbility()->GetSurvivalCharacterCombatComponent())
+		{
+			const float WeaponBaseDamage = SurvivalCharacterCombatComponent->GetCharacterCurrentEquipWeaponDamageAtLevel(GetAbilityLevel());
+			const auto SpecHandle = MakeCharacterDamageEffectSpecHandle(
+				DamageEffect,
+				WeaponBaseDamage,
+				FGameplayTag::RequestGameplayTag(FName("Character.SetByCaller.AttackType.Ray"))
+			);
+			NativeApplyEffectSpecHandleToTarget(LocalTargetActor, SpecHandle);
+
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+				LocalTargetActor,
+				FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.HitReact")),
+				GameplayEventData
+			);
+
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			LocalTargetActor,
+			FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.ThrowBack")),
+			GameplayEventData
+		);
+		}
+	}
 }
 
 void UProjectileAttackAbility::OnCancelled(FGameplayTag EventTag, FGameplayEventData Payload)
@@ -69,8 +100,4 @@ void UProjectileAttackAbility::EndAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
-
-// void UProjectileAttackAbility::StopFire(FGameplayEventData GameplayEventData)
-// {
-// }
 

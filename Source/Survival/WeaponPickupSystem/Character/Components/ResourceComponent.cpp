@@ -22,22 +22,22 @@ void UResourceComponent::InitializeWithGAS(UCharacterAbilitySystemComponent* ASC
 		return;
 	}
 
-	if (CharacterAbilitySystemComponent.IsValid() && CharacterAbilitySystemComponent == ASC)
+	if (CharacterAbilitySystemComponentPtr.IsValid() && CharacterAbilitySystemComponentPtr == ASC)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HealthComponent: AbilitySystemComponent is already initialized."));
 		return;
 	}
 
-	CharacterAbilitySystemComponent = ASC;
-	CharacterAttributes = AttributeSet;
+	CharacterAbilitySystemComponentPtr = ASC; // MakeWeakObjectPtr
+	CharacterAttributes = AttributeSet; // MakeWeakObjectPtr
 
-	CharacterAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributes->GetHealthAttribute()).AddUObject(
+	CharacterAbilitySystemComponentPtr->GetGameplayAttributeValueChangeDelegate(CharacterAttributes->GetHealthAttribute()).AddUObject(
 		this, &UResourceComponent::HandleHealthChanged);
 
-	CharacterAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributes->GetManaAttribute()).AddUObject(
+	CharacterAbilitySystemComponentPtr->GetGameplayAttributeValueChangeDelegate(CharacterAttributes->GetManaAttribute()).AddUObject(
 		this, &UResourceComponent::HandleManaChanged);
 
-	CharacterAbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(CharacterAttributes->GetStaminaAttribute()).AddUObject(
+	CharacterAbilitySystemComponentPtr->GetGameplayAttributeValueChangeDelegate(CharacterAttributes->GetStaminaAttribute()).AddUObject(
 		this, &UResourceComponent::HandleStaminaChanged);
 
 	

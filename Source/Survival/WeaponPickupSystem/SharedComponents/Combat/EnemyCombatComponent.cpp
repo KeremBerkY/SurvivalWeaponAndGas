@@ -3,34 +3,58 @@
 
 #include "EnemyCombatComponent.h"
 
+#include "GameplayTagContainer.h"
+#include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/MeleeWeapons/MeleeWeapon.h"
 
-// Sets default values for this component's properties
+
 UEnemyCombatComponent::UEnemyCombatComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
+
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
-
-// Called when the game starts
-void UEnemyCombatComponent::BeginPlay()
+void UEnemyCombatComponent::RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegister, AMeleeWeapon* InWeaponToRegister, bool bRegisterEquippedWeapon)
 {
-	Super::BeginPlay();
-
-	// ...
+	Debug::Print(InWeaponTagToRegister.ToString());
+	checkf(!EnemyCarriedWeaponMap.Contains(InWeaponTagToRegister), TEXT("A named named %s has already been added as carried weapon"), *InWeaponTagToRegister.ToString())
+	check(InWeaponToRegister);
 	
+	EnemyCarriedWeaponMap.Emplace(InWeaponTagToRegister, InWeaponToRegister);
+
+	// InWeaponToRegister->OnWeaponHitTarget.AddUnique(this, &ThisClass::OnHitTargetActor);
+	// InWeaponToRegister->OnWeaponPulledFromTarget.AddUnique(this, &ThisClass::OnWeaponPulledFromTargetActor);
+	
+	if (bRegisterEquippedWeapon)
+	{
+		CurrentEquippedWeaponTag = InWeaponTagToRegister;
+	}
 }
 
-
-// Called every frame
-void UEnemyCombatComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                          FActorComponentTickFunction* ThisTickFunction)
+AMeleeWeapon* UEnemyCombatComponent::GetEnemyCarriedWeaponByTag(FGameplayTag InWeaponTagToGet) const
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (EnemyCarriedWeaponMap.Contains(InWeaponTagToGet))
+	{
+		if (AMeleeWeapon* const* FoundWeapon = EnemyCarriedWeaponMap.Find(InWeaponTagToGet))
+		{
+			return *FoundWeapon;
+		}
+	}
 
-	// ...
+	return nullptr;
 }
+
+AMeleeWeapon* UEnemyCombatComponent::GetEnemyCurrentEquippedWeapon() const
+{
+	if (!CurrentEquippedWeaponTag.IsValid())
+	{
+		return nullptr;
+	}
+
+	return GetEnemyCarriedWeaponByTag(CurrentEquippedWeaponTag);
+}
+
+
+
 

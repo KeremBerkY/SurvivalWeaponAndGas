@@ -80,7 +80,7 @@ void ULockonAbility::CheckTimeHeld()
 	{
 		if (LockonComponentPtr.IsValid() && LockonComponentPtr->IsLocked())
 		{
-			LockonComponentPtr->AddFocusCrosshair();
+			// LockonComponentPtr->AddFocusCrosshair();
 			LockonComponentPtr->EndLockon();
 			UE_LOG(LogTemp, Warning, TEXT("Lockon Ended Automatically due to TimeHeld >= 1.0f!"));
 			bLockEnded = true;
@@ -144,6 +144,7 @@ void ULockonAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const F
 		else
 		{
 			// TODO: Toggle çağır ve en yakındaki düşmana geçsin.
+			LockonComponentPtr->StartToLookNearestEnemy();
 			UE_LOG(LogTemp, Warning, TEXT("Activateability Toggle"));
 		}
 	}

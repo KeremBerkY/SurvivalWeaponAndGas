@@ -8,6 +8,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Data/ProjectileDataAssets/ProjectileData.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/ProjectileWeapons.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/WeaponEffectManagerComponent/ProjectileEffectManagerComponent.h"
@@ -57,8 +58,15 @@ void AProjectile::BeginPlay()
 		if (AActor* WeaponOwner = MyOwner->GetOwner())
 		{
 			CollisionComponent->IgnoreActorWhenMoving(WeaponOwner, true);
+
+			if (const auto PlayerCharacterRef = Cast<ASurvivalCharacter>(WeaponOwner))
+			{
+				ProjectileHit.AddDynamic(PlayerCharacterRef->GetPawnCombatComponent(), &UPawnCombatComponent::OnHitTargetActor);		
+			}
 		}
 	}
+
+	
 	
 }
 
@@ -83,27 +91,43 @@ void AProjectile::FireInDirection(const FVector& ShootDirection)
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor)
+	// if (OtherActor)
+	// {
+	// }
+
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionShape Sphere = FCollisionShape::MakeSphere(150.f);
+
+	// Overlap sorgusu yapılıyor (örneğin, Pawn kanalı üzerinden)
+	bool bOverlap = GetWorld()->OverlapMultiByObjectType(
+		OverlapResults,
+		GetActorLocation(),
+		FQuat::Identity,
+		FCollisionObjectQueryParams(ECC_Pawn),    // Bu kanalı, hedef aktörlerin collision ayarlarına göre güncelle! Eğer özel bir kanal tanımlarsan onu kullan.
+		Sphere
+	);
+
+	// Sorguya dahil olan her aktör için hasar uygulama
+	if (bOverlap)
 	{
-		ProjectileHit.Broadcast(OtherActor);
+		for (FOverlapResult OverlapResult : OverlapResults)
+		{
+			AActor* OverlappedActor = OverlapResult.GetActor();
+			if (OverlappedActor && OverlappedActor != this)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Patlama alanında düşman: %s"), *OverlappedActor->GetName());
+				
+				ProjectileHit.Broadcast(OverlappedActor);
+			}
+		}
 	}
+	
 	if (ProjectileData->ExplosiveSettings.bIsExplosive)
 	{
 		OnExplosion.Broadcast();
 	}
-	// else
-	// {
-	// 	if (OtherActor && OtherActor != this && OtherActor != GetOwner())
-	// 	{
-	// 		UGameplayStatics::ApplyDamage(
-	// 			OtherActor,
-	// 			ProjectileData->ProjectileSettings.DamageAmount,
-	// 			GetInstigatorController(),
-	// 			this,
-	// 			nullptr);
-	// 		Destroy();
-	// 	}
-	// }
+
+	OverlapResults.Empty();
 }
 
 

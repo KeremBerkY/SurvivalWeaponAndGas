@@ -23,7 +23,6 @@ void UMeleeWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 
 		if (const auto WeaponInventory = PlayerCharacter->GetWeaponInventory())
 		{
-			
 			if (WeaponInventory->HasWeaponInCategory(EWeaponCategory::Ewc_MeleeWeapons))
 			{
 				if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
@@ -38,6 +37,12 @@ void UMeleeWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 			}
 			else
 			{
+				if (!CharacterWeaponComponent->GetCurrentWeapon() || !CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset())
+				{
+					EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+					return;
+				}
+				
 				if (CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_MeleeWeapons)
 				{
 					if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())

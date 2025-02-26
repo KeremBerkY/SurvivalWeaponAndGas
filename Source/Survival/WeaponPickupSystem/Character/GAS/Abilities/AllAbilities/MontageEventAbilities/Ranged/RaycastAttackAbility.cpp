@@ -88,8 +88,9 @@ void URaycastAttackAbility::OnInputRelease(float TimeHeld)
 	// TODO: AutomaticShot da ateş etmeye devam ediyor. Bunu Kaldırmamız lazım! (Shot Modelarına Tag ekleyelim. Burada da Tagler check edilsin.
 	if (PlayerCharacterRef)
 	{
+		// !CurrentWeapon->GetAttackCooldownActive
 		const auto CurrentWeapon = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
-		if (CurrentWeapon && !CurrentWeapon->GetAttackCooldownActive())
+		if (CurrentWeapon)
 		{
 			CurrentWeapon->EndAttack();
 			Debug::Print("EndAbility Called!", FColor::Orange);

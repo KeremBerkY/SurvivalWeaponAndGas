@@ -204,7 +204,7 @@ void UCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModC
 		// TODO: Handle character death
 		if (NewCurrentHealth == 0.f)
 		{
-			
+			USurvivalAbilitySystemLibrary::AddGameplayTagToActorIfNone(Data.Target.GetAvatarActor(), FGameplayTag::RequestGameplayTag(FName("Character.Shared.Status.Dead")));
 		}
 	}
 }

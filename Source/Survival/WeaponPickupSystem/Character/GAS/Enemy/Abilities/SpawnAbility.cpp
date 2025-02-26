@@ -4,6 +4,8 @@
 #include "SpawnAbility.h"
 
 #include "AbilitySystemComponent.h"
+#include "Survival/WeaponPickupSystem/SharedComponents/Combat/EnemyCombatComponent.h"
+#include "Survival/WeaponPickupSystem/SharedComponents/Combat/PawnCombatComponent.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/MeleeWeapons/MeleeWeapon.h"
 
 void USpawnAbility::OnGiveAbility(const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilitySpec& Spec)
@@ -43,10 +45,13 @@ void USpawnAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 				
 				SpawnedActor->AttachToComponent(SkeletalMeshComponent, AttachRules, SocketNameToAttachTo);
 				
-				// if (WeaponTagToRegister.IsValid())
-				// {
-				// 	GetPawnCombatComponentFromActorInfo()->RegisterSpawnedWeapon(WeaponTagToRegister, SpawnedActor, RegisterAsEquippedWeapon);
-				// }
+				if (WeaponTagToRegister.IsValid())
+				{
+					if (const auto EnemyCombatComponent = GetAvatarActorFromActorInfo()->FindComponentByClass<UEnemyCombatComponent>())
+					{
+						EnemyCombatComponent->RegisterSpawnedWeapon(WeaponTagToRegister, SpawnedActor, RegisterAsEquippedWeapon);
+					}
+				}
 			}
 		}
 	}

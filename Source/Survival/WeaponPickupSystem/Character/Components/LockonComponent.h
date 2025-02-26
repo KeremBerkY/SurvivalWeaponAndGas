@@ -21,14 +21,12 @@ class SURVIVAL_API ULockonComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	
-	
 	ULockonComponent();
 
 	FORCEINLINE bool IsLocked() const { return bIsLocked; }
 	FORCEINLINE void SetLocked(bool IsLocked) { bIsLocked = IsLocked; }
 	// FORCEINLINE AEnemyBase* GetCurrentTargetActor() const { return CurrentTargetActor; }
-	FORCEINLINE ASurvivalEnemyCharacter* GetCurrentTargetActor() const { return CurrentTargetActor; }
+	FORCEINLINE ASurvivalEnemyCharacter* GetCurrentTargetActor() const { return CurrentTargetActorPtr.Get(); }
 	FORCEINLINE UFocusCrosshair* GetFocusCrosshair() const { return FocusCrosshair; }
 
 	void RemoveFocusCrosshair() const;
@@ -37,24 +35,30 @@ public:
 	void StartLockon();
 	void EndLockon();
 
+	void StartToLookNearestEnemy();
+
 	void PerformSelect();
 	void EndSelect() const;
 	
 	void DrawDebugVisuals(const FVector& Start, const FVector& End, const FHitResult& HitResult) const;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<UFocusCrosshair> FocusCrosshairClass;
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	// TSubclassOf<UFocusCrosshair> FocusCrosshairClass;
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void FocusCrosshairInitialize();
+	// void FocusCrosshairInitialize();
 
 private:
 	void CheckCurrentWeaponAndCategory();
 	void CheckAndPerformTargetSelection(float DeltaTime);
 	void UpdateTargetState(ETargetWidgetState NewState) const;
 	void RotateTowardsTarget(float DeltaTime) const;
+	void FindEnemiesInRadius(float Radius, TArray<ASurvivalEnemyCharacter*>& OutEnemies) const;
+
+	UPROPERTY(EditDefaultsOnly, Category = "LockonRadius")
+	float NearbyRadius;
 	
 	UPROPERTY()
 	UFocusCrosshair* FocusCrosshair;
@@ -65,12 +69,11 @@ private:
 
 	TWeakObjectPtr<UCharacterMovementComponent> MovementComponentPtr;
 
-	UPROPERTY()
+	// UPROPERTY()
 	// AEnemyBase* CurrentTargetActor;
-	ASurvivalEnemyCharacter* CurrentTargetActor;
+	TWeakObjectPtr<ASurvivalEnemyCharacter> CurrentTargetActorPtr;
 
 	UPROPERTY()
-	// AEnemyBase* SelectedActor;
 	ASurvivalEnemyCharacter* SelectedActor;
 
 	bool bIsLocked;

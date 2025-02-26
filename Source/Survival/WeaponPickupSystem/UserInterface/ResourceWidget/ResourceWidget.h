@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ResourceWidget.generated.h"
 
+class USurvivalWidgetBase;
 class UTextBlock;
 class UProgressBar;
 /**
@@ -17,29 +18,39 @@ class SURVIVAL_API UResourceWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	// Health Bar Widget
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* HealthBar;
+	USurvivalWidgetBase* HealthBar;
 
-	// Mana Bar Widget
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* ManaBar;
+	USurvivalWidgetBase* ManaBar;
 
-	// Stamina Bar Widget
 	UPROPERTY(meta = (BindWidget))
-	UProgressBar* StaminaBar;
+	USurvivalWidgetBase* RageBar;
 
-	// Text için Health bilgisi
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* HealthText;
-
-	// Text için Mana bilgisi
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* ManaText;
-
-	// Text için Stamina bilgisi
-	UPROPERTY(meta = (BindWidget))
-	UTextBlock* StaminaText;
+	
+	// // Health Bar Widget
+	// UPROPERTY(meta = (BindWidget))
+	// UProgressBar* HealthBar;
+	//
+	// // Mana Bar Widget
+	// UPROPERTY(meta = (BindWidget))
+	// UProgressBar* ManaBar;
+	//
+	// // Stamina Bar Widget
+	// UPROPERTY(meta = (BindWidget))
+	// UProgressBar* StaminaBar;
+	//
+	// // Text için Health bilgisi
+	// UPROPERTY(meta = (BindWidget))
+	// UTextBlock* HealthText;
+	//
+	// // Text için Mana bilgisi
+	// UPROPERTY(meta = (BindWidget))
+	// UTextBlock* ManaText;
+	//
+	// // Text için Stamina bilgisi
+	// UPROPERTY(meta = (BindWidget))
+	// UTextBlock* StaminaText;
 
 	UFUNCTION()
 	void UpdateHealthBar(float NewHealth, float MaxHealth);

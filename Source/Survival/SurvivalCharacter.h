@@ -86,8 +86,8 @@ protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
 	// void Bum(); // TEST!
-	UFUNCTION()
-	void OnTargetHit(const AActor* HitActor);
+	// UFUNCTION()
+	// void OnTargetHit(const AActor* HitActor);
 
 // Movement Speed
 	void OnMovementSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData) const;

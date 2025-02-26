@@ -180,10 +180,10 @@ void ASurvivalCharacter::InitializeResourceComponent()
 	}
 }
 
-void ASurvivalCharacter::OnTargetHit(const AActor* HitActor)
-{
-	BP_OnCombatTargetHit();
-}
+// void ASurvivalCharacter::OnTargetHit(const AActor* HitActor)
+// {
+// 	BP_OnCombatTargetHit();
+// }
 
 void ASurvivalCharacter::BeginPlay()
 {
@@ -207,19 +207,7 @@ void ASurvivalCharacter::BeginPlay()
 	{
 		FootCollision->IgnoreActorWhenMoving(OwnerActor, true);
 	}
-
-	/* GameplayAbility Test Section */
 	
-	// if (IsValid(SurvivalCharacterCombatComponent))
-	// {
-	// 	SurvivalCharacterCombatComponent->OnCombatHitTargetDelegate.AddDynamic(this, &ThisClass::OnTargetHit);
-	// }
-
-	// FTimerHandle HitPauseTimerHandle;
-	// FTimerDelegate TimerDel;
-	// TimerDel.BindUObject(this, &ASurvivalCharacter::Bum);
-	// 	
-	// GetWorld()->GetTimerManager().SetTimer(HitPauseTimerHandle, TimerDel, 10.f, false);
 }
 
 void ASurvivalCharacter::BindResourceInitialization()

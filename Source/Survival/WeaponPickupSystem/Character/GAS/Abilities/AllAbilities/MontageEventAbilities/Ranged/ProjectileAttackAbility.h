@@ -26,7 +26,7 @@ protected:
 
 	// UFUNCTION()
 	// virtual void StopFire(FGameplayEventData GameplayEventData);
-	// virtual void HandleApplyDamage(const FGameplayEventData& GameplayEventData);
+	virtual void HandleApplyDamage(const FGameplayEventData& GameplayEventData);
 	
 
 	TWeakObjectPtr<AProjectileWeapons> ProjectileWeaponPtr;

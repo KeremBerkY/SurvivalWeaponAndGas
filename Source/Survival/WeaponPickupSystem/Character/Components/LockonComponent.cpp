@@ -27,8 +27,9 @@ ULockonComponent::ULockonComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	bIsLocked = false;
-	CurrentTargetActor = nullptr;
+	CurrentTargetActorPtr = nullptr;
 	bIsNotRaycast = false;
+	NearbyRadius = 1000.f;
 }
 
 void ULockonComponent::BeginPlay()
@@ -40,20 +41,20 @@ void ULockonComponent::BeginPlay()
 	ControllerPtr = MakeWeakObjectPtr(GetWorld()->GetFirstPlayerController());
 	MovementComponentPtr = MakeWeakObjectPtr(PlayerCharacterPtr->GetCharacterMovement());
 
-	FocusCrosshairInitialize();
+	// FocusCrosshairInitialize(); // Buna bak bu işe yaramıyor olabilir?
 }
 
-void ULockonComponent::FocusCrosshairInitialize()
-{
-	if (FocusCrosshairClass)
-	{
-		FocusCrosshair = CreateWidget<UFocusCrosshair>(GetWorld(), FocusCrosshairClass);
-		if (FocusCrosshair)
-		{
-			FocusCrosshair->AddToViewport();
-		}
-	}
-}
+// void ULockonComponent::FocusCrosshairInitialize()
+// {
+// 	if (FocusCrosshairClass)
+// 	{
+// 		FocusCrosshair = CreateWidget<UFocusCrosshair>(GetWorld(), FocusCrosshairClass);
+// 		if (FocusCrosshair)
+// 		{
+// 			FocusCrosshair->AddToViewport();
+// 		}
+// 	}
+// }
 
 void ULockonComponent::RemoveFocusCrosshair() const
 {
@@ -102,11 +103,13 @@ void ULockonComponent::StartLockon() // TODO: Bu rakip çok yakına gelirse çal
 		return;
 	}
 	
+	
 	FHitResult OutResult;
 	
 	FVector StartLocation = PlayerCharacterPtr->GetCharacterCameraComponent()->GetComponentLocation();
 	FVector ForwardVector = PlayerCharacterPtr->GetCharacterCameraComponent()->GetForwardVector();
-	FVector EndLocation = StartLocation + (ForwardVector * 10000.0f);
+	FVector EndLocation = CurrentTargetActorPtr.Get() ? CurrentTargetActorPtr->GetActorLocation() :  StartLocation + (ForwardVector * 10000.0f);
+	// FVector EndLocation = StartLocation + (ForwardVector * 10000.0f); // Buraya bir end location koyucaz o da yeni PlayerCharacterPtr olacak. Yan, PlayerCharacterPtr referansı varsa endLocation direkt onun üstü olsun.
 	
 	FCollisionQueryParams IgnoreParams{
 		FName{ TEXT("Ignore Collision Params") },
@@ -131,16 +134,16 @@ void ULockonComponent::StartLockon() // TODO: Bu rakip çok yakına gelirse çal
 			UE_LOG(LogTemp, Warning, TEXT("Target Found: %s"), *HitActor->GetName());
 			
 			// CurrentTargetActor = Cast<AEnemyBase>(HitActor); // For TEST Enemy
-			CurrentTargetActor = Cast<ASurvivalEnemyCharacter>(HitActor);
+			CurrentTargetActorPtr = MakeWeakObjectPtr(Cast<ASurvivalEnemyCharacter>(HitActor));
 			bIsLocked = true;
 			
-			if (CurrentTargetActor)
+			if (CurrentTargetActorPtr.IsValid())
 			{
 				// FocusCrosshair->HideFocusCrosshair();
 				RemoveFocusCrosshair();
 				EndSelect();
 				UpdateTargetState(ETargetWidgetState::GetOutFromTarget);
-				CurrentTargetActor->GetLockedWidgetComponent()->ShowLockWidget();
+				CurrentTargetActorPtr.Get()->GetLockedWidgetComponent()->ShowLockWidget();
 			}
 			
 			ControllerPtr.Get()->SetIgnoreLookInput(true);
@@ -161,13 +164,13 @@ void ULockonComponent::StartLockon() // TODO: Bu rakip çok yakına gelirse çal
 
 void ULockonComponent::EndLockon()
 {
-	if (CurrentTargetActor)
+	if (CurrentTargetActorPtr.IsValid())
 	{
-		FocusCrosshair->ShowFocusCrosshair();
-		CurrentTargetActor->GetLockedWidgetComponent()->HideLockWidget();
+		// FocusCrosshair->ShowFocusCrosshair();
+		CurrentTargetActorPtr->GetLockedWidgetComponent()->HideLockWidget();
 	}
 	
-	CurrentTargetActor = nullptr;
+	CurrentTargetActorPtr = nullptr;
 	SetLocked(false);
 	
 	MovementComponentPtr.Get()->bOrientRotationToMovement = true;
@@ -175,6 +178,81 @@ void ULockonComponent::EndLockon()
 	PlayerCharacterPtr->GetCameraBoom()->TargetOffset = FVector::ZeroVector;
 
 	ControllerPtr.Get()->ResetIgnoreLookInput();
+	
+}
+
+void ULockonComponent::StartToLookNearestEnemy()
+{
+	TArray<ASurvivalEnemyCharacter*> NearbyEnemies;
+	FindEnemiesInRadius(NearbyRadius, NearbyEnemies);
+
+	if (NearbyEnemies.Num() == 0) return;
+
+	ASurvivalEnemyCharacter* NearestEnemy = nullptr;
+	float MinDistance = TNumericLimits<float>::Max();
+
+	FVector CurrentTargetLocation = CurrentTargetActorPtr.Get() ?
+		CurrentTargetActorPtr->GetActorLocation() : PlayerCharacterPtr->GetActorLocation();
+
+	
+	for (ASurvivalEnemyCharacter* Enemy : NearbyEnemies)
+	{
+		if (CurrentTargetActorPtr == Enemy) continue;
+
+		// float Distance = FVector::Dist(CurrentTargetLocation, Enemy->GetActorLocation());
+		float Distance = FVector::Dist(CurrentTargetLocation, PlayerCharacterPtr->GetActorLocation());
+
+		if (Distance < MinDistance)
+		{
+			MinDistance = Distance;
+			NearestEnemy = Enemy;
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("Yakındaki düşman: %s"), *Enemy->GetName());
+	}
+	
+	if (NearestEnemy)
+	{
+		if (CurrentTargetActorPtr.IsValid())
+		{
+			CurrentTargetActorPtr->GetLockedWidgetComponent()->HideLockWidget();
+		}
+		CurrentTargetActorPtr = MakeWeakObjectPtr(NearestEnemy); // En yakın düşmanı yeni hedef olarak ata && MakeWeakObjectPtr yapabiliyor musun bak!
+		StartLockon();
+	}
+}
+
+void ULockonComponent::FindEnemiesInRadius(float Radius, TArray<ASurvivalEnemyCharacter*>& OutEnemies) const
+{
+	
+	if (!GetWorld() || !PlayerCharacterPtr.IsValid()) return;
+	
+	TArray<FOverlapResult> OverlapResults;
+
+	const auto Sphere = FCollisionShape::MakeSphere(Radius);
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(PlayerCharacterPtr.Get());
+
+	bool bHasHit = GetWorld()->OverlapMultiByChannel(
+		OverlapResults,
+		PlayerCharacterPtr->GetActorLocation(),
+		FQuat::Identity,
+		ECC_Pawn,
+		Sphere,
+		QueryParams
+	);
+
+	if (bHasHit)
+	{
+		for (const FOverlapResult& Result : OverlapResults)
+		{
+			if (ASurvivalEnemyCharacter* Enemy = Cast<ASurvivalEnemyCharacter>(Result.GetActor()))
+			{
+				OutEnemies.Add(Enemy);
+			}
+		}
+	}
 	
 }
 
@@ -253,7 +331,7 @@ void ULockonComponent::CheckCurrentWeaponAndCategory()
 
 void ULockonComponent::CheckAndPerformTargetSelection(float DeltaTime)
 {
-	if (!IsValid(CurrentTargetActor)) // TODO:  && !PlayerCharacterPtr->GetCharacterCameraComponent()->IsAiming() Bunu düşün!
+	if (!CurrentTargetActorPtr.IsValid()) // TODO:  && !PlayerCharacterPtr->GetCharacterCameraComponent()->IsAiming() Bunu düşün!
 	{
 		static float TimeSinceLastCheck = 0.0f;
 		constexpr float Interval = 0.25f;
@@ -286,10 +364,10 @@ void ULockonComponent::UpdateTargetState(const ETargetWidgetState NewState) cons
 
 void ULockonComponent::RotateTowardsTarget(float DeltaTime) const
 {
-	if (!IsValid(CurrentTargetActor) || !PlayerCharacterPtr.IsValid()) { return; }
+	if (!CurrentTargetActorPtr.IsValid() || !PlayerCharacterPtr.IsValid()) { return; }
 
 	const FVector CurrentLocation = PlayerCharacterPtr.Get()->GetActorLocation();
-	FVector TargetLocation = CurrentTargetActor->GetActorLocation();
+	FVector TargetLocation = CurrentTargetActorPtr->GetActorLocation();
 
 	TargetLocation.Z -= 125;
 	

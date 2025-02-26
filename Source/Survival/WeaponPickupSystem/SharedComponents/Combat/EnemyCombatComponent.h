@@ -3,9 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "PawnCombatComponent.h"
 #include "EnemyCombatComponent.generated.h"
 
+
+struct FGameplayTag;
+class AMeleeWeapon;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SURVIVAL_API UEnemyCombatComponent : public UPawnCombatComponent
@@ -15,13 +19,19 @@ class SURVIVAL_API UEnemyCombatComponent : public UPawnCombatComponent
 public:
 	// Sets default values for this component's properties
 	UEnemyCombatComponent();
+	
+	UFUNCTION(BlueprintCallable, Category = "Survival|EnemyCombat")
+	void RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegister, AMeleeWeapon* InWeaponToRegister, bool bRegisterEquippedWeapon = false);
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable, Category = "Warrior|Combat")
+	AMeleeWeapon* GetEnemyCarriedWeaponByTag(FGameplayTag InWeaponTagToGet) const;
+	
+	UPROPERTY(BlueprintReadWrite, Category = "Survival|EnemyCombar")
+	FGameplayTag CurrentEquippedWeaponTag;
+	
+	UFUNCTION(BlueprintCallable, Category = "Survival|EnemyCombat")
+	AMeleeWeapon* GetEnemyCurrentEquippedWeapon() const;
 
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-	                           FActorComponentTickFunction* ThisTickFunction) override;
+private:
+	TMap<FGameplayTag, AMeleeWeapon*> EnemyCarriedWeaponMap;
 };

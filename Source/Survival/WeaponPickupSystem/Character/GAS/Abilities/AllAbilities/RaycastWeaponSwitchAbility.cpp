@@ -33,6 +33,17 @@ void URaycastWeaponSwitchAbility::ActivateAbility(const FGameplayAbilitySpecHand
 			}
 			else
 			{
+				if (!CharacterWeaponComponent->GetCurrentWeapon() || !CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset())
+				{
+					EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+					return;
+				}
+				
+				if (!CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset()) // Burada Error alıyosun WeaponDataAssetten dolayı olsa gerek.
+				{
+					EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+					return;
+				}
 				if (CharacterWeaponComponent->GetCurrentWeapon()->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_RaycastWeapons)
 				{
 					if (CharacterWeaponComponent && CharacterWeaponComponent->CanSwitchWeapon() && !PlayerCharacter->GetLockonComponent()->IsLocked())
