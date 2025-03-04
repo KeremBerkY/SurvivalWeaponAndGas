@@ -76,6 +76,14 @@ void UHeatComponent::UpdateHeat()
 
 		if (IsOverheated())
 		{
+			if (auto WeaponBase = Cast<AWeaponBase>(Weapon))
+			{
+				WeaponBase->EndAttack();
+			}
+			if (const auto ASC = Weapon->GetOwningCharacter()->GetCharacterAbilitySystemComponent())
+			{
+				ASC->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.OverHeat")));
+			}
 			Weapon->GetWeaponMesh()->SetScalarParameterValueOnMaterials(FName("HitFxSwitch"), 1);
 			bIsOverHeated = true;
 			StartCooling();
@@ -112,17 +120,15 @@ void UHeatComponent::ApplyCooling()
 {
 	const float AddCooler = (WeaponDataAsset->FiringHeatSettings.HeatGeneratedPerShot * 2);
 	CurrentHeat = FMath::Clamp(CurrentHeat - AddCooler, 0, WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity);
-
-	// if (CurrentHeat <= WeaponDataAsset->FiringHeatSettings.MaxHeatCapacity * 0.6f)
-	// {
-	// 	UCustomDepthHelper::ResetCustomDepth(Weapon->GetWeaponMesh());
-	//
-	// }
 	
 	if (CurrentHeat <= 0.f)
 	{
 		CurrentHeat = 0.f;
 		bIsOverHeated = false;
+		if (const auto ASC = Weapon->GetOwningCharacter()->GetCharacterAbilitySystemComponent())
+		{
+			ASC->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.OverHeat")));
+		}
 		GetWorld()->GetTimerManager().ClearTimer(CoolingTimerHandle);
 	}
 	

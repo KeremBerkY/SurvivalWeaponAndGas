@@ -14,6 +14,15 @@ class ARaycastWeapons;
 class URaycastWeaponData;
 class UCharacterAbilitySystemComponent;
 
+
+UENUM(BlueprintType)
+enum class EFireMode : uint8
+{
+	SingleShot     UMETA(DisplayName = "Single Shot"),
+	BurstShot      UMETA(DisplayName = "Burst Shot"),
+	AutomaticShot  UMETA(DisplayName = "Automatic Shot")
+};
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SURVIVAL_API UFireModeBaseComponent : public UActorComponent, public IFire
 {
@@ -21,20 +30,25 @@ class SURVIVAL_API UFireModeBaseComponent : public UActorComponent, public IFire
 
 public:
 	UFireModeBaseComponent();
-
+	
 protected:
 	virtual void BeginPlay() override;
 
 	UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent() const;
 
+	virtual void ResetFire();
+	virtual void LoopModeFire();
+
 	FGameplayTag FireTag;
 
-	// TWeakObjectPtr<URaycastWeaponData> RaycastWeaponDataPtr;
-	// TWeakObjectPtr<ARaycastWeapons> OwnerWeaponPtr;
-	URaycastWeaponData* RaycastWeaponDataPtr;
-	ARaycastWeapons* OwnerWeaponPtr;
-
+	TWeakObjectPtr<URaycastWeaponData> RaycastWeaponDataPtr;
+	TWeakObjectPtr<ARaycastWeapons> OwnerWeaponPtr;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Fire Mode")
+	EFireMode FireModeType;
 public:
 	virtual void Fire() override;
 	virtual void EndFire() override;
+
+	FORCEINLINE EFireMode GetFireModeType() const { return FireModeType; }
 };

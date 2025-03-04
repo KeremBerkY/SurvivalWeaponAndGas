@@ -6,6 +6,9 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 #include "PistolWeapon.generated.h"
 
+class UAutomaticShotModeComponent;
+class UBurstShotModeComponent;
+
 UCLASS()
 class SURVIVAL_API APistolWeapon : public ARaycastWeapons
 {
@@ -18,7 +21,11 @@ public:
 	void PerformFire();
 
 protected:
-	virtual void BeginPlay() override;
 	virtual void AddFireModes() override;
 
+private:
+	UPROPERTY()
+	UBurstShotModeComponent* BurstShotModeComponent;
+	UPROPERTY()
+	UAutomaticShotModeComponent* AutomaticShotModeComponent;
 };

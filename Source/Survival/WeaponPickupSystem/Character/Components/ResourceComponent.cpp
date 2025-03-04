@@ -28,17 +28,17 @@ void UResourceComponent::InitializeWithGAS(UCharacterAbilitySystemComponent* ASC
 		return;
 	}
 
-	CharacterAbilitySystemComponentPtr = ASC; // MakeWeakObjectPtr
-	CharacterAttributes = AttributeSet; // MakeWeakObjectPtr
+	CharacterAbilitySystemComponentPtr = MakeWeakObjectPtr(ASC); // MakeWeakObjectPtr
+	CharacterAttributesPtr = MakeWeakObjectPtr(AttributeSet); // MakeWeakObjectPtr
 
-	CharacterAbilitySystemComponentPtr->GetGameplayAttributeValueChangeDelegate(CharacterAttributes->GetHealthAttribute()).AddUObject(
+	CharacterAbilitySystemComponentPtr->GetGameplayAttributeValueChangeDelegate(CharacterAttributesPtr->GetHealthAttribute()).AddUObject(
 		this, &UResourceComponent::HandleHealthChanged);
 
-	CharacterAbilitySystemComponentPtr->GetGameplayAttributeValueChangeDelegate(CharacterAttributes->GetManaAttribute()).AddUObject(
+	CharacterAbilitySystemComponentPtr->GetGameplayAttributeValueChangeDelegate(CharacterAttributesPtr->GetManaAttribute()).AddUObject(
 		this, &UResourceComponent::HandleManaChanged);
 
-	CharacterAbilitySystemComponentPtr->GetGameplayAttributeValueChangeDelegate(CharacterAttributes->GetStaminaAttribute()).AddUObject(
-		this, &UResourceComponent::HandleStaminaChanged);
+	CharacterAbilitySystemComponentPtr->GetGameplayAttributeValueChangeDelegate(CharacterAttributesPtr->GetCurrentRageAttribute()).AddUObject(
+		this, &UResourceComponent::HandleRageChanged);
 
 	
 	BroadCastInitialResourceValues();
@@ -46,26 +46,26 @@ void UResourceComponent::InitializeWithGAS(UCharacterAbilitySystemComponent* ASC
 	UE_LOG(LogTemp, Log, TEXT("HealthComponent successfully initialized with GAS."));
 }
 
-void UResourceComponent::BeginPlay()
+void UResourceComponent::BindAndInitializeRageResource()
 {
-	Super::BeginPlay();
+	if (!CharacterAbilitySystemComponentPtr.IsValid() || !CharacterAttributesPtr.IsValid())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HealthComponent: Invalid AbilitySystemComponent or AttributeSet"));
+		return;
+	}
 
-	// BroadCastInitialResourceValues();
-	
-}
+	CharacterAbilitySystemComponentPtr->GetGameplayAttributeValueChangeDelegate(CharacterAttributesPtr->GetStaminaAttribute()).AddUObject(
+	this, &UResourceComponent::HandleRageChanged);
 
-void UResourceComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	InitializeRageValues();
 }
 
 void UResourceComponent::HandleHealthChanged(const FOnAttributeChangeData& Data)
 {
-	if (CharacterAttributes.IsValid())
+	if (CharacterAttributesPtr.IsValid())
 	{
 		float NewHealth = Data.NewValue;
-		float MaxHealth = CharacterAttributes->GetMaxHealth();
+		float MaxHealth = CharacterAttributesPtr->GetMaxHealth();
 
 		CheckHealthState(NewHealth, MaxHealth);
 		
@@ -75,42 +75,49 @@ void UResourceComponent::HandleHealthChanged(const FOnAttributeChangeData& Data)
 
 void UResourceComponent::HandleManaChanged(const FOnAttributeChangeData& Data)
 {
-	if (CharacterAttributes.IsValid())
+	if (CharacterAttributesPtr.IsValid())
 	{
 		float NewMana = Data.NewValue;
-		float MaxMana = CharacterAttributes->GetMaxMana();
+		float MaxMana = CharacterAttributesPtr->GetMaxMana();
 		
 		OnManaChanged.Broadcast(NewMana, MaxMana);
 	}
 }
 
-void UResourceComponent::HandleStaminaChanged(const FOnAttributeChangeData& Data)
+void UResourceComponent::HandleRageChanged(const FOnAttributeChangeData& Data)
 {
-	if (CharacterAttributes.IsValid())
-	{
-		float NewStamina = Data.NewValue;
-		float MaxStamina = CharacterAttributes->GetMaxStamina();
+	// if (CharacterAttributes.IsValid())
+	// {
+	// 	float NewStamina = Data.NewValue;
+	// 	float MaxStamina = CharacterAttributes->GetMaxStamina();
+	//
+	// 	OnStaminaChanged.Broadcast(NewStamina, MaxStamina);
+	// }
 
-		OnStaminaChanged.Broadcast(NewStamina, MaxStamina);
+	if (CharacterAttributesPtr.IsValid())
+	{
+		float NewRage = Data.NewValue;
+		float MaxRage = CharacterAttributesPtr->GetMaxRage();
+
+		OnRageChanged.Broadcast(NewRage, MaxRage);
 	}
 }
 
 void UResourceComponent::BroadCastInitialResourceValues()
 {
-	if (CharacterAttributes.IsValid())
+	if (CharacterAttributesPtr.IsValid())
 	{
 		UE_LOG(LogTemp, Log, TEXT("Resource Values Health, Mana, Stamina Initialized."));
 		InitializeHealthValues();
 		InitializeManaValues();
-		InitializeStaminaValues();
-		
+		InitializeRageValues();
 	}
 }
 
 void UResourceComponent::InitializeHealthValues()
 {
-	float CurrentHealth = CharacterAttributes->GetHealth();
-	float MaxHealth = CharacterAttributes->GetMaxHealth();
+	float CurrentHealth = CharacterAttributesPtr->GetHealth();
+	float MaxHealth = CharacterAttributesPtr->GetMaxHealth();
 
 	UE_LOG(LogTemp, Log, TEXT("health: %f & maxhealth: %f "), CurrentHealth, MaxHealth);
 
@@ -121,23 +128,28 @@ void UResourceComponent::InitializeHealthValues()
 
 void UResourceComponent::InitializeManaValues()
 {
-	float CurrentMana = CharacterAttributes->GetMana();
-	float MaxMana = CharacterAttributes->GetMaxMana();
+	float CurrentMana = CharacterAttributesPtr->GetMana();
+	float MaxMana = CharacterAttributesPtr->GetMaxMana();
 
 	OnManaChanged.Broadcast(CurrentMana, MaxMana);
 }
 
-void UResourceComponent::InitializeStaminaValues()
+void UResourceComponent::InitializeRageValues()
 {
-	float CurrentStamina = CharacterAttributes->GetStamina();
-	float MaxStamina = CharacterAttributes->GetMaxStamina();
+	// float CurrentStamina = CharacterAttributes->GetStamina();
+	// float MaxStamina = CharacterAttributes->GetMaxStamina();
+	//
+	// OnRageChanged.Broadcast(CurrentStamina, MaxStamina);
 
-	OnStaminaChanged.Broadcast(CurrentStamina, MaxStamina);
+	float CurrentRage = CharacterAttributesPtr->GetCurrentRage();
+	float MaxRage = CharacterAttributesPtr->GetMaxRage();
+
+	OnRageChanged.Broadcast(CurrentRage, MaxRage);
 }
 
 float UResourceComponent::GetLowHealthThreshold() const
 {
-	return CharacterAttributes.IsValid() ? CharacterAttributes->GetMaxHealth() * 0.25f : 0.f;
+	return CharacterAttributesPtr.IsValid() ? CharacterAttributesPtr->GetMaxHealth() * 0.25f : 0.f;
 }
 
 void UResourceComponent::CheckHealthState(float NewHealth, float MaxHealth)

@@ -29,7 +29,7 @@ ULockonComponent::ULockonComponent()
 	bIsLocked = false;
 	CurrentTargetActorPtr = nullptr;
 	bIsNotRaycast = false;
-	NearbyRadius = 1000.f;
+	NearbyRadius = 2000.f;
 }
 
 void ULockonComponent::BeginPlay()
@@ -41,20 +41,20 @@ void ULockonComponent::BeginPlay()
 	ControllerPtr = MakeWeakObjectPtr(GetWorld()->GetFirstPlayerController());
 	MovementComponentPtr = MakeWeakObjectPtr(PlayerCharacterPtr->GetCharacterMovement());
 
-	// FocusCrosshairInitialize(); // Buna bak bu işe yaramıyor olabilir?
+	FocusCrosshairInitialize();
 }
 
-// void ULockonComponent::FocusCrosshairInitialize()
-// {
-// 	if (FocusCrosshairClass)
-// 	{
-// 		FocusCrosshair = CreateWidget<UFocusCrosshair>(GetWorld(), FocusCrosshairClass);
-// 		if (FocusCrosshair)
-// 		{
-// 			FocusCrosshair->AddToViewport();
-// 		}
-// 	}
-// }
+void ULockonComponent::FocusCrosshairInitialize()
+{
+	if (FocusCrosshairClass)
+	{
+		FocusCrosshair = CreateWidget<UFocusCrosshair>(GetWorld(), FocusCrosshairClass);
+		if (FocusCrosshair)
+		{
+			FocusCrosshair->AddToViewport();
+		}
+	}
+}
 
 void ULockonComponent::RemoveFocusCrosshair() const
 {
@@ -76,21 +76,21 @@ void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	CheckCurrentWeaponAndCategory();
-	
-	if (!bIsNotRaycast)
-	{
-		AddFocusCrosshair();
-	}
-	else
-	{
-		RemoveFocusCrosshair();
-		return;
-	}
-	
-	CheckAndPerformTargetSelection(DeltaTime);
-	
-	RotateTowardsTarget(DeltaTime);
+	// CheckCurrentWeaponAndCategory();
+	//
+	// if (!bIsNotRaycast)
+	// {
+	// 	AddFocusCrosshair();
+	// }
+	// else
+	// {
+	// 	RemoveFocusCrosshair();
+	// 	return;
+	// }
+	//
+	// CheckAndPerformTargetSelection(DeltaTime);
+	//
+	// RotateTowardsTarget(DeltaTime);
 	
 }
 
@@ -197,7 +197,8 @@ void ULockonComponent::StartToLookNearestEnemy()
 	
 	for (ASurvivalEnemyCharacter* Enemy : NearbyEnemies)
 	{
-		if (CurrentTargetActorPtr == Enemy) continue;
+		if (CurrentTargetActorPtr == Enemy ||
+			Enemy->GetCharacterAbilitySystemComponent()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Shared.Status.Dead")))) continue;
 
 		// float Distance = FVector::Dist(CurrentTargetLocation, Enemy->GetActorLocation());
 		float Distance = FVector::Dist(CurrentTargetLocation, PlayerCharacterPtr->GetActorLocation());
@@ -211,7 +212,7 @@ void ULockonComponent::StartToLookNearestEnemy()
 		UE_LOG(LogTemp, Warning, TEXT("Yakındaki düşman: %s"), *Enemy->GetName());
 	}
 	
-	if (NearestEnemy)
+	if (NearestEnemy) // TODO: Ölen enemylerin efekti bitene kadar tekrar ulaşılabilir oluyor destroy actor diyemiyoruz o yüzden tag koymamız lazım. Eğer Enemy.Dead ise bu enemy'i seçme gibi
 	{
 		if (CurrentTargetActorPtr.IsValid())
 		{

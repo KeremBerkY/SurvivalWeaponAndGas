@@ -21,13 +21,10 @@ public:
 protected:
 	virtual void Fire() override;
 	virtual void EndFire() override;
+	virtual void LoopModeFire() override;
 
-	void BurstFire();
-	void ResetFire() const;
+	virtual void ResetFire() override;
 	void BurstFireCooldown();
-
-	// UPROPERTY()
-	// ARaycastWeapons* OwnerWeapon;
 
 	FTimerHandle BurstFireTimerHandle;
 	FTimerHandle BurstFireLoopTimerHandle;
@@ -37,12 +34,6 @@ protected:
 		
 private:
 	
-	// UPROPERTY()
-	// ARaycastWeapons* RaycastWeapon;
-	//
-	// UPROPERTY()
-	// URaycastWeaponData* RaycastWeaponData;
-
 	UPROPERTY(EditAnywhere, Category = "BurstShots")
 	float BurstCount;
 	UPROPERTY(EditAnywhere, Category = "BurstShots")

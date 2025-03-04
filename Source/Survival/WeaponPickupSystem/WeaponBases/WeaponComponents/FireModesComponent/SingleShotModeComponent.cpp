@@ -14,6 +14,8 @@ USingleShotModeComponent::USingleShotModeComponent()
 
 	FireTag = FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.SingleShot"));
 
+	FireModeType = EFireMode::SingleShot;
+
 }
 
 void USingleShotModeComponent::Fire()
@@ -47,23 +49,30 @@ void USingleShotModeComponent::Fire()
 	
 }
 
-void USingleShotModeComponent::ResetFire() const
+void USingleShotModeComponent::ResetFire()
 {
+	Super::ResetFire();
+
 	if (GetCharacterAbilitySystemComponent())
 	{
 		GetCharacterAbilitySystemComponent()->RemoveLooseGameplayTag(FireTag);
 	}
-	OwnerWeaponPtr->SetCanFire(true);
-	OwnerWeaponPtr->SetAttackCooldownActive(false);
-
-	UE_LOG(LogTemp, Log, TEXT("Ready to fire again!"));
+	
 }
 
 
 void USingleShotModeComponent::EndFire()
 {
 	Super::EndFire();
-	OwnerWeaponPtr->SetAttackCooldownActive(true);
+	
+	if (GetWorld()->GetTimerManager().IsTimerActive(FireRateTimerHandle))
+	{
+		OwnerWeaponPtr->SetAttackCooldownActive(true);
+	}
+	else
+	{
+		OwnerWeaponPtr->SetAttackCooldownActive(false);
+	}
 
 }
 

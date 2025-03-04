@@ -21,10 +21,9 @@ public:
 protected:
 	virtual void Fire() override;
 	virtual void EndFire() override;
+	virtual void LoopModeFire() override;
 
-	void AutomaticFire();
-
-	void ResetFire() const;
+	virtual void ResetFire() override;
 
 	FTimerHandle AutomaticFireTimerHandle;
 	FTimerHandle FireRateTimerHandle;

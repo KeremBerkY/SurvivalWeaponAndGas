@@ -8,6 +8,7 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "GameHUDWidget.generated.h"
 
+class UWeaponSwitchCooldownWidget;
 class UCurrentWeaponWidget;
 class UWeaponHeatBar;
 class UResourceWidget;
@@ -27,9 +28,10 @@ class SURVIVAL_API UGameHUDWidget : public UUserWidget
 public:
 	FORCEINLINE UInteractionWidget* GetInteractionWidget() const { return InteractionWidget; }
 	FORCEINLINE UWeaponInventoryWidget* GetWeaponInventoryWidget() const { return WeaponInventoryWidget; }
-	FORCEINLINE UResourceWidget* GetHealthWidget() const { return ResourceWidget; }
+	FORCEINLINE UResourceWidget* GetResourceWidget() const { return ResourceWidget; }
 	FORCEINLINE UWeaponHeatBar* GetHeatProgressBar() const { return HeatProgressBar; }
 	FORCEINLINE UCurrentWeaponWidget* GetCurrentWeaponWidget() const { return CurrentWeaponWidget; }
+	FORCEINLINE UWeaponSwitchCooldownWidget* GetWeaponSwitchCooldownWidget() const { return WeaponSwitchCooldownWidget; }
 
 protected:
 	
@@ -52,4 +54,7 @@ protected:
 	
 	UPROPERTY(meta = (BindWidget))
 	UCurrentWeaponWidget* CurrentWeaponWidget;
+	
+	UPROPERTY(meta = (BindWidget))
+	UWeaponSwitchCooldownWidget* WeaponSwitchCooldownWidget;
 };

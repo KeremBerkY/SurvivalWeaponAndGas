@@ -5,6 +5,12 @@
 
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
+#include "Survival/WeaponPickupSystem/UserInterface/MainHUDWidget.h"
+#include "Survival/WeaponPickupSystem/UserInterface/SurvivalSystemHUD.h"
+#include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponWidget.h"
+#include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponRangedWidgets/RaycastWeaponWidget/RaycastCurrentWeaponWidget.h"
+#include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponRangedWidgets/RaycastWeaponWidget/WeaponFireModesWidget/WeaponFireModesWidget.h"
+#include "Survival/WeaponPickupSystem/UserInterface/GameHUD/GameHUDWidget.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RangedWeapon.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/FireModesComponent/FireModeBaseComponent.h"
@@ -18,7 +24,6 @@ void UToggleFireModeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 		if (ARaycastWeapons* CurrentWeapon = Cast<ARaycastWeapons>(PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon()))
 		{
 			const auto FireModeComponents = CurrentWeapon->GetFireModeComponents();
-			
 			if (FireModeComponents.Num() <= 1)
 			{
 				UE_LOG(LogTemp, Warning, TEXT("Only one or no fire mode available."));
@@ -29,12 +34,17 @@ void UToggleFireModeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 			CurrentWeapon->SetCurrentFireModeIndex(CurrentFireModeIndex);
 			const auto CurrentFireModeComponent = FireModeComponents[CurrentFireModeIndex];
 			CurrentWeapon->SetCurrentFireModeComponent(CurrentFireModeComponent);	
-
+			
 			if (CurrentFireModeComponent)
 			{
-				//  TODO: Ateşleme modunun özel bir efekt veya UI koyabilirsin! örn: CurrentFireModeComponent->OnModeActivated();
-				const FString ModeName = CurrentFireModeComponent->GetClass()->GetName();
-				UE_LOG(LogTemp, Log, TEXT("Switched to fire mode: %s"), *ModeName);
+				if (FireModeComponents.Num() > 1)
+				{
+					if (UWeaponFireModesWidget* WeaponFireModesWidget = PlayerCharacter->GetSurvivalHUD()->GetMainHUDWidget()->GetGameHUDWidget()
+						->GetCurrentWeaponWidget()->GetRaycastCurrentWeaponWidget()->GetWeaponFireModesWidget())
+					{
+						WeaponFireModesWidget->SetFireModeState(CurrentFireModeComponent->GetFireModeType()); // TODO: Bu yapı yanlış oldu düzelt!! idex gönderiyosun eğer single ve automatic add ederse birisi gönderdiğin 1 indexi burst olacak ama sen automatic seçmiş oluyorsun.
+					}
+				}
 			}
 			else
 			{

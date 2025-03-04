@@ -6,6 +6,7 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
 #include "MeleeWeapon.generated.h"
 
+class UMeleeWeaponUIHandler;
 class UBoxComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTargetInteractedMulticastDelegate, AActor*, Actor);
@@ -30,5 +31,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+private:
+
+	UPROPERTY(VisibleAnywhere, Category = "UIHandler")
+	UMeleeWeaponUIHandler* MeleeWeaponUIHandler;
+
+public:
+	FORCEINLINE UMeleeWeaponUIHandler* GetMeleeWeaponUIHandler() const { return MeleeWeaponUIHandler; }
 
 };

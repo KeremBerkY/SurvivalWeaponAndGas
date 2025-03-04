@@ -8,6 +8,7 @@
 #include "ProjectileWeapons.generated.h"
 
 
+class UProjectileWeaponUIHandler;
 class UProjectileEffectManagerComponent;
 class UProjectileWeaponData;
 class UProjectileData;
@@ -35,6 +36,8 @@ public:
 	FORCEINLINE void SetProjectileNullptr() { SpawnedProjectile = nullptr; }
 	FORCEINLINE USceneComponent* GetRearMuzzleLocation() const { return RearMuzzleLocation; }
 	FORCEINLINE UProjectileEffectManagerComponent* GetEffectManagerComponent() const { return EffectManagerComponent; }
+	FORCEINLINE UProjectileWeaponUIHandler* GetProjectileWeaponUIHandler() const { return  ProjectileWeaponUIHandler; }
+
 	
 	// UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 	// TSubclassOf<AProjectile> ProjectileClass;
@@ -75,6 +78,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Weapon")
 	USceneComponent* RearMuzzleLocation;
+
+	UPROPERTY(VisibleAnywhere, Category = "UIHandler")
+	UProjectileWeaponUIHandler* ProjectileWeaponUIHandler;
 	
 	UPROPERTY()
 	UProjectileEffectManagerComponent* EffectManagerComponent;

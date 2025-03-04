@@ -10,6 +10,7 @@
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/CharacterAnimInstance.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/ProjectileWeaponData/ProjectileWeaponData.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/WeaponCategoriesUIHandlers/ProjectileWeaponUIHandler/ProjectileWeaponUIHandler.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/WeaponEffectManagerComponent/ProjectileEffectManagerComponent.h"
 
 
@@ -23,6 +24,7 @@ AProjectileWeapons::AProjectileWeapons()
 	RearMuzzleLocation->SetupAttachment(GetWeaponMesh());
 
 	EffectManagerComponent = CreateDefaultSubobject<UProjectileEffectManagerComponent>(TEXT("ProjectileEffectManagerComponent"));
+	ProjectileWeaponUIHandler = CreateDefaultSubobject<UProjectileWeaponUIHandler>(TEXT("ProjectileWeaponUIHandler"));
 }
 
 void AProjectileWeapons::BeginPlay()

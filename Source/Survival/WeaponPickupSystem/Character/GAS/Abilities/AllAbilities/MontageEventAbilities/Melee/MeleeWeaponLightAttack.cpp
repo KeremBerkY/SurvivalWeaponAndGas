@@ -126,6 +126,16 @@ void UMeleeWeaponLightAttack::HandleApplyDamage(const FGameplayEventData& Gamepl
 				FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.HitReact")),
 				GameplayEventData
 			);
+
+			FGameplayEffectSpecHandle RageSpecHandle = GetCharacterAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(
+				RageEffect,
+				1.0f,
+				GetCharacterAbilitySystemComponentFromActorInfo()->MakeEffectContext()
+			);
+			if (RageSpecHandle.IsValid())
+			{
+				GetCharacterAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(*RageSpecHandle.Data.Get());
+			}
 		}
 	}
 }

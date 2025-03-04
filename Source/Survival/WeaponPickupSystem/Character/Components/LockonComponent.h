@@ -42,13 +42,13 @@ public:
 	
 	void DrawDebugVisuals(const FVector& Start, const FVector& End, const FHitResult& HitResult) const;
 
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	// TSubclassOf<UFocusCrosshair> FocusCrosshairClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UFocusCrosshair> FocusCrosshairClass;
 protected:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	// void FocusCrosshairInitialize();
+	void FocusCrosshairInitialize();
 
 private:
 	void CheckCurrentWeaponAndCategory();

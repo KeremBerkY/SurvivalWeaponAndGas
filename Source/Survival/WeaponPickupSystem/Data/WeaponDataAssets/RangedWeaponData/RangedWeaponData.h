@@ -40,19 +40,19 @@ struct FRecoilSettings
 			   RecoilCooldown(0)
 	{}
 
-	UPROPERTY(EditAnywhere, Category = "Recoil Settings")
+	UPROPERTY(EditAnywhere)
 	float BaseRecoilAmount = 1.0f; // Genel geri tepme kuvveti
 
-	UPROPERTY(EditAnywhere, Category = "Recoil Settings")
+	UPROPERTY(EditAnywhere)
 	float PitchMultiplier = 1.0f; // Yükseklik (Pitch) çarpanı
 
-	UPROPERTY(EditAnywhere, Category = "Recoil Settings")
+	UPROPERTY(EditAnywhere)
 	float YawMultiplier = 0.2f; // Yatay (Yaw) çarpanı
 
-	UPROPERTY(EditAnywhere, Category = "Recoil Settings")
+	UPROPERTY(EditAnywhere)
 	float RandomRecoilRange = 0.5f; // Recoil için rastgele bir seed aralığı
 
-	UPROPERTY(EditAnywhere, Category = "Recoil Settings")
+	UPROPERTY(EditAnywhere)
 	float RecoilCooldown = 0.1f; // Recoil soğuma süresi
 };
 
@@ -73,5 +73,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Ranged Weapon Data | RecoilSettings")
 	FRecoilSettings RecoilSettings;
 	
+	UPROPERTY(EditAnywhere, Category = "Ranged Weapon Data | RecoilSettings")
+	UAnimMontage* ReloadAnimation;
 
 };

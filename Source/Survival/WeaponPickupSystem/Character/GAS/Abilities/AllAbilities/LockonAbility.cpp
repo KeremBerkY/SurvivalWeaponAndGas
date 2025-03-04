@@ -16,6 +16,13 @@
 #include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponRangedWidgets/RaycastWeaponWidget/RaycastFocusWidget/RaycastFocusStages/GetOutFromTargetWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/GameHUD/GameHUDWidget.h"
 
+ULockonAbility::ULockonAbility()
+{
+	const auto AbilityTag = FGameplayTag::RequestGameplayTag(FName("Character.Player.Ability.Lockon"));
+	AbilityTags.AddTag(AbilityTag);
+	ActivationOwnedTags.AddTag(AbilityTag);
+}
+
 void ULockonAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);

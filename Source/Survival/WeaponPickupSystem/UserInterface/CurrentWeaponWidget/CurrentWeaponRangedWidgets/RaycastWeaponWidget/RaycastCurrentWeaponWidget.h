@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "RaycastCurrentWeaponWidget.generated.h"
 
+class UWeaponFireModesWidget;
 class ARaycastWeapons;
 class UCurrentWeaponWidget;
 class URaycastWeaponUIHandler;
@@ -36,14 +37,17 @@ class SURVIVAL_API URaycastCurrentWeaponWidget : public UUserWidget
 
 public:
 	FORCEINLINE UGetOutFromTargetWidget* GetGetOutFromTargetWidget() const { return GetOutFromTargetWidget; }
+	FORCEINLINE UWeaponFireModesWidget* GetWeaponFireModesWidget() const { return WeaponFireModesWidget; }
 	
-	void NativeOnInitialized();
+	// void NativeOnInitialized();
 	void SetParent(UCurrentWeaponWidget* WeaponWidget);
 	void BindUICallbacks(ARaycastWeapons* RaycastWeapon);
 
 	UFUNCTION()
 	void ShowCurrentWeaponRaycastWidget();
 	void HideCurrentWeaponRaycastWidget();
+
+	void SetCurrentWeaponImage(UTexture2D* WeaponImage);
 
 	UFUNCTION()
 	void InitializeAmmo();
@@ -70,6 +74,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UAmmoWidget* AmmoWidget;
+
+	UPROPERTY(meta = (BindWidget))
+	UWeaponFireModesWidget* WeaponFireModesWidget;
 
 	// TWeakObjectPtr<ASurvivalCharacter> PlayerCharacterPtr;
 	TWeakObjectPtr<UCurrentWeaponWidget> CurrentWeaponWidgetPtr;

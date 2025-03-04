@@ -145,6 +145,7 @@ bool UCharacterWeaponComponent::CanSwitchWeapon() const
 
 void UCharacterWeaponComponent::UpdateLastSwitchTime()
 {
+	// TODO: Buradan UI güncellenecek!! Buraya bir Timer koyabilirsin!
 	LastSwitchTime = GetWorld()->TimeSeconds;
 }
 

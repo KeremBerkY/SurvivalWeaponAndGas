@@ -30,6 +30,8 @@
 #include "WeaponPickupSystem/Libraries/SurvivalAbilitySystemLibrary.h"
 #include "WeaponPickupSystem/SharedComponents/Combat/SurvivalCharacterCombatComponent.h"
 #include "WeaponPickupSystem/UserInterface/MainHUDWidget.h"
+#include "WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponWidget.h"
+#include "WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponMeleeWidget/MeleeCurrentWeaponWidget.h"
 #include "WeaponPickupSystem/UserInterface/GameHUD/GameHUDWidget.h"
 #include "WeaponPickupSystem/UserInterface/ResourceWidget/ResourceWidget.h"
 
@@ -167,7 +169,7 @@ void ASurvivalCharacter::HandleInitializeDelay()
 
 void ASurvivalCharacter::InitializeResourceComponent()
 {
-	UResourceWidget* ResourceWidget = HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetHealthWidget();
+	UResourceWidget* ResourceWidget = HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetResourceWidget();
 
 	if (ResourceWidget && !ResourceWidget->IsInViewport())
 	{
@@ -175,7 +177,12 @@ void ASurvivalCharacter::InitializeResourceComponent()
 
 		ResourceComponent->OnHealthChanged.AddDynamic(ResourceWidget, &UResourceWidget::UpdateHealthBar);
 		ResourceComponent->OnManaChanged.AddDynamic(ResourceWidget, &UResourceWidget::UpdateManaBar);
-		ResourceComponent->OnStaminaChanged.AddDynamic(ResourceWidget, &UResourceWidget::UpdateStaminaBar);
+		// ResourceComponent->OnRageChanged.AddDynamic(ResourceWidget, &UResourceWidget::UpdateRageBar);
+		if (const auto MeleeCurrentWeaponWidget = HUD->GetMainHUDWidget()->GetGameHUDWidget()->GetCurrentWeaponWidget()->GetMeleeCurrentWeaponWidget())
+		{
+			ResourceComponent->OnRageChanged.AddDynamic(MeleeCurrentWeaponWidget, &UMeleeCurrentWeaponWidget::UpdateRageBar);
+			Debug::Print(TEXT("ResourceComponent Widgets Bind"));
+		}
 		
 	}
 }

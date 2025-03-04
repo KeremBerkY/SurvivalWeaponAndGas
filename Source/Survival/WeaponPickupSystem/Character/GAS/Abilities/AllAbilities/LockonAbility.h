@@ -18,6 +18,8 @@ class SURVIVAL_API ULockonAbility : public UCharacterGameplayAbility
 	GENERATED_BODY()
 
 public:
+	ULockonAbility();
+	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 	UFUNCTION()
 	void OnInputRelease(float TimeHeld);

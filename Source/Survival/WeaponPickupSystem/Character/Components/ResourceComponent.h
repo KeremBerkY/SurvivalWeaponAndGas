@@ -20,7 +20,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLowHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnManaChanged, float, NewMana, float, MaxMana);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, NewStamina, float, MaxStamina);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRageChanged, float, NewRage, float, MaxRage);
 
 /*
  *
@@ -38,7 +38,9 @@ public:
 	UResourceComponent();
 
 	void InitializeWithGAS(UCharacterAbilitySystemComponent* ASC, UCharacterAttributeSet* AttributeSet);
-
+	UFUNCTION()
+	void BindAndInitializeRageResource();
+	
 // Delegates for broadcasting Health events
 	UPROPERTY(BlueprintAssignable, Category = "Health")
 	FOnHealthChanged OnHealthChanged;
@@ -54,26 +56,18 @@ public:
 	
 	UPROPERTY(BlueprintAssignable, Category = "Health")
 	FOnDeath OnDeath;
-
-// Delegates for broadcasting Mana events
+	
 	UPROPERTY(BlueprintAssignable, Category = "Mana")
 	FOnManaChanged OnManaChanged;
 
-// Delegates for broadcasting Mana events
-	UPROPERTY(BlueprintAssignable, Category = "Stamina")
-	FOnStaminaChanged OnStaminaChanged;
-
-	
-protected:
-	virtual void BeginPlay() override;
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-						   FActorComponentTickFunction* ThisTickFunction) override;
+	UPROPERTY(BlueprintAssignable, Category = "Rage")
+	FOnRageChanged OnRageChanged;
 
 private:
 	
 	void HandleHealthChanged(const FOnAttributeChangeData& Data); 
 	void HandleManaChanged(const FOnAttributeChangeData& Data);
-	void HandleStaminaChanged(const FOnAttributeChangeData& Data);
+	void HandleRageChanged(const FOnAttributeChangeData& Data);
 
 	UFUNCTION()
 	void CheckHealthState(float NewHealth, float MaxHealth);
@@ -86,16 +80,14 @@ private:
 	UFUNCTION()
 	void InitializeManaValues();
 	UFUNCTION()
-	void InitializeStaminaValues();
+	void InitializeRageValues();
 	
 	float GetLowHealthThreshold() const;
-	
-
 	
 	UPROPERTY()
 	TWeakObjectPtr<UCharacterAbilitySystemComponent> CharacterAbilitySystemComponentPtr;
 	UPROPERTY()
-	TWeakObjectPtr<UCharacterAttributeSet> CharacterAttributes;
+	TWeakObjectPtr<UCharacterAttributeSet> CharacterAttributesPtr;
 	
 	bool bRegenerationActive;
 	

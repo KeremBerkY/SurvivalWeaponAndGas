@@ -24,9 +24,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	USurvivalWidgetBase* ManaBar;
 
-	UPROPERTY(meta = (BindWidget))
-	USurvivalWidgetBase* RageBar;
-
+	// UPROPERTY(meta = (BindWidget))
+	// USurvivalWidgetBase* RageBar;
 	
 	// // Health Bar Widget
 	// UPROPERTY(meta = (BindWidget))
@@ -56,7 +55,10 @@ public:
 	void UpdateHealthBar(float NewHealth, float MaxHealth);
 	UFUNCTION()
 	void UpdateManaBar(float NewMana, float MaxMana);
-	UFUNCTION()
-	void UpdateStaminaBar(float NewStamina, float MaxStamina);
+	// UFUNCTION()
+	// void UpdateRageBar(float NewRage, float MaxRage);
+	//
+	// UFUNCTION()
+	// void SetRageBarVisibility(bool SetVisibility);
 	
 };

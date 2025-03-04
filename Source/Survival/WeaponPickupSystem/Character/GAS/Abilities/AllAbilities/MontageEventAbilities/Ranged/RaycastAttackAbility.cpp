@@ -23,7 +23,7 @@ URaycastAttackAbility::URaycastAttackAbility()
 void URaycastAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
+	
 	const auto WeaponRef = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
 	if (PlayerCharacterRef && WeaponRef)
 	{
@@ -42,7 +42,7 @@ void URaycastAttackAbility::ActivateAbility(const FGameplayAbilitySpecHandle Han
 			return;
 		}
 
-		if (RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage && !RaycastWeaponPtr->CanFire())
+		if (RaycastWeaponPtr->GetRaycastWeaponDataAsset()->WeaponAnimMontages.bPlayFromMontage && !RaycastWeaponPtr->CanFire()) //  RaycastWeaponPtr->GetCurrentFireModeIndex() ile bir kontrol sağlayabilirsin?
 		{
 			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 			return;
@@ -109,8 +109,6 @@ void URaycastAttackAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEven
 	{
 		HandleApplyDamage(Payload);
 	}
-
-	// EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 void URaycastAttackAbility::HandleApplyDamage(const FGameplayEventData& GameplayEventData)
@@ -126,7 +124,6 @@ void URaycastAttackAbility::HandleApplyDamage(const FGameplayEventData& Gameplay
 				FGameplayTag::RequestGameplayTag(FName("Character.SetByCaller.AttackType.Ray"))
 			);
 			NativeApplyEffectSpecHandleToTarget(LocalTargetActor, SpecHandle);
-			UE_LOG(LogTemp, Warning, TEXT("HANDLE APPLY DAMAGE CALLED"));
 		}
 	}
 }
@@ -134,6 +131,17 @@ void URaycastAttackAbility::HandleApplyDamage(const FGameplayEventData& Gameplay
 void URaycastAttackAbility::OnCancelled(FGameplayTag EventTag, FGameplayEventData Payload)
 {
 	Super::OnCancelled(EventTag, Payload);
+	
+	if (PlayerCharacterRef)
+	{
+		// !CurrentWeapon->GetAttackCooldownActive
+		const auto CurrentWeapon = PlayerCharacterRef->GetCharacterWeaponComponent()->GetCurrentWeapon();
+		if (CurrentWeapon)
+		{
+			CurrentWeapon->EndAttack();
+			Debug::Print("EndAbility Called!", FColor::Orange);
+		}
+	}
 	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
@@ -152,5 +160,6 @@ void URaycastAttackAbility::OnCompleted(FGameplayTag EventTag, FGameplayEventDat
 void URaycastAttackAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-	
+
+
 }

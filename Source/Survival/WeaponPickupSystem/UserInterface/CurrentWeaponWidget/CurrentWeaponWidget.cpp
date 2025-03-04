@@ -4,6 +4,8 @@
 #include "CurrentWeaponWidget.h"
 
 #include "Components/WidgetSwitcher.h"
+#include "CurrentWeaponMeleeWidget/MeleeCurrentWeaponWidget.h"
+#include "CurrentWeaponRangedWidgets/ProjectileWeaponWidget/ProjectileCurrentWeaponWidget.h"
 #include "CurrentWeaponRangedWidgets/RaycastWeaponWidget/RaycastCurrentWeaponWidget.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
@@ -18,6 +20,17 @@ void UCurrentWeaponWidget::NativeConstruct()
 	if (RaycastCurrentWeapon)
 	{
 		RaycastCurrentWeapon->SetParent(this);
+	}
+
+	if (ProjectileCurrentWeaponWidget)
+	{
+		ProjectileCurrentWeaponWidget->SetParent(this);
+	}
+
+	if (MeleeCurrentWeaponWidget)
+	{
+		MeleeCurrentWeaponWidget->SetParent(this);
+		MeleeCurrentWeaponWidget->SetRageBarVisibility(false);
 	}
 
 	SetVisibility(ESlateVisibility::Hidden);
@@ -42,11 +55,11 @@ void UCurrentWeaponWidget::UpdateCurrentWeaponWidget(const ASurvivalCharacter* P
 			break;
 			
 		case EWeaponCategory::Ewc_ProjectileWeapons:
-			// WidgetSwitcher->SetActiveWidget(ProjectileCurrentWeapon);
+			WidgetSwitcher->SetActiveWidget(ProjectileCurrentWeaponWidget);
 			break;
 			
 		case EWeaponCategory::Ewc_MeleeWeapons:
-			// WidgetSwitcher->SetActiveWidget(MeleeCurrentWeapon);
+			WidgetSwitcher->SetActiveWidget(MeleeCurrentWeaponWidget);
 			break;
 		case EWeaponCategory::Ewc_Max:
 			break;

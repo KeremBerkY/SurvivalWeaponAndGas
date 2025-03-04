@@ -125,6 +125,16 @@ void UMeleeWeaponHeavyAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEv
 						Payload
 					);
 				}
+
+				FGameplayEffectSpecHandle RageSpecHandle = GetCharacterAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(
+					RageEffect,
+					1.0f,
+					GetCharacterAbilitySystemComponentFromActorInfo()->MakeEffectContext()
+				);
+				if (RageSpecHandle.IsValid())
+				{
+					GetCharacterAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(*RageSpecHandle.Data.Get());
+				}
 			}
 		}
 	}

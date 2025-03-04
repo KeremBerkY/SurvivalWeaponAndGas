@@ -5,6 +5,8 @@
 
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/FireModesComponent/AutomaticShotModeComponent.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/FireModesComponent/BurstShotModeComponent.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/FireModesComponent/FireModeBaseComponent.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/HeatComponent/HeatComponent.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/WeaponEffectManagerComponent/RaycastEffectManagerComponent.h"
@@ -14,18 +16,16 @@ APistolWeapon::APistolWeapon()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-}
-
-
-void APistolWeapon::BeginPlay()
-{
-	Super::BeginPlay();
-
+	BurstShotModeComponent = CreateDefaultSubobject<UBurstShotModeComponent>(TEXT("BurstShotModeComponent"));
+	AutomaticShotModeComponent = CreateDefaultSubobject<UAutomaticShotModeComponent>(TEXT("AutomaticShotModeComponent"));
 }
 
 void APistolWeapon::AddFireModes()
 {
 	Super::AddFireModes();
+
+	FireModeComponents.Add(BurstShotModeComponent);
+	FireModeComponents.Add(AutomaticShotModeComponent);
 
 	if (FireModeComponents.Num() > 0)
 	{
@@ -73,7 +73,11 @@ void APistolWeapon::PerformFire()
 
 		if (AActor* HitActor = HitResult.GetActor())
 		{
-			OnRayHitTarget.Broadcast(HitActor);
+			if (HitActor->ActorHasTag(FName("Enemy")))
+			{
+				// OnRayHitTarget.ExecuteIfBound(HitActor);
+				OnRayHitTarget.Broadcast(HitActor);
+			}
 		}
 	}
 	else

@@ -4,6 +4,7 @@
 #include "RaycastShotModesAbility.h"
 
 #include "Survival/SurvivalCharacter.h"
+#include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
 #include "Survival/WeaponPickupSystem/SharedComponents/Combat/SurvivalCharacterCombatComponent.h"
@@ -33,7 +34,6 @@ void URaycastShotModesAbility::OnCancelled(FGameplayTag EventTag, FGameplayEvent
 	Super::OnCancelled(EventTag, Payload);
 
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-
 }
 
 void URaycastShotModesAbility::OnCompleted(FGameplayTag EventTag, FGameplayEventData Payload)

@@ -13,9 +13,9 @@
 class ARaycastWeapons;
 class ASurvivalCharacter;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShowUI);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnShowRaycastUI);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHideUI);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInitializeCallbacks, AWeaponBase*, Weapon);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInitializeRaycastCallbacks, AWeaponBase*, Weapon);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnUpdateHeatBar, float, Heat, float, MaxHeat);
 // DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnUpdateHeatBar, AWeaponBase*, Weapon);
 
@@ -27,9 +27,9 @@ class SURVIVAL_API URaycastWeaponUIHandler : public UWeaponUIHandlerBase
 public:
 	URaycastWeaponUIHandler();
 	
-	FOnShowUI ShowUI;
+	FOnShowRaycastUI ShowUI;
 	FOnHideUI HideUI;
-	FOnInitializeCallbacks OnInitializeCallbacks;
+	FOnInitializeRaycastCallbacks OnInitializeCallbacks;
 	FOnUpdateHeatBar OnUpdateHeatBar;
 	
 	void UpdateHeatBar(float Heat, float MaxHeat);

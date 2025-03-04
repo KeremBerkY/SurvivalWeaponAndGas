@@ -4,10 +4,18 @@
 #include "AimingAbility.h"
 
 #include "Abilities/Tasks/AbilityTask_WaitInputRelease.h"
+#include "MontageEventAbilities/Ranged/RaycastAttackAbility.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterCameraComponent.h"
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterWeaponComponent.h"
 #include "Survival/WeaponPickupSystem/Character/Components/LockonComponent.h"
+
+UAimingAbility::UAimingAbility()
+{
+	const auto AbilityTag = FGameplayTag::RequestGameplayTag(FName("Character.Player.Ability.Aim"));
+	AbilityTags.AddTag(AbilityTag);
+	ActivationOwnedTags.AddTag(AbilityTag);
+}
 
 void UAimingAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -35,6 +43,13 @@ void UAimingAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 void UAimingAbility::OnInputRelease(float TimeHeld)
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+}
+
+void UAimingAbility::OnCancelled(FGameplayTag EventTag, FGameplayEventData Payload)
+{
+	Super::OnCancelled(EventTag, Payload);
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+
 }
 
 void UAimingAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)

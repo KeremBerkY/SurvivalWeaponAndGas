@@ -89,7 +89,7 @@ struct FWeaponAnimMontages
 	UAnimMontage* FireMontage;
 
 	UPROPERTY(EditDefaultsOnly)
-	bool bPlayFromMontage;
+	bool bPlayFromMontage; // If you don't want to use fire modes and just want to fire from montage, set bPlayFromMontage = true;
 	
 };
 

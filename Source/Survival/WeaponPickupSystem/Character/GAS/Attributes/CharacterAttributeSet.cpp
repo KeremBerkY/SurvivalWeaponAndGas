@@ -46,12 +46,12 @@ void UCharacterAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldM
 
 void UCharacterAttributeSet::OnRep_CurrentRage(const FGameplayAttributeData& OldRage)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSet, MaxStamina, OldRage);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSet, CurrentRage, OldRage);
 }
 
 void UCharacterAttributeSet::OnRep_MaxRage(const FGameplayAttributeData& OldMaxRage)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSet, MaxStamina, OldMaxRage);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UCharacterAttributeSet, MaxRage, OldMaxRage);
 }
 
 void UCharacterAttributeSet::OnRep_MovementSpeed(const FGameplayAttributeData& OldMovementSpeed)
@@ -91,6 +91,8 @@ void UCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty
 	DOREPLIFETIME_CONDITION_NOTIFY(UCharacterAttributeSet, MaxMana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCharacterAttributeSet, Stamina, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCharacterAttributeSet, MaxStamina, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UCharacterAttributeSet, CurrentRage, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UCharacterAttributeSet, MaxRage, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCharacterAttributeSet, MovementSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCharacterAttributeSet, SprintSpeed, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UCharacterAttributeSet, AttackPower, COND_None, REPNOTIFY_Always);
@@ -114,6 +116,11 @@ void UCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attrib
 	if (Attribute == GetStaminaAttribute())
 	{
 		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxStamina());	
+	}
+
+	if (Attribute == GetCurrentRageAttribute())
+	{
+		NewValue = FMath::Clamp(NewValue, 0.f, GetMaxRage());	
 	}
 	
 	if (Attribute == GetMaxHealthAttribute())

@@ -23,7 +23,7 @@ public:
 protected:
 	virtual void Fire() override;
 	virtual void EndFire() override;
-	void ResetFire() const;
+	virtual void ResetFire() override;
 	
 	FTimerHandle FireRateTimerHandle;
 };

@@ -34,6 +34,9 @@ private:
 	
 	UPROPERTY(EditAnywhere, Category="GameplayCue|Tag", meta=(AllowPrivateAccess="true"))
 	FGameplayTag GameplayCueTag;
+
+	UPROPERTY(EditAnywhere, Category="Ability|Effect", meta=(AllowPrivateAccess="true"))
+	TSubclassOf<UGameplayEffect> RageEffect;
 	
 	FTimerHandle ComboCountResetTimerHandle;
 

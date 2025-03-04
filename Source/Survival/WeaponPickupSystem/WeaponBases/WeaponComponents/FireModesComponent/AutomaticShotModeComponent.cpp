@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
+#include "Survival/WeaponPickupSystem/Character/Components/CharacterCameraComponent.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 
@@ -16,6 +17,8 @@ UAutomaticShotModeComponent::UAutomaticShotModeComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	FireTag = FGameplayTag::RequestGameplayTag(FName("Character.Player.Weapon.FireMode.Automatic"));
+
+	FireModeType = EFireMode::AutomaticShot;
 }
 
 void UAutomaticShotModeComponent::Fire()
@@ -35,7 +38,7 @@ void UAutomaticShotModeComponent::Fire()
 			GetWorld()->GetTimerManager().SetTimer(
 				AutomaticFireTimerHandle,
 				this,
-				&UAutomaticShotModeComponent::AutomaticFire,
+				&UAutomaticShotModeComponent::LoopModeFire,
 				RaycastWeaponDataPtr->FireRate,
 				true
 			);
@@ -64,9 +67,11 @@ void UAutomaticShotModeComponent::EndFire()
 
 }
 
-void UAutomaticShotModeComponent::AutomaticFire()
+void UAutomaticShotModeComponent::LoopModeFire()
 {
-	if (OwnerWeaponPtr)
+	Super::LoopModeFire();
+
+	if (OwnerWeaponPtr.IsValid())
 	{
 		if (GetCharacterAbilitySystemComponent())
 		{
@@ -83,21 +88,20 @@ void UAutomaticShotModeComponent::AutomaticFire()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Cannot Reach RaycastData!"));
 		}
-
+ 
 		OwnerWeaponPtr->SetCanFire(false);
 		OwnerWeaponPtr->PerformFire();
 	}
 }
 
-void UAutomaticShotModeComponent::ResetFire() const
+void UAutomaticShotModeComponent::ResetFire()
 {
+	Super::ResetFire();
+
 	if (GetCharacterAbilitySystemComponent())
 	{
 		GetCharacterAbilitySystemComponent()->RemoveLooseGameplayTag(FireTag);
 	}
-
-	OwnerWeaponPtr->SetCanFire(true);
-	OwnerWeaponPtr->SetAttackCooldownActive(false);
-	UE_LOG(LogTemp, Log, TEXT("Ready to fire again!"));
+	
 }
 

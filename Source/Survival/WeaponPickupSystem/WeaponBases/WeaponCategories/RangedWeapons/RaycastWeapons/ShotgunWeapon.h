@@ -17,9 +17,6 @@ public:
 	AShotgunWeapon();
 
 protected:
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-
 	virtual void PerformFire() override;
 	virtual void AddFireModes() override;
 

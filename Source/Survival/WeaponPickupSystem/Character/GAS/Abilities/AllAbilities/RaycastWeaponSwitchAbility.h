@@ -15,8 +15,29 @@ class SURVIVAL_API URaycastWeaponSwitchAbility : public UCharacterGameplayAbilit
 	GENERATED_BODY()
 
 protected:
+	URaycastWeaponSwitchAbility();
+	
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+
+private:
 	
+#pragma region SwitchTimer
+	void TickTimer();
+	
+	UPROPERTY()
+	float RemainingTime;
+
+	UPROPERTY(EditDefaultsOnly, Category = "SwitchTimer")
+	float SwitchCoolDownDuration;
+	
+	FTimerHandle SwitchTimerHandle;
+	FTimerHandle ResetTimerHandle;
+#pragma endregion
+
+	void ApplyManaCost();
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Mana")
+	TSubclassOf<UGameplayEffect> ManaCostEffect;
 };

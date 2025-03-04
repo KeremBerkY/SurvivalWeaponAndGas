@@ -11,6 +11,7 @@
 #include "Survival/WeaponPickupSystem/UserInterface/SurvivalSystemHUD.h"
 #include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponRangedWidgets/RaycastWeaponWidget/RaycastCurrentWeaponWidget.h"
+#include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponRangedWidgets/RaycastWeaponWidget/WeaponFireModesWidget/WeaponFireModesWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/GameHUD/GameHUDWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/WeaponHeat/WeaponHeatBar.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponBase.h"
@@ -45,6 +46,8 @@ void URaycastWeaponUIHandler::InitializeCallbacks(AWeaponBase* Weapon, ASurvival
 				HeatProgressBar->BindUICallbacks(RaycastWeapon);
 				// TODO: Burada CurrentWeaponWidget çağırıcaz ve RaycastWeapon göndericez! O da diğerlerini Hide edip RaycastUI Visible yapıcak.
 				RaycastCurrentWeaponWidget->BindUICallbacks(RaycastWeapon);
+				RaycastCurrentWeaponWidget->GetWeaponFireModesWidget()->SetNumberOfModesText(RaycastWeapon->GetFireModeComponents().Num());
+				RaycastCurrentWeaponWidget->SetCurrentWeaponImage(RaycastWeapon->GetRaycastWeaponDataAsset()->WeaponAttributes.GetWeaponImage());
 				// OnInitializeCallbacks.Broadcast(Weapon);
 			}
 			else
@@ -65,7 +68,6 @@ void URaycastWeaponUIHandler::UpdateUI(AWeaponBase* Weapon)
 	IWeaponUIHandler::UpdateUI(Weapon);
 	// UCurrentWeaponWidget* CurrentWeaponWidget = PlayerCharacter->GetSurvivalHUD()->GetMainHUDWidget()->GetGameHUDWidget()->GetCurrentWeaponWidget();
 
-	
 	if (ARaycastWeapons* RaycastWeapon = Cast<ARaycastWeapons>(Weapon))
 	{
 		// RaycastWeapon->GetHeatComponent()->UpdateHeatBar.Broadcast(0.f, RaycastWeapon->GetRaycastWeaponDataAsset()->FiringHeatSettings.MaxHeatCapacity);

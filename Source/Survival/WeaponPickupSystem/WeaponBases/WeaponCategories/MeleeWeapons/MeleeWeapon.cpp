@@ -5,6 +5,7 @@
 
 #include "Components/BoxComponent.h"
 #include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
+#include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/WeaponCategoriesUIHandlers/MeleeWeaponUIHandler/MeleeWeaponUIHandler.h"
 
 
 AMeleeWeapon::AMeleeWeapon()
@@ -18,6 +19,8 @@ AMeleeWeapon::AMeleeWeapon()
 	
 	WeaponCollisionBox->OnComponentBeginOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxBeginOverlap);
 	WeaponCollisionBox->OnComponentEndOverlap.AddUniqueDynamic(this,&ThisClass::OnCollisionBoxEndOverlap);
+
+	MeleeWeaponUIHandler = CreateDefaultSubobject<UMeleeWeaponUIHandler>(TEXT("MeleeWeaponUIHandler"));
 }
 
 void AMeleeWeapon::OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

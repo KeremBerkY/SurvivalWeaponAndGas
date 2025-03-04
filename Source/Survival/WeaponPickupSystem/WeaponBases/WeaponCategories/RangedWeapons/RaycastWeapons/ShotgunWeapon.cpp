@@ -18,15 +18,7 @@ AShotgunWeapon::AShotgunWeapon()
 
 	BurstShotModeComponent = CreateDefaultSubobject<UBurstShotModeComponent>(TEXT("BurstShotModeComponent"));
 }
-void AShotgunWeapon::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-void AShotgunWeapon::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
+
 
 void AShotgunWeapon::AddFireModes()
 {

@@ -275,8 +275,9 @@ void UGASEnhancedInputComponent::HandleFireActionReleased()
 	{
 		if (const AWeaponBase* CurrentWeapon = PlayerCharacter->GetCharacterWeaponComponent()->GetCurrentWeapon())
 		{
-			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_RaycastWeapons &&
-				PlayerCharacter->GetCharacterCameraComponent()->IsAiming() || PlayerCharacter->GetLockonComponent()->IsLocked())
+			
+			   // PlayerCharacter->GetCharacterCameraComponent()->IsAiming() || PlayerCharacter->GetLockonComponent()->IsLocked() , Bunu kaldırmamın nedeni, aimi bırakınca fire released gönderilmiyor ve EndAbility çağrılmıyor.
+			if (CurrentWeapon->GetWeaponDataAsset().Get()->WeaponAttributes.WeaponCategory == EWeaponCategory::Ewc_RaycastWeapons || PlayerCharacter->GetLockonComponent()->IsLocked())
 			{
 				SendInputActionToASC(false, EGASAbilityInputID::Fire);
 			}

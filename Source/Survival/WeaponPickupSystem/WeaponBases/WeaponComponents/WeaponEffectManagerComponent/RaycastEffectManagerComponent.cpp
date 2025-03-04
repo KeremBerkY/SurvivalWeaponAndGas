@@ -9,6 +9,7 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RangedWeapon.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 #include "Components/DecalComponent.h"
+#include "Survival/WeaponPickupSystem/CharacterBase/SurvivalEnemyCharacter.h"
 #include "Survival/WeaponPickupSystem/Enemy/EnemyBase.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/HeatComponent/HeatComponent.h"
 
@@ -122,7 +123,8 @@ void URaycastEffectManagerComponent::ResetWeaponPosition(FVector OriginalLocatio
 
 void URaycastEffectManagerComponent::ImpactEffect(const FHitResult& HitResult) const
 {
-	if (HitResult.GetActor()->IsA(AEnemyBase::StaticClass()))
+	// if (HitResult.GetActor()->IsA(ASurvivalEnemyCharacter::StaticClass()))
+	if (Cast<ASurvivalEnemyCharacter>(HitResult.GetActor()))
 	{
 		if (RaycastWeaponDataPtr.Get()->BloodEffect)
 		{

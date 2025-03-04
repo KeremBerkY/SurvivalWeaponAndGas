@@ -8,6 +8,10 @@
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RangedWeaponData.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RangedWeapon.h"
 
+UReloadAbility::UReloadAbility()
+{
+}
+
 void UReloadAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -20,6 +24,11 @@ void UReloadAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 			{
 				if (CurrentWeapon->GetCurrentAmmo() <= CurrentWeapon->GetRangedWeaponDataAsset()->WeaponAmmoAttributes.AmmoInMagazine)
 				{
+					if (CurrentWeapon->GetRangedWeaponDataAsset()->ReloadAnimation)
+					{
+						AbilityMontage = CurrentWeapon->GetRangedWeaponDataAsset()->ReloadAnimation;
+						StartAnimMontage();
+					}
 					CurrentWeapon->Reload();
 				}
 				else
@@ -33,6 +42,25 @@ void UReloadAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 			}
 		}
 	}
+
+}
+
+void UReloadAbility::OnEventReceived(FGameplayTag EventTag, FGameplayEventData Payload)
+{
+	Super::OnEventReceived(EventTag, Payload);
+}
+
+void UReloadAbility::OnCancelled(FGameplayTag EventTag, FGameplayEventData Payload)
+{
+	Super::OnCancelled(EventTag, Payload);
+	
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+
+}
+
+void UReloadAbility::OnCompleted(FGameplayTag EventTag, FGameplayEventData Payload)
+{
+	Super::OnCompleted(EventTag, Payload);
 
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }

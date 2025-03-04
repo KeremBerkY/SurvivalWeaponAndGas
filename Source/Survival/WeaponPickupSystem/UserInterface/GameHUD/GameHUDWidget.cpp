@@ -8,6 +8,7 @@
 #include "Survival/WeaponPickupSystem/UserInterface/CurrentWeaponWidget/CurrentWeaponWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/Interaction/InteractionWidget.h"
 #include "Survival/WeaponPickupSystem/UserInterface/WeaponHeat/WeaponHeatBar.h"
+#include "Survival/WeaponPickupSystem/UserInterface/WeaponInventory/WeaponSwitchWidget/WeaponSwitchCooldownWidget.h"
 
 
 void UGameHUDWidget::NativeConstruct()
@@ -27,6 +28,11 @@ void UGameHUDWidget::NativeConstruct()
 	if (CrosshairBase)
 	{
 		CrosshairBase->SetVisibility(ESlateVisibility::Collapsed);
+	}
+
+	if (WeaponSwitchCooldownWidget)
+	{
+		WeaponSwitchCooldownWidget->SetVisibility(ESlateVisibility::Visible);
 	}
 }
 

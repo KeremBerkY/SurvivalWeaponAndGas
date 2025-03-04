@@ -3,6 +3,7 @@
 
 #include "RaycastCurrentWeaponWidget.h"
 
+#include "Components/Image.h"
 #include "Components/WidgetSwitcher.h"
 #include "RaycastFocusWidget/RaycastFocusStages/GetOutFromTargetWidget.h"
 #include "RaycastFocusWidget/RaycastFocusStages/NoTargetFoundWidget.h"
@@ -16,11 +17,11 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/WeaponCategoriesUIHandlers/RaycastWeaponUIHandler/RaycastWeaponUIHandler.h"
 
 
-void URaycastCurrentWeaponWidget::NativeOnInitialized()
-{
-	Super::NativeOnInitialized();
-	
-}
+// void URaycastCurrentWeaponWidget::NativeOnInitialized()
+// {
+// 	Super::NativeOnInitialized();
+// 	
+// }
 
 void URaycastCurrentWeaponWidget::SetParent(UCurrentWeaponWidget* WeaponWidget)
 {
@@ -35,7 +36,7 @@ void URaycastCurrentWeaponWidget::BindUICallbacks(ARaycastWeapons* RaycastWeapon
 		RaycastWeaponPtr->GetRaycastWeaponUIHandler()->ShowUI.AddDynamic(this, &URaycastCurrentWeaponWidget::ShowCurrentWeaponRaycastWidget);
 		RaycastWeaponPtr->GetRaycastWeaponUIHandler()->ShowUI.AddDynamic(this, &URaycastCurrentWeaponWidget::InitializeAmmo);
 
-		ARangedWeapon* RangedWeapon = Cast<ARangedWeapon>(RaycastWeapon);
+		ARangedWeapon* RangedWeapon = Cast<ARangedWeapon>(RaycastWeapon); // TODO: Kaldır!
 		AmmoWidget->BindUICallbacks(RaycastWeapon);
 	}
 	
@@ -62,6 +63,14 @@ void URaycastCurrentWeaponWidget::ShowCurrentWeaponRaycastWidget()
 
 void URaycastCurrentWeaponWidget::HideCurrentWeaponRaycastWidget()
 {
+}
+
+void URaycastCurrentWeaponWidget::SetCurrentWeaponImage(UTexture2D* WeaponImage)
+{
+	if (CurrentWeaponImage)
+	{
+		CurrentWeaponImage->SetBrushFromTexture(WeaponImage);
+	}
 }
 
 void URaycastCurrentWeaponWidget::InitializeAmmo()
