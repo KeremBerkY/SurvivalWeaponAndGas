@@ -81,7 +81,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Weapon",  meta = (DisplayName = "OnCombatTargetHit"))
 	void BP_OnCombatTargetHit();
-	
+
+	UFUNCTION()
+	void PlayFireEffect();
 protected:
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaSeconds) override;
@@ -98,6 +100,10 @@ protected:
 	
 	UPROPERTY()
 	ASurvivalSystemHUD* HUD;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Effects")
+	UParticleSystem* FireEffect;
+
 
 private:
 
@@ -150,6 +156,11 @@ private:
 
 	uint32 bIsCharacterInitialized:1;
 
+	UPROPERTY(VisibleAnywhere, Category = "Effects")
+	UParticleSystemComponent* ActiveFireEffect;
+
+	UPROPERTY(EditDefaultsOnly ,Category = "Effects", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<UGameplayEffect> FireEffectReducer;
 
 public:
 
@@ -185,6 +196,8 @@ public:
 	FORCEINLINE UBoxComponent* GetFootCollision() const { return FootCollision; }
 	// SurvivalCharacterCombatComponent
 	FORCEINLINE USurvivalCharacterCombatComponent* GetSurvivalCharacterCombatComponent() const { return SurvivalCharacterCombatComponent; }
+	// RageFire
+	FORCEINLINE UParticleSystemComponent* GetActiveFireEffect() const { return ActiveFireEffect; }
 	
 	virtual UPawnCombatComponent* GetPawnCombatComponent() const override;
 	

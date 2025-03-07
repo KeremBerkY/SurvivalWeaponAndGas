@@ -22,7 +22,8 @@ void UReloadAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 		{
 			if (ARangedWeapon* CurrentWeapon = Cast<ARangedWeapon>(WeaponComponent->GetCurrentWeapon()))
 			{
-				if (CurrentWeapon->GetCurrentAmmo() <= CurrentWeapon->GetRangedWeaponDataAsset()->WeaponAmmoAttributes.AmmoInMagazine)
+				if (CurrentWeapon->GetCurrentAmmo() <= CurrentWeapon->GetRangedWeaponDataAsset()->WeaponAmmoAttributes.AmmoInMagazine &&
+				CurrentWeapon->GetCurrentAmmo() < CurrentWeapon->GetRangedWeaponDataAsset()->WeaponAmmoAttributes.CurrentAmmo)
 				{
 					if (CurrentWeapon->GetRangedWeaponDataAsset()->ReloadAnimation)
 					{

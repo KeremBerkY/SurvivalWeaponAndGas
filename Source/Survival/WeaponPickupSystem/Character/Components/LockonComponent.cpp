@@ -76,22 +76,21 @@ void ULockonComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// CheckCurrentWeaponAndCategory();
-	//
-	// if (!bIsNotRaycast)
-	// {
-	// 	AddFocusCrosshair();
-	// }
-	// else
-	// {
-	// 	RemoveFocusCrosshair();
-	// 	return;
-	// }
-	//
-	// CheckAndPerformTargetSelection(DeltaTime);
-	//
-	// RotateTowardsTarget(DeltaTime);
+	CheckCurrentWeaponAndCategory();
 	
+	if (!bIsNotRaycast)
+	{
+		AddFocusCrosshair();
+	}
+	else
+	{
+		RemoveFocusCrosshair();
+		return;
+	}
+	
+	CheckAndPerformTargetSelection(DeltaTime);
+	
+	RotateTowardsTarget(DeltaTime);
 }
 
 
@@ -158,7 +157,7 @@ void ULockonComponent::StartLockon() // TODO: Bu rakip çok yakına gelirse çal
 		UE_LOG(LogTemp, Warning, TEXT("No target found!"));
 	}
 	
-	DrawDebugVisuals(StartLocation, EndLocation, OutResult);
+	// DrawDebugVisuals(StartLocation, EndLocation, OutResult);
 
 }
 
@@ -271,7 +270,7 @@ void ULockonComponent::PerformSelect()
 
 		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params))
 		{
-			DrawDebugVisuals(Start, End, HitResult);
+			// DrawDebugVisuals(Start, End, HitResult);
 			
 			// if(AEnemyBase* HitEnemy = Cast<AEnemyBase>(HitResult.GetActor()))
 			if(ASurvivalEnemyCharacter* HitEnemy = Cast<ASurvivalEnemyCharacter>(HitResult.GetActor()))
@@ -297,7 +296,7 @@ void ULockonComponent::PerformSelect()
 		}
 		else if (SelectedActor)
 		{
-			DrawDebugVisuals(Start, End, HitResult);
+			// DrawDebugVisuals(Start, End, HitResult);
 			
 			EndSelect();
 			SelectedActor = nullptr;

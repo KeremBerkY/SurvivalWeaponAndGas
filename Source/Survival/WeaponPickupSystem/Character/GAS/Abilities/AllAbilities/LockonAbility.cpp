@@ -31,7 +31,7 @@ void ULockonAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 	LockonComponentPtr = PlayerCharacterPtr.Get()->GetLockonComponent();
 
 	const auto CurrentWeapon = PlayerCharacterPtr.Get()->GetCharacterWeaponComponent()->GetCurrentWeapon();
-	if (!CurrentWeapon)
+	if (!CurrentWeapon || CurrentWeapon->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory != EWeaponCategory::Ewc_RaycastWeapons)
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		return;
@@ -130,14 +130,14 @@ void ULockonAbility::ResetRadialSliderWidgetValue() const
 void ULockonAbility::CheckCurrentWeaponAndCategory()
 {
 	
-	
 }
 
 void ULockonAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 
-	if (!PlayerCharacterPtr->GetCharacterWeaponComponent()->GetCurrentWeapon()) { return; }
+	if (!PlayerCharacterPtr->GetCharacterWeaponComponent()->GetCurrentWeapon() ||
+		PlayerCharacterPtr->GetCharacterWeaponComponent()->GetCurrentWeapon()->GetWeaponDataAsset()->WeaponAttributes.WeaponCategory != EWeaponCategory::Ewc_RaycastWeapons) { return; }
 	
 	if (PlayerCharacterPtr.IsValid() && !bLockEnded)
 	{

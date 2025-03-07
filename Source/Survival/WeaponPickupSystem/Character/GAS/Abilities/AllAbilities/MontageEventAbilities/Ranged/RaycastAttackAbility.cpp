@@ -16,7 +16,6 @@ URaycastAttackAbility::URaycastAttackAbility()
 	const auto AbilityTag = FGameplayTag::RequestGameplayTag(FName("Character.Player.Ability.Attack.Raycast"));
     AbilityTags.AddTag(AbilityTag);
     ActivationOwnedTags.AddTag(AbilityTag);
-	
 }
 
 //TODO: sol tuşa basılı tuttun loop döndü sonra parmağını çekip tekrar basarsan end çalışmıyor. bu sınıf için

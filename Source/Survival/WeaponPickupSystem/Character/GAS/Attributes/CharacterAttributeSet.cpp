@@ -10,6 +10,8 @@
 #include "GameplayEffectAggregatorLibrary.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Particles/ParticleSystemComponent.h"
+#include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
 #include "Survival/WeaponPickupSystem/Character/GAS/CharacterAbilitySystemComponent.h"
 #include "Survival/WeaponPickupSystem/Libraries/SurvivalAbilitySystemLibrary.h"
@@ -187,6 +189,25 @@ void UCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModC
 		const float NewCurrentRage = FMath::Clamp(GetCurrentRage(), 0.f, GetMaxRage());
 
 		SetCurrentRage(NewCurrentRage);
+
+		ASurvivalCharacter* PlayerCharacter = Cast<ASurvivalCharacter>(GetOwningActor());
+		if (GetCurrentRage() >= GetMaxRage())
+		{
+			// 🔥 Rage FULL: Bir şeyler tetikle
+			if (PlayerCharacter)
+			{
+				PlayerCharacter->PlayFireEffect();
+			}
+		}
+		if (GetCurrentRage() <= 0.f)
+		{
+			if (PlayerCharacter)
+			{
+				// PlayerCharacter->GetActiveFireEffect()->Deactivate();
+				PlayerCharacter->GetActiveFireEffect()->DestroyComponent();
+				PlayerCharacter->GetCharacterAbilitySystemComponent()->RemoveLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Status.RageActive")));
+			}
+		}
 	}
 
 	if (Data.EvaluatedData.Attribute == GetDamageTakenAttribute())

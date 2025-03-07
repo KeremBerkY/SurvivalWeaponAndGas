@@ -126,14 +126,29 @@ void UMeleeWeaponHeavyAttack::OnEventReceived(FGameplayTag EventTag, FGameplayEv
 					);
 				}
 
-				FGameplayEffectSpecHandle RageSpecHandle = GetCharacterAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(
-					RageEffect,
-					1.0f,
-					GetCharacterAbilitySystemComponentFromActorInfo()->MakeEffectContext()
-				);
-				if (RageSpecHandle.IsValid())
+				if (!GetCharacterAbilitySystemComponentFromActorInfo()->HasMatchingGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Status.RageActive"))))
 				{
-					GetCharacterAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(*RageSpecHandle.Data.Get());
+					FGameplayEffectSpecHandle RageSpecHandle = GetCharacterAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(
+						RageEffect,
+						1.0f,
+						GetCharacterAbilitySystemComponentFromActorInfo()->MakeEffectContext()
+					);
+					if (RageSpecHandle.IsValid())
+					{
+						GetCharacterAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(*RageSpecHandle.Data.Get());
+					}
+				}
+				else
+				{
+					FGameplayEffectSpecHandle HealSpecHandle = GetCharacterAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(
+						HealEffect,
+						1.0f,
+						GetCharacterAbilitySystemComponentFromActorInfo()->MakeEffectContext()
+					);
+					if (HealSpecHandle.IsValid())
+					{
+						GetCharacterAbilitySystemComponentFromActorInfo()->ApplyGameplayEffectSpecToSelf(*HealSpecHandle.Data.Get());
+					}
 				}
 			}
 		}

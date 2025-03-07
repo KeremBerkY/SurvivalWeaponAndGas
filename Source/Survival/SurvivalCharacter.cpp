@@ -12,6 +12,7 @@
 #include "Components/SphereComponent.h"
 #include "AbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "WeaponPickupSystem/SurvivalDebugHelper.h"
 #include "WeaponPickupSystem/Character/CharacterAnimInstance.h"
 #include "WeaponPickupSystem/Character/CharacterStateComponent.h"
@@ -228,7 +229,7 @@ void ASurvivalCharacter::BindResourceInitialization()
 void ASurvivalCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
+
 }
 
 void ASurvivalCharacter::OnMovementSpeedChanged(const FOnAttributeChangeData& OnAttributeChangeData) const
@@ -237,6 +238,42 @@ void ASurvivalCharacter::OnMovementSpeedChanged(const FOnAttributeChangeData& On
 	{
 		GetCharacterMovement()->MaxWalkSpeed = OnAttributeChangeData.NewValue;
 	}
+}
+
+void ASurvivalCharacter::PlayFireEffect()
+{
+	CharacterAbilitySystemComponent->AddLooseGameplayTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Status.RageActive")));
+	
+	if (FireEffect)
+	{
+		ActiveFireEffect = UGameplayStatics::SpawnEmitterAttached(
+		   FireEffect,                                    
+		   GetMesh(),                                      
+		   FName("RageFire"),                                
+		   FVector::ZeroVector,                           
+		   FRotator::ZeroRotator,                          
+		   EAttachLocation::SnapToTargetIncludingScale      
+	   );
+	}
+
+	FTimerHandle FireReducerTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(FireReducerTimerHandle, [this]()
+	{
+		if (CharacterAbilitySystemComponent && FireEffectReducer)
+		{
+			FGameplayEffectSpecHandle SpecHandle = CharacterAbilitySystemComponent->MakeOutgoingSpec(
+				FireEffectReducer,
+				1.f,
+				CharacterAbilitySystemComponent->MakeEffectContext()
+			);
+
+			if (SpecHandle.IsValid())
+			{
+				CharacterAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
+			}
+		}
+	},0.5f, false);
+	
 }
 
 UPawnCombatComponent* ASurvivalCharacter::GetPawnCombatComponent() const

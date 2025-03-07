@@ -50,6 +50,8 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 	float BaseDamage = 0.f;
 	int32 UsedLightAttackComboCount = 0;
 	int32 UsedHeavyAttackComboCount = 0;
+
+	bool bIsRageActive = EffectSpec.CapturedSourceTags.GetAggregatedTags()->HasTag(FGameplayTag::RequestGameplayTag(FName("Character.Player.Status.RageActive")));
 	
 	for(const TPair<FGameplayTag, float>& TagMagnitude : EffectSpec.SetByCallerTagMagnitudes)
 	{
@@ -82,32 +84,61 @@ void UGEExecCalc_DamageTaken::Execute_Implementation(const FGameplayEffectCustom
 	// Debug::Print(TEXT("TargetDefensePower"), TargetDefensePower);
 
 
-	if (UsedLightAttackComboCount != 0)
-	{
-		const float DamageIncreasePercentLight = (UsedLightAttackComboCount - 1) * 0.5f + 1.f;
+	// if (UsedLightAttackComboCount != 0)
+	// {
+	// 	const float DamageIncreasePercentLight = (UsedLightAttackComboCount - 1) * 0.5f + 1.f;
+	//
+	// 	BaseDamage *= DamageIncreasePercentLight;
+	// 	// Debug::Print(TEXT("ScaledBaseDamageLight"), BaseDamage);
+	// }
+	//
+	// if (UsedHeavyAttackComboCount != 0)
+	// {
+	// 	const float DamageIncreasePercentHeavy = UsedHeavyAttackComboCount * 0.15f + 1.f;
+	//
+	// 	BaseDamage *= DamageIncreasePercentHeavy;
+	// 	// Debug::Print(TEXT("ScaledBaseDamageHeavy"), BaseDamage);
+	// }
 
-		BaseDamage *= DamageIncreasePercentLight;
-		// Debug::Print(TEXT("ScaledBaseDamageLight"), BaseDamage);
+	if (bIsRageActive)
+	{
+		if (UsedLightAttackComboCount != 0)
+		{
+			const float DamageIncreasePercentLight = (UsedLightAttackComboCount - 1) * 0.5f + 1.f;
+			BaseDamage *= DamageIncreasePercentLight * 2.0f;  // 🔥 Rage: 2 Katı
+		}
+
+		if (UsedHeavyAttackComboCount != 0)
+		{
+			const float DamageIncreasePercentHeavy = UsedHeavyAttackComboCount * 0.15f + 1.f;
+			BaseDamage *= DamageIncreasePercentHeavy * 2.0f;  // 🔥 Rage: 2 Katı
+		}
+	}
+	else  // 🔥 Normal Durumda Hasar Hesapla
+	{
+		if (UsedLightAttackComboCount != 0)
+		{
+			const float DamageIncreasePercentLight = (UsedLightAttackComboCount - 1) * 0.5f + 1.f;
+			BaseDamage *= DamageIncreasePercentLight;
+		}
+
+		if (UsedHeavyAttackComboCount != 0)
+		{
+			const float DamageIncreasePercentHeavy = UsedHeavyAttackComboCount * 0.15f + 1.f;
+			BaseDamage *= DamageIncreasePercentHeavy;
+		}
 	}
 
-	if (UsedHeavyAttackComboCount != 0)
-	{
-		const float DamageIncreasePercentHeavy = UsedHeavyAttackComboCount * 0.15f + 1.f;
-
-		BaseDamage *= DamageIncreasePercentHeavy;
-		// Debug::Print(TEXT("ScaledBaseDamageHeavy"), BaseDamage);
-	}
-
-	if (UsedHeavyAttackComboCount != 0)
-	{
-		const float DamageIncreasePercentHeavy = UsedHeavyAttackComboCount * 0.15f + 1.f;
-
-		BaseDamage *= DamageIncreasePercentHeavy;
-		// Debug::Print(TEXT("ScaledBaseDamageHeavy"), BaseDamage);
-	}
+	// if (UsedHeavyAttackComboCount != 0)
+	// {
+	// 	const float DamageIncreasePercentHeavy = UsedHeavyAttackComboCount * 0.15f + 1.f;
+	//
+	// 	BaseDamage *= DamageIncreasePercentHeavy;
+	// 	// Debug::Print(TEXT("ScaledBaseDamageHeavy"), BaseDamage);
+	// }
 
 	const float FinalDamageDone = BaseDamage * SourceAttackPower / TargetDefensePower;
-	// Debug::Print(TEXT("FinalDamageDone"), FinalDamageDone);
+	Debug::Print(TEXT("FinalDamageDone"), FinalDamageDone);
 
 	if (FinalDamageDone > 0.f)
 	{

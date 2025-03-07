@@ -38,6 +38,9 @@ private:
 	UPROPERTY(EditAnywhere, Category="Ability|Effect", meta=(AllowPrivateAccess="true"))
 	TSubclassOf<UGameplayEffect> RageEffect;
 	
+	UPROPERTY(EditAnywhere, Category="Ability|Effect", meta=(AllowPrivateAccess="true"))
+	TSubclassOf<UGameplayEffect> HealEffect;
+	
 	FTimerHandle ComboCountResetTimerHandle;
 
 	int32 CurrentHeavyAttackComboCount;
