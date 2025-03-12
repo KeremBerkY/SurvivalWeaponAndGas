@@ -22,6 +22,9 @@ public:
 	void InitializeDefaultAttributes(const TArray<TSubclassOf<UGameplayEffect>>& AttributeEffect);
 	void InitializeSpecialAttributes(const TArray<TSubclassOf<UGameplayEffect>>& SpecialEffects);
 
+	UFUNCTION(BlueprintPure, Category = "Survival|Ability")
+	bool TryActivateAbilityByTag(FGameplayTag AbilityTagToActivate);
+	
 	// void AbilityActorInfoSet();
 	// void EffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);
 };

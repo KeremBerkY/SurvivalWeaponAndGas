@@ -9,8 +9,7 @@
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RangedWeapon.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/RangedWeapons/RaycastWeapons.h"
 #include "Components/DecalComponent.h"
-#include "Survival/WeaponPickupSystem/CharacterBase/SurvivalEnemyCharacter.h"
-#include "Survival/WeaponPickupSystem/Enemy/EnemyBase.h"
+#include "Survival/WeaponPickupSystem/CharacterBase/Enemy/SurvivalEnemyCharacter.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/HeatComponent/HeatComponent.h"
 
 

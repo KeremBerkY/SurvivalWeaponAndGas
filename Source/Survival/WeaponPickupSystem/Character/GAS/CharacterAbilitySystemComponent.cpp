@@ -79,3 +79,26 @@ void UCharacterAbilitySystemComponent::InitializeSpecialAttributes(const TArray<
 	}
 }
 
+bool UCharacterAbilitySystemComponent::TryActivateAbilityByTag(FGameplayTag AbilityTagToActivate)
+{
+	check(AbilityTagToActivate.IsValid());
+
+	TArray<FGameplayAbilitySpec*> FoundAbilitiesSpecs;
+	GetActivatableGameplayAbilitySpecsByAllMatchingTags(AbilityTagToActivate.GetSingleTagContainer(), FoundAbilitiesSpecs);
+
+	if (!FoundAbilitiesSpecs.IsEmpty())
+	{
+		const int32 RandomAbilityIndex = FMath::RandRange(0, FoundAbilitiesSpecs.Num() - 1);
+		FGameplayAbilitySpec* SpecToActivate = FoundAbilitiesSpecs[RandomAbilityIndex];
+
+		check(SpecToActivate);
+
+		if (!SpecToActivate->IsActive())
+		{
+			return TryActivateAbility(SpecToActivate->Handle);
+		}
+	}
+
+	return false;
+}
+

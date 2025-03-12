@@ -70,10 +70,13 @@ void UToggleFireModeAbility::ActivateAbility(const FGameplayAbilitySpecHandle Ha
 	}
 	else
 	{
-		FTimerHandle CooldownTimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &UToggleFireModeAbility::Cooldown, 1.f, false);
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		return;
 	}
+
 	
+	FTimerHandle CooldownTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(CooldownTimerHandle, this, &UToggleFireModeAbility::Cooldown, 1.f, false);
 }
 
 void UToggleFireModeAbility::Cooldown()

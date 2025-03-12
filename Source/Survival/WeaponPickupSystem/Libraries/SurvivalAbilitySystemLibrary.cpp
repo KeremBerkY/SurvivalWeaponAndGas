@@ -4,6 +4,7 @@
 #include "SurvivalAbilitySystemLibrary.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GenericTeamAgentInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/SurvivalGameMode.h"
@@ -93,4 +94,19 @@ USurvivalCharacterCombatComponent* USurvivalAbilitySystemLibrary::BP_GetSurvival
 	OutValidType = SurvivalCharacterCombatComponent ? EWarriorValidType::Valid : EWarriorValidType::Invalid;
 
 	return SurvivalCharacterCombatComponent; 
+}
+
+bool USurvivalAbilitySystemLibrary::IsTargetPawnHostile(APawn* QueryPawn, APawn* TargetPawn)
+{
+	// check(QueryPawn, TargetPawn);
+	
+	IGenericTeamAgentInterface* QueryTeamAgent = Cast<IGenericTeamAgentInterface>(QueryPawn->GetController());
+	IGenericTeamAgentInterface* TargetTeamAgent = Cast<IGenericTeamAgentInterface>(TargetPawn->GetController());
+
+	if (QueryTeamAgent && TargetTeamAgent)
+	{
+		return QueryTeamAgent->GetGenericTeamId() != TargetTeamAgent->GetGenericTeamId();
+	}
+
+	return false;
 }

@@ -16,8 +16,11 @@ class SURVIVAL_API USurvivalEnemyGameplayAbility : public UCharacterMontageEvent
 	GENERATED_BODY()
 
 public:
-	UFUNCTION(BlueprintPure, Category = "Warrior|Ability")
+	UFUNCTION(BlueprintPure, Category = "Survival|Ability")
 	ASurvivalEnemyCharacter* GetEnemyCharacterFromActorInfo();
+	
+	UFUNCTION(BlueprintPure, Category = "Survival|Ability")
+	FGameplayEffectSpecHandle MakeEnemyDamageEffectSpecHandle(TSubclassOf<UGameplayEffect> EffectClass, const FScalableFloat& InDamageScalableFloat);
 
 private:
 	TWeakObjectPtr<ASurvivalEnemyCharacter> CachedEnemyCharacter;

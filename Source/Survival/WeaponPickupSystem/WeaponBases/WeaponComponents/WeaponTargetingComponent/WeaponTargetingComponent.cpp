@@ -5,8 +5,7 @@
 
 #include "Survival/SurvivalCharacter.h"
 #include "Survival/WeaponPickupSystem/Character/Components/LockonComponent.h"
-#include "Survival/WeaponPickupSystem/CharacterBase/SurvivalEnemyCharacter.h"
-#include "Survival/WeaponPickupSystem/Enemy/EnemyBase.h"
+#include "Survival/WeaponPickupSystem/CharacterBase/Enemy/SurvivalEnemyCharacter.h"
 
 
 UWeaponTargetingComponent::UWeaponTargetingComponent()

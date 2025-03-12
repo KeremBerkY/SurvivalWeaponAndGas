@@ -3,8 +3,7 @@
 
 #include "HitReact.h"
 #include "Kismet/KismetMathLibrary.h"
-
-#include "Survival/WeaponPickupSystem/CharacterBase/SurvivalEnemyCharacter.h"
+#include "Survival/WeaponPickupSystem/CharacterBase/Enemy/SurvivalEnemyCharacter.h"
 
 UHitReact::UHitReact()
 {

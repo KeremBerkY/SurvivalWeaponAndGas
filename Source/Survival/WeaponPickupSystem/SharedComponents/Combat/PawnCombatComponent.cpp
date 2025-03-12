@@ -32,6 +32,8 @@ AWeaponBase* UPawnCombatComponent::GetCharacterCurrentEquippedWeapon() const
 
 void UPawnCombatComponent::ToggleWeaponCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType)
 {
+	// TODO: Bu parent sınıfta değil Karakter sınıfında olmalı enemy ve karakter override edecek ve kendi işlevlerini yazacak!
+	
 	if (ToggleDamageType == EToggleDamageType::CurrentEquippedWeapon)
 	{
 		const AWeaponBase* WeaponToToggle = GetCharacterCurrentEquippedWeapon();

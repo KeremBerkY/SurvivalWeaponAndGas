@@ -3,24 +3,85 @@
 
 #include "SurvivalAIController.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Navigation/CrowdFollowingComponent.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "Perception/AIPerceptionTypes.h"
+#include "Perception/AISenseConfig_Sight.h"
+#include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
 
-// Sets default values
-ASurvivalAIController::ASurvivalAIController()
+ASurvivalAIController::ASurvivalAIController(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UCrowdFollowingComponent>("PathFollowingComponent"))
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	if (UCrowdFollowingComponent* CrowdComp = Cast<UCrowdFollowingComponent>(GetPathFollowingComponent()))
+	{
+		Debug::Print(TEXT("CrowdFollowingComponent valid"),FColor::Green);
+	}
+
+	AISenseConfig_Sight = CreateDefaultSubobject<UAISenseConfig_Sight>("EnemySenseConfig_Sight");
+	AISenseConfig_Sight->DetectionByAffiliation.bDetectEnemies = true;
+	AISenseConfig_Sight->DetectionByAffiliation.bDetectFriendlies = false;
+	AISenseConfig_Sight->DetectionByAffiliation.bDetectNeutrals = false;
+	AISenseConfig_Sight->SightRadius = 5000.f;
+	AISenseConfig_Sight->LoseSightRadius = 0.f;
+	AISenseConfig_Sight->PeripheralVisionAngleDegrees = 360.f;
+
+	EnemyPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>("EnemyPerceptionComponent");
+	EnemyPerceptionComponent->ConfigureSense(*AISenseConfig_Sight);
+	EnemyPerceptionComponent->SetDominantSense(UAISenseConfig_Sight::StaticClass());
+	EnemyPerceptionComponent->OnTargetPerceptionUpdated.AddUniqueDynamic(this,&ThisClass::OnEnemyPerceptionUpdated);
+
+	SetGenericTeamId(FGenericTeamId(1));
 }
 
-// Called when the game starts or when spawned
+ETeamAttitude::Type ASurvivalAIController::GetTeamAttitudeTowards(const AActor& Other) const
+{
+	const APawn* PawnToCheck = Cast<const APawn>(&Other);
+	
+	const IGenericTeamAgentInterface* OtherTeamAgent = Cast<IGenericTeamAgentInterface>(PawnToCheck->GetController());
+
+	if (OtherTeamAgent && OtherTeamAgent->GetGenericTeamId() != GetGenericTeamId())
+	{
+		return ETeamAttitude::Hostile;
+	}
+
+	return ETeamAttitude::Friendly;
+}
+
 void ASurvivalAIController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (UCrowdFollowingComponent* CrowdComp = Cast<UCrowdFollowingComponent>(GetPathFollowingComponent()))
+	{
+		CrowdComp->SetCrowdSimulationState(bEnableDetourCrowdAvoidance ? ECrowdSimulationState::Enabled : ECrowdSimulationState::Disabled);
+
+		switch (DetourCrowdAvoidanceQuality)
+		{
+		case 1: CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::Low); 	break;
+		case 2: CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::Medium); 	break;
+		case 3: CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::Good); 	break;
+		case 4: CrowdComp->SetCrowdAvoidanceQuality(ECrowdAvoidanceQuality::High); 	break;
+		default:
+			break;
+		}
+		CrowdComp->SetAvoidanceGroup(1);
+		CrowdComp->SetGroupsToAvoid(1);
+		CrowdComp->SetCrowdCollisionQueryRange(CollisionQueryRange);
+	}
 	
 }
 
-// Called every frame
-void ASurvivalAIController::Tick(float DeltaTime)
+void ASurvivalAIController::OnEnemyPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	Super::Tick(DeltaTime);
+	if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
+	{
+		if (!BlackboardComponent->GetValueAsObject(FName("TargetActor")))
+		{
+			if (Stimulus.WasSuccessfullySensed() && Actor)
+			{
+				BlackboardComponent->SetValueAsObject(FName("TargetActor"),Actor);
+			}
+		}
+	}
 }
-

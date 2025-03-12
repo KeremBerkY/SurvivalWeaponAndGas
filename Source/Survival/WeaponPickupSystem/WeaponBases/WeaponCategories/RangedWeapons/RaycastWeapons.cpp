@@ -7,7 +7,6 @@
 #include "Survival/WeaponPickupSystem/Character/Components/CharacterCameraComponent.h"
 #include "Survival/WeaponPickupSystem/Character/Components/LockonComponent.h"
 #include "Survival/WeaponPickupSystem/Data/WeaponDataAssets/RangedWeaponData/RaycastWeaponData/RaycastWeaponData.h"
-#include "Survival/WeaponPickupSystem/Enemy/EnemyBase.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/WeaponCategoriesUIHandlers/RaycastWeaponUIHandler/RaycastWeaponUIHandler.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/FireModesComponent/SingleShotModeComponent.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponComponents/HeatComponent/HeatComponent.h"

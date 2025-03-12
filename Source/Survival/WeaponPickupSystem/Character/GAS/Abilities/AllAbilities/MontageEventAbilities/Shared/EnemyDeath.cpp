@@ -4,7 +4,6 @@
 #include "EnemyDeath.h"
 
 #include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
-#include "Survival/WeaponPickupSystem/CharacterBase/SurvivalEnemyCharacter.h"
 
 UEnemyDeath::UEnemyDeath()
 {

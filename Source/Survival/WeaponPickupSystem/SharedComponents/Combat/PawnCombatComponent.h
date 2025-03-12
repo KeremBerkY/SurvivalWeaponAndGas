@@ -27,8 +27,11 @@ public:
 	UFUNCTION()
 	AWeaponBase* GetCharacterCurrentEquippedWeapon() const;
 
+	// UFUNCTION(BlueprintCallable, Category = "Survival|Combat")
+	// void ToggleWeaponCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType);
+
 	UFUNCTION(BlueprintCallable, Category = "Survival|Combat")
-	void ToggleWeaponCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType);
+	virtual void ToggleWeaponCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType);
 
 	UFUNCTION()
 	virtual void OnHitTargetActor(AActor* HitActor);

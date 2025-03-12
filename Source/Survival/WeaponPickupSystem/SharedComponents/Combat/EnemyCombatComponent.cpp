@@ -3,7 +3,10 @@
 
 #include "EnemyCombatComponent.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayTagContainer.h"
+#include "Abilities/GameplayAbilityTypes.h"
+#include "Components/BoxComponent.h"
 #include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/MeleeWeapons/MeleeWeapon.h"
 
@@ -23,8 +26,8 @@ void UEnemyCombatComponent::RegisterSpawnedWeapon(FGameplayTag InWeaponTagToRegi
 	
 	EnemyCarriedWeaponMap.Emplace(InWeaponTagToRegister, InWeaponToRegister);
 
-	// InWeaponToRegister->OnWeaponHitTarget.AddUnique(this, &ThisClass::OnHitTargetActor);
-	// InWeaponToRegister->OnWeaponPulledFromTarget.AddUnique(this, &ThisClass::OnWeaponPulledFromTargetActor);
+	InWeaponToRegister->OnWeaponHitTarget.AddUniqueDynamic(this, &ThisClass::EnemyOnHitTargetActor);
+	InWeaponToRegister->OnWeaponPulledFromTarget.AddUniqueDynamic(this, &ThisClass::EnemyOnWeaponPulledFromTargetActor);
 	
 	if (bRegisterEquippedWeapon)
 	{
@@ -53,6 +56,79 @@ AMeleeWeapon* UEnemyCombatComponent::GetEnemyCurrentEquippedWeapon() const
 	}
 
 	return GetEnemyCarriedWeaponByTag(CurrentEquippedWeaponTag);
+}
+
+void UEnemyCombatComponent::ToggleEnemyWeaponCollision(bool bShouldEnable, EToggleDamageType ToggleDamageType)
+{
+	if (ToggleDamageType == EToggleDamageType::CurrentEquippedWeapon)
+	{
+		const AWeaponBase* WeaponToToggle = GetEnemyCurrentEquippedWeapon();
+
+		check(WeaponToToggle);
+		
+		if (bShouldEnable)
+		{
+			WeaponToToggle->GetWeaponCollisionBox()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			if (WeaponToToggle->GetWeaponHandleCollisionBox())
+			{
+				WeaponToToggle->GetWeaponHandleCollisionBox()->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			}
+		}
+		else
+		{
+			WeaponToToggle->GetWeaponCollisionBox()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			if (WeaponToToggle->GetWeaponHandleCollisionBox())
+			{
+				WeaponToToggle->GetWeaponHandleCollisionBox()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				
+			}
+			
+			OverlappedActors.Empty(); 
+		}
+	}
+}
+
+void UEnemyCombatComponent::EnemyOnHitTargetActor(AActor* HitActor)
+{
+	if (OverlappedActors.Contains(HitActor))
+	{
+		return;
+	}
+
+	OverlappedActors.AddUnique(HitActor);
+
+	// TODO: Implement block check
+	bool bIsValidBlock = false;
+
+	const bool bIsPlayerBlocking = false;
+	const bool bIsMyAttackUnblockable = false;
+
+	if (bIsPlayerBlocking && bIsMyAttackUnblockable)
+	{
+		// TODO: Check if the block is valid
+	}
+
+	FGameplayEventData EventData;
+	EventData.Instigator = GetOwningPawn();
+	EventData.Target = HitActor;
+	
+	if (bIsValidBlock)
+	{
+		// TODO: Handle successful block
+	}
+	else
+	{
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(
+			GetOwningPawn(),
+			FGameplayTag::RequestGameplayTag(FName("Character.Shared.Event.Hit")),
+			EventData
+		);
+	}
+}
+
+void UEnemyCombatComponent::EnemyOnWeaponPulledFromTargetActor(AActor* InteractedActor)
+{
+	
 }
 
 

@@ -5,6 +5,7 @@
 
 #include "Components/BoxComponent.h"
 #include "Survival/WeaponPickupSystem/SurvivalDebugHelper.h"
+#include "Survival/WeaponPickupSystem/Libraries/SurvivalAbilitySystemLibrary.h"
 #include "Survival/WeaponPickupSystem/WeaponBases/WeaponCategories/WeaponCategoriesUIHandlers/MeleeWeaponUIHandler/MeleeWeaponUIHandler.h"
 
 
@@ -26,36 +27,53 @@ AMeleeWeapon::AMeleeWeapon()
 void AMeleeWeapon::OnCollisionBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	const APawn* WeaponOwningPawn = GetInstigator<APawn>();
+	APawn* WeaponOwningPawn = GetInstigator<APawn>();
 
 	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instigator as the owning pawn for the weapon: %s"), *GetName());
 
-	if (const APawn* HitPawn = Cast<APawn>(OtherActor))
+	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (WeaponOwningPawn != HitPawn)
+		if (USurvivalAbilitySystemLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
 			OnWeaponHitTarget.Broadcast(OtherActor);
 		}
-
-		// TODO: Implement hit check for enemy characters
 	}
+	
+	// if (const APawn* HitPawn = Cast<APawn>(OtherActor))
+	// {
+	// 	if (WeaponOwningPawn != HitPawn)
+	// 	{
+	// 		OnWeaponHitTarget.Broadcast(OtherActor);
+	// 	}
+	//
+	// 	// TODO: Implement hit check for enemy characters
+	// }
 }
 
 void AMeleeWeapon::OnCollisionBoxEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	const APawn* WeaponOwningPawn = GetInstigator<APawn>();
+	APawn* WeaponOwningPawn = GetInstigator<APawn>();
 
 	checkf(WeaponOwningPawn, TEXT("Forgot to assign an instigator as the onwning pawn for the weapon: %s"), *GetName());
-	if (const APawn* HitPawn = Cast<APawn>(OtherActor))
+	
+	if (APawn* HitPawn = Cast<APawn>(OtherActor))
 	{
-		if (WeaponOwningPawn != HitPawn)
+		if (USurvivalAbilitySystemLibrary::IsTargetPawnHostile(WeaponOwningPawn, HitPawn))
 		{
 			OnWeaponPulledFromTarget.Broadcast(OtherActor);
 		}
-
-		// TODO: Implement hit check for enemy characters
 	}
+	
+	// if (const APawn* HitPawn = Cast<APawn>(OtherActor))
+	// {
+	// 	if (WeaponOwningPawn != HitPawn)
+	// 	{
+	// 		OnWeaponPulledFromTarget.Broadcast(OtherActor);
+	// 	}
+	//
+	// 	// TODO: Implement hit check for enemy characters
+	// }
 }
 
 void AMeleeWeapon::BeginPlay()

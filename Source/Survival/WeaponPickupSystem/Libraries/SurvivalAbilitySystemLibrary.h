@@ -45,6 +45,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Survival|FunctionLibrary", meta = (DisplayName = "Get Survival Character Combat Component From Actor", ExpandEnumAsExecs = "OutValidType "))
 	static USurvivalCharacterCombatComponent* BP_GetSurvivalCharacterCombatComponentFromActor(AActor* InActor, EWarriorValidType& OutValidType);
 
+	UFUNCTION(BlueprintPure, Category = "Survival|FunctionLibrary")
+	static bool IsTargetPawnHostile(APawn* QueryPawn, APawn* TargetPawn);
+	
 	// UFUNCTION(BlueprintPure)
 	// static UCharacterAbilitySystemComponent* GetCharacterAbilitySystemComponent(const AActor* Actor);
 };
